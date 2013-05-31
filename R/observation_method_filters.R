@@ -158,6 +158,40 @@ interval_recording <- function(BS, n_intervals, rest_proportion = 0, partial = T
          rest_proportion = rest_proportion, partial = partial, summarize = summarize)
 
 
+## augmented interval recording ####
+
+#' @title Applies augmented interval recording to a behavior stream
+#' 
+#' @description Divides the observation session into a specified number of intervals. 
+#' Each interval is scored using partial interval recording, whole interval recording, and  
+#' momentary time sampling (at the beginning of the following interval). The sum of the three
+#' scores is then recorded.
+#' 
+#' @param BS object of class behavior_stream
+#' @param n_intervals number of intervals into which the behavior stream is divided.
+#' @param rest_proportion proportion of each interval to exclude from observation. See details.
+#' 
+#' @details
+#' Each behavior stream is divided into \code{n_intervals} intervals. The last \code{rest_proportion} of each interval is 
+#' excluded from observation. For example, for a stream length of 100, \code{n_intervals = 20}, and 
+#' \code{rest_proportion = 0.2}, the first interval runs from [0,4), the second interval runs from [5,9], etc. 
+#' 
+#' @export 
+#' 
+#' @return A matrix with length \code{n_intervals} and width equal to the number
+#' of behavior streams in \code{BS}.
+#' 
+#' @examples
+#' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
+#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
+#' augmented_recording(BS, 30)
+
+augmented_recording <- function(BS, n_intervals, rest_proportion = 0) {
+  PIR <- interval_recording(BS, n_intervals, rest_proportion, partial = TRUE, summarize = FALSE)
+  WIR <- interval_recording(BS, n_intervals, rest_proportion, partial = FALSE, summarize = FALSE)
+  MTS <- momentary_time_recording(BS, n_intervals, summarize = FALSE)
+  list(initial = MTS[1,], AIR = PIR + WIR + MTS[-1,])
+}
 
 
 
