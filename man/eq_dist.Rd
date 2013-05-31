@@ -1,0 +1,32 @@
+\name{eq_dist}
+\alias{eq_dist}
+\title{Constructor for class \code{eq_dist}}
+\usage{
+  eq_dist(r_gen, r_eq)
+}
+\arguments{
+  \item{r_gen}{function for generating random deviates.}
+
+  \item{r_eq}{function for generating random deviates from
+  the corresponding equilibrium distribution.}
+}
+\value{
+  Object of class \code{eq_dist} with components
+  \code{r_gen} and \code{r_eq}.
+}
+\description{
+  The \code{eq_dist} class consists of a pair of component
+  functions for generating random variates from a specified
+  distribution and the corresponding equilibrium
+  distribution.
+}
+\details{
+  Both functions must take arguments \code{n} and
+  \code{mean}. Currently, the following distributions are
+  implemented: \itemize{ \item \code{\link{F_exp}} -
+  Exponential \item \code{\link{F_gam}} - Gamma \item
+  \code{\link{F_gam_mix}} - Mixture of two gammas \item
+  \code{\link{F_unif}} - Uniform \item
+  \code{\link{F_const}} - Constant }
+}
+

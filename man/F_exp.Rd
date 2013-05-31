@@ -1,0 +1,27 @@
+\name{F_exp}
+\alias{F_exp}
+\title{Exponential distribution and related equilibrium distribution}
+\usage{
+  F_exp()
+}
+\value{
+  Object of class \code{\link{eq_dist}} with components
+  \code{r_gen} and \code{r_eq}.
+
+  The function \code{r_gen(n, mean)} generates random
+  deviates from an exponential distribution with specified
+  \code{mean}.
+
+  The function \code{r_eq(n, mean)} generates random
+  deviates from an exponential distribution with specified
+  \code{mean}.
+}
+\description{
+  Random number generation from exponential distributions,
+  for use with \code{\link{r_behavior_stream}}.
+}
+\examples{
+hist(F_exp()$r_gen(1000, 3))
+hist(F_exp()$r_eq(1000, 3))
+}
+

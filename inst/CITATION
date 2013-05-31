@@ -1,0 +1,7 @@
+bibentry("Manual",
+   title = "ARPobservation: Simulating recording procedures for direct observation of behavior",
+   author = "James E. Pustejovsky",
+   year   = version$year,
+   note   = "R package version 0.1.0",
+   mheader = "To cite ARPobservation in publications use:"
+)

@@ -1,0 +1,21 @@
+Package: ARPobservation
+Title: Tools for simulating different methods of observing alternating renewal
+    processes
+Description: ARPobservation provides a set of tools for simulating data based
+    on direct observation of behavior. It works by first simulating a behavior
+    stream based on an alternating renewal process, based on specified
+    distributions of event durations and interim times. Different procedures for
+    recording data can then be applied to the simulated behavior stream.
+    Functions are provided for the following recording methods: continuous
+    duration recording, event counting, momentary time sampling, partial
+    interval recording, and whole interval recording.
+Version: 0.1.0
+Maintainer: James E. Pustejovsky <jepusto@gmail.com>
+Author: James E. Pustejovsky <jepusto@gmail.com>
+License: GPL-3
+Collate:
+    'ARPobservation-package.r'
+    'equilibrium_distributions.R'
+    'observation_method_filters.R'
+    'simulate_behavior_stream.R'
+    'simulate_latent_parameters.R'

@@ -1,0 +1,22 @@
+\name{event_counting}
+\alias{event_counting}
+\title{Applies event counting to a behavior stream}
+\usage{
+  event_counting(BS)
+}
+\arguments{
+  \item{BS}{object of class \code{behavior_stream}}
+}
+\value{
+  Vector of non-negative integers.
+}
+\description{
+  Calculates the number of behaviors that begin during the
+  observation session.
+}
+\examples{
+BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10,
+                       F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
+event_counting(BS)
+}
+
