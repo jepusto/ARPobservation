@@ -203,7 +203,8 @@ reported_observations <- function(BS, data_types = c("C","M","E","P","W"),
                                   n_intervals = 0, rest_proportion = 0, n_aggregate = 1) {
   n <- length(BS$b_streams)
   recorded <- data.frame(matrix(NA, n, length(data_types)))
-  names(recorded) <- data_types
+  data_type_names <- c(C = "CDR", M = "MTR", E = "EC", P = "PIR", W = "WIR")
+  names(recorded) <- data_type_names[data_types]
   
   if ("C" %in% data_types) 
     recorded$CDR <- continuous_duration_recording(BS)  
