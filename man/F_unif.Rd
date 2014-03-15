@@ -2,28 +2,28 @@
 \alias{F_unif}
 \title{Uniform distribution and related equilibrium distribution}
 \usage{
-  F_unif()
+F_unif()
 }
 \value{
-  Object of class \code{\link{eq_dist}} with components
-  \code{r_gen} and \code{r_eq}.
+Object of class \code{\link{eq_dist}} with components
+\code{r_gen} and \code{r_eq}.
 
-  The function \code{r_gen(n, mean)} generates random
-  deviates from a uniform distribution with specified
-  \code{mean} \eqn{\mu} on the interval \eqn{(0, 2 \mu)}.
-  The cumulative distribution function is given by
-  \eqn{F(x) = x / 2 \mu}.
+The function \code{r_gen(n, mean)} generates random
+deviates from a uniform distribution with specified
+\code{mean} \eqn{\mu} on the interval \eqn{(0, 2 \mu)}. The
+cumulative distribution function is given by \eqn{F(x) = x
+/ 2 \mu}.
 
-  The function \code{r_eq(n, mean)} generates random
-  deviates from the equilibrium distribuion corresponding
-  to a uniform distribution on the interval \eqn{(0, 2
-  \mu)}. The cumulative distribution function is given by
-  \deqn{F(x) = x (4 \mu - x) / (4 \mu^2).}
+The function \code{r_eq(n, mean)} generates random deviates
+from the equilibrium distribuion corresponding to a uniform
+distribution on the interval \eqn{(0, 2 \mu)}. The
+cumulative distribution function is given by \deqn{F(x) = x
+(4 \mu - x) / (4 \mu^2).}
 }
 \description{
-  Random number generation from a uniform distribution and
-  the related equilibrium distribution, for use with
-  \code{\link{r_behavior_stream}}.
+Random number generation from a uniform distribution and
+the related equilibrium distribution, for use with
+\code{\link{r_behavior_stream}}.
 }
 \examples{
 hist(F_unif()$r_gen(1000, 2))
