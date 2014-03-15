@@ -2,8 +2,8 @@
 \alias{r_behavior_stream}
 \title{Generates random behavior streams}
 \usage{
-  r_behavior_stream(n, mu, lambda, F_mu, F_lambda,
-    stream_length, tuning = 2)
+r_behavior_stream(n, mu, lambda, F_mu, F_lambda, stream_length,
+  equilibrium = TRUE, p0 = 0, tuning = 2)
 }
 \arguments{
   \item{n}{number of behavior streams to generate}
@@ -20,33 +20,49 @@
 
   \item{stream_length}{length of behavior stream}
 
+  \item{equilibrium}{logical; if \code{TRUE}, then
+  equilibrium initial conditions are used; if \code{FALSE},
+  then \code{p0} is used to determine initial state and
+  normal generating distributions are used for event
+  durations and interim times.}
+
+  \item{p0}{vector of initial state probabilities. Only
+  used if \code{equilibrium = FALSE}, in which case default
+  is zero (i.e., behavior stream always starts with an
+  interim time).}
+
   \item{tuning}{controls the size of the chunk of random
   event durations and interim times. Adjusting this may be
   useful in order to speed computation time .}
 }
 \value{
-  An object of class \code{behavior_stream} containing two
-  elements.
+An object of class \code{behavior_stream} containing two
+elements.
 }
 \description{
-  Random generation of behavior streams (based on an
-  alternating renewal process) of a specified length and
-  with specified mean event durations, mean interim times,
-  event distribution, and interim distribution.
+Random generation of behavior streams (based on an
+alternating renewal process) of a specified length and with
+specified mean event durations, mean interim times, event
+distribution, and interim distribution.
 }
 \details{
-  Generates behavior streams by repeatedly drawing random
-  event durations and random interim times from the
-  distributions as specified, until the sum of the
-  durations and interim times exceeds the requested stream
-  length. The vectors \code{mu} and \code{lambda} are
-  recycled to length \code{n}. \code{r_behavior_stream}
-  works by calling \code{\link{r_behavior_stream_single}}
-  repeatedly.
+Generates behavior streams by repeatedly drawing random
+event durations and random interim times from the
+distributions as specified, until the sum of the durations
+and interim times exceeds the requested stream length. The
+vectors \code{mu}, \code{lambda}, and \code{p0} are
+recycled to length \code{n}.
 }
 \examples{
+# default equilibrium initial conditions
 r_behavior_stream(n = 5, mu = 3, lambda = 10,
                   F_mu = F_exp(), F_lambda = F_exp(),
                   stream_length = 100)
+
+# non-equilibrium initial conditions
+r_behavior_stream(n = 5, mu = 3, lambda = 10,
+                  F_mu = F_gam(3), F_lambda = F_gam(3),
+                  stream_length = 100,
+                  equilibrium = FALSE, p0 = 0.5)
 }
 

@@ -2,7 +2,7 @@
 \alias{F_gam_mix}
 \title{Mixture of two gamma distributions and related equilibrium distribution}
 \usage{
-  F_gam_mix(shape1, shape2, scale_ratio, mix)
+F_gam_mix(shape1, shape2, scale_ratio, mix)
 }
 \arguments{
   \item{shape1}{shape parameter for first mixture
@@ -17,29 +17,28 @@
   \item{mix}{mixing proportion of first component, \eqn{p}}
 }
 \value{
-  Object of class \code{\link{eq_dist}} with components
-  \code{r_gen} and \code{r_eq}.
+Object of class \code{\link{eq_dist}} with components
+\code{r_gen} and \code{r_eq}.
 
-  The function \code{r_gen(n, mean)} generates random
-  deviates from a mixture of two gamma distributions with
-  specified \code{mean}, \code{shape1}, \code{shape2},
-  \code{scale_ratio}, and \code{mix}. The cumulative
-  distribution function is given by \deqn{F(x) = p
-  \Gamma(x; k_1, \theta_1) + (1 - p) \Gamma(x; k_2,
-  \theta_2),} where \eqn{\Gamma(x; k, \theta)} is the
-  cumulative distribution function of a Gamma random
-  variable with shape \eqn{k} and scale \eqn{\theta}, and
-  the scale parameters are determined by the specified
-  \code{mean} and \code{scale_ratio}.
+The function \code{r_gen(n, mean)} generates random
+deviates from a mixture of two gamma distributions with
+specified \code{mean}, \code{shape1}, \code{shape2},
+\code{scale_ratio}, and \code{mix}. The cumulative
+distribution function is given by \deqn{F(x) = p \Gamma(x;
+k_1, \theta_1) + (1 - p) \Gamma(x; k_2, \theta_2),} where
+\eqn{\Gamma(x; k, \theta)} is the cumulative distribution
+function of a Gamma random variable with shape \eqn{k} and
+scale \eqn{\theta}, and the scale parameters are determined
+by the specified \code{mean} and \code{scale_ratio}.
 
-  The function \code{r_eq(n, mean)} generates random
-  deviates from the equilibrium distribuion corresponding
-  to the mixture of gamma distributions.
+The function \code{r_eq(n, mean)} generates random deviates
+from the equilibrium distribuion corresponding to the
+mixture of gamma distributions.
 }
 \description{
-  Random number generation from a mixture of two gamma
-  distributions and the related equilibrium distribution,
-  for use with \code{\link{r_behavior_stream}}.
+Random number generation from a mixture of two gamma
+distributions and the related equilibrium distribution, for
+use with \code{\link{r_behavior_stream}}.
 }
 \examples{
 hist(F_gam_mix(2, 2, 1 / 12, 3 / 5)$r_gen(1000, 20))

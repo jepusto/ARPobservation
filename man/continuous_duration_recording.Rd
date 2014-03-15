@@ -2,17 +2,17 @@
 \alias{continuous_duration_recording}
 \title{Applies continuous duration recording to a behavior stream}
 \usage{
-  continuous_duration_recording(BS)
+continuous_duration_recording(BS)
 }
 \arguments{
   \item{BS}{object of class \code{behavior_stream}}
 }
 \value{
-  Vector of proportions.
+Vector of proportions.
 }
 \description{
-  Calculates the proportion of session time during which
-  behavior occurs.
+Calculates the proportion of session time during which
+behavior occurs.
 }
 \examples{
 BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10,

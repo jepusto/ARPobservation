@@ -2,25 +2,22 @@
 \alias{F_const}
 \title{Constant (degenerate) distribution and related equilibrium distribution}
 \usage{
-  F_const()
+F_const()
 }
 \value{
-  Object of class \code{\link{eq_dist}} with components
-  \code{r_gen} and \code{r_eq}.
+Object of class \code{\link{eq_dist}} with components
+\code{r_gen} and \code{r_eq}.
 
-  The function \code{r_gen(n, mean)} simply returns a
-  vector of length \code{n} with all values equal to
-  \code{mean}.
+The function \code{r_gen(n, mean)} simply returns a vector
+of length \code{n} with all values equal to \code{mean}.
 
-  The function \code{r_eq(n, mean)} generates random
-  deviates from a uniform distribution on the interval (0,
-  mean).
+The function \code{r_eq(n, mean)} generates random deviates
+from a uniform distribution on the interval (0, mean).
 }
 \description{
-  Generation from a degenerate distribution and random
-  number generation from the related equilibrium
-  distribution, for use with
-  \code{\link{r_behavior_stream}}.
+Generation from a degenerate distribution and random number
+generation from the related equilibrium distribution, for
+use with \code{\link{r_behavior_stream}}.
 }
 \examples{
 hist(F_const()$r_gen(1000, 2))
