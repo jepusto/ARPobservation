@@ -207,15 +207,15 @@ reported_observations <- function(BS, data_types = c("C","M","E","P","W"),
   names(recorded) <- data_type_names[data_types]
   
   if ("C" %in% data_types) 
-    recorded$CDR <- continuous_duration_recording(BS)  
+    recorded$C <- continuous_duration_recording(BS)  
   if ("M" %in% data_types) 
-    recorded$MTR <- momentary_time_recording(BS, n_intervals)
+    recorded$M <- momentary_time_recording(BS, n_intervals)
   if ("E" %in% data_types) 
-    recorded$EC <- event_counting(BS)
+    recorded$E <- event_counting(BS)
   if ("P" %in% data_types) 
-    recorded$PIR <- interval_recording(BS, n_intervals, rest_proportion, partial = TRUE)  
+    recorded$P <- interval_recording(BS, n_intervals, rest_proportion, partial = TRUE)  
   if ("W" %in% data_types) 
-    recorded$WIR <- interval_recording(BS, n_intervals, rest_proportion, partial = FALSE)  
+    recorded$W <- interval_recording(BS, n_intervals, rest_proportion, partial = FALSE)  
   
   if (n_aggregate == 1) return(recorded) else {
     groups <- list(rep(1:(n / n_aggregate), each = n_aggregate))
