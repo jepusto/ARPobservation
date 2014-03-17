@@ -2,7 +2,7 @@
 \alias{r_behavior_stream}
 \title{Generates random behavior streams}
 \usage{
-r_behavior_stream(n, mu, lambda, F_mu, F_lambda, stream_length,
+r_behavior_stream(n, mu, lambda, F_event, F_interim, stream_length,
   equilibrium = TRUE, p0 = 0, tuning = 2)
 }
 \arguments{
@@ -12,11 +12,11 @@ r_behavior_stream(n, mu, lambda, F_mu, F_lambda, stream_length,
 
   \item{lambda}{vector of mean interim time}
 
-  \item{F_mu}{distribution of event durations. Must be of
-  class \code{\link{eq_dist}}.}
+  \item{F_event}{distribution of event durations. Must be
+  of class \code{\link{eq_dist}}.}
 
-  \item{F_lambda}{distribution of interim times. Must be of
-  class \code{\link{eq_dist}}.}
+  \item{F_interim}{distribution of interim times. Must be
+  of class \code{\link{eq_dist}}.}
 
   \item{stream_length}{length of behavior stream}
 
@@ -56,12 +56,12 @@ recycled to length \code{n}.
 \examples{
 # default equilibrium initial conditions
 r_behavior_stream(n = 5, mu = 3, lambda = 10,
-                  F_mu = F_exp(), F_lambda = F_exp(),
+                  F_event = F_exp(), F_interim = F_exp(),
                   stream_length = 100)
 
 # non-equilibrium initial conditions
 r_behavior_stream(n = 5, mu = 3, lambda = 10,
-                  F_mu = F_gam(3), F_lambda = F_gam(3),
+                  F_event = F_gam(3), F_interim = F_gam(3),
                   stream_length = 100,
                   equilibrium = FALSE, p0 = 0.5)
 }

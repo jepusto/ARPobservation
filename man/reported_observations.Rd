@@ -3,7 +3,7 @@
 \title{Applies multiple recording procedures to a behavior stream}
 \usage{
 reported_observations(BS, data_types = c("C", "M", "E", "P", "W"),
-  n_intervals = 0, rest_proportion = 0, n_aggregate = 1)
+  interval_length = 1, rest_length = 0, n_aggregate = 1)
 }
 \arguments{
   \item{BS}{object of class behavior_stream}
@@ -11,12 +11,12 @@ reported_observations(BS, data_types = c("C", "M", "E", "P", "W"),
   \item{data_types}{list of recording procedures to apply
   to the behavior stream. See details.}
 
-  \item{n_intervals}{number of intervals into which the
-  behavior stream is divided, for purposes of momentary
-  time recording and interval recording procedures.}
+  \item{interval_length}{time length of each interval used
+  to score momentary time recording and interval recording
+  procedures.}
 
-  \item{rest_proportion}{proportion of each interval to
-  exclude from observation for interval recording. See
+  \item{rest_length}{portion of each interval to exclude
+  from observation for interval recording. See
   documentation for \code{\link{interval_recording}}.}
 
   \item{n_aggregate}{number of observations over which to
@@ -46,8 +46,8 @@ recording \item \code{W} - whole interval recording }
 }
 \examples{
 BS <- r_behavior_stream(n = 50, mu = 3, lambda = 10,
-                       F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
-reported_observations(BS, n_intervals = 30)
-reported_observations(BS, n_intervals = 30, n_aggregate = 5)
+                       F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
+reported_observations(BS, interval_length = 10)
+reported_observations(BS, interval_length = 10, n_aggregate = 5)
 }
 

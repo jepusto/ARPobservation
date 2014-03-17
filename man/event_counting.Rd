@@ -16,7 +16,7 @@ observation session.
 }
 \examples{
 BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10,
-                       F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
+                       F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
 event_counting(BS)
 }
 

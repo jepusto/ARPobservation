@@ -8,7 +8,7 @@ Description: ARPobservation provides a set of tools for simulating data based
     Functions are provided for the following recording methods: continuous
     duration recording, event counting, momentary time sampling, partial
     interval recording, and whole interval recording.
-Version: 0.1.1
+Version: 0.1.2
 Maintainer: James E. Pustejovsky <jepusto@gmail.com>
 Author: James E. Pustejovsky <jepusto@gmail.com>
 License: GPL-3

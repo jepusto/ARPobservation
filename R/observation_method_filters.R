@@ -31,7 +31,7 @@ CDR_single <- function(b_stream, stream_length) {
 #' 
 #' @examples
 #' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
-#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
+#'                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
 #' continuous_duration_recording(BS)
 
 continuous_duration_recording <- function(BS) 
@@ -43,11 +43,9 @@ continuous_duration_recording <- function(BS)
 
 ## momentary time recording ####
 
-MTS_single <- function(b_stream, stream_length, n_intervals, summarize = TRUE) {
-  obs_pos <- sapply(stream_length * (summarize:n_intervals) / n_intervals, 
-                    findInterval, vec=b_stream$b_stream)
-  MTS <- (obs_pos %% 2) != b_stream$start_state
-  if (summarize) return(mean(MTS)) else return(MTS)
+MTS_single <- function(b_stream, moments) {
+  obs_pos <- findInterval(moments, vec=b_stream$b_stream)
+  (obs_pos %% 2) != b_stream$start_state
 }
 
 #' @title Applies momentary time recording to a behavior stream
@@ -55,7 +53,7 @@ MTS_single <- function(b_stream, stream_length, n_intervals, summarize = TRUE) {
 #' @description Evaluates the presence or absence of the behavior at fixed moments in time.
 #' 
 #' @param BS object of class behavior_stream
-#' @param n_intervals number of intervals into which the behavior stream is divided.
+#' @param interval_length length of interval between moments.
 #' @param summarize logical value indicating whether vector of moments should be summarized by taking their mean.
 #' 
 #' @export 
@@ -67,18 +65,16 @@ MTS_single <- function(b_stream, stream_length, n_intervals, summarize = TRUE) {
 #' 
 #' @examples
 #' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
-#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
-#' momentary_time_recording(BS, 30, FALSE)
-#' momentary_time_recording(BS, 30)
-#' colMeans(momentary_time_recording(BS, 30, FALSE)[-1,])
+#'                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
+#' momentary_time_recording(BS, interval_length = 20, FALSE)
+#' momentary_time_recording(BS, interval_length = 20)
+#' colMeans(momentary_time_recording(BS, 20, FALSE)[-1,])
 
-momentary_time_recording <- function(BS, n_intervals, summarize = TRUE) 
-  sapply(BS$b_streams, MTS_single, 
-         stream_length = BS$stream_length, 
-         n_intervals = n_intervals, summarize = summarize)
-
-
-
+momentary_time_recording <- function(BS, interval_length, summarize = TRUE) {
+  moments <- seq(interval_length * summarize, BS$stream_length, interval_length)
+  MTS <- sapply(BS$b_streams, MTS_single, moments = moments)
+  if (summarize) colMeans(MTS) else MTS
+}
 
 
 ## event counting ####
@@ -96,7 +92,7 @@ momentary_time_recording <- function(BS, n_intervals, summarize = TRUE)
 #' 
 #' @examples
 #' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
-#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
+#'                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
 #' event_counting(BS)
 
 event_counting <- function(BS) 
@@ -109,14 +105,11 @@ event_counting <- function(BS)
 
 ## interval recording ####
 
-IntRec_single <- function(b_stream, stream_length, 
-                          n_intervals, rest_proportion = 0, 
-                          partial = TRUE, summarize = TRUE) {
-  int_start <- sapply(stream_length * (0:(n_intervals-1)) / n_intervals, findInterval, vec=b_stream$b_stream)
-  int_end <- sapply(stream_length * ((1:n_intervals) - rest_proportion) / n_intervals, findInterval, vec=b_stream$b_stream)
-  WIR <- (int_start == int_end) * ((int_start + 1 - partial) %% 2 == b_stream$start_state)
-  if (summarize) return(ifelse(partial, 1 - mean(WIR), mean(WIR))) else
-    if (partial) return(1 - WIR) else return(WIR)
+IntRec_single <- function(b_stream, start_time, end_time, partial = TRUE) {
+  start_event <- findInterval(start_time, vec=b_stream$b_stream)
+  end_event <- findInterval(end_time, vec=b_stream$b_stream)
+  WIR <- (start_event == end_event) * ((start_event + 1 - partial) %% 2 == b_stream$start_state)
+  if (partial) 1 - WIR else WIR
 }
 
 #' @title Applies interval recording to a behavior stream
@@ -126,39 +119,40 @@ IntRec_single <- function(b_stream, stream_length,
 #' interval recording, each interval is scored according to whether the behavior is present for the duration.
 #' 
 #' @param BS object of class behavior_stream
-#' @param n_intervals number of intervals into which the behavior stream is divided.
-#' @param rest_proportion proportion of each interval to exclude from observation. See details.
+#' @param interval_length time length of each interval.
+#' @param rest_length portion of each interval to exclude from observation. Default is zero. See details.
 #' @param partial logical value indicating whether to use partial interval recording (\code{TRUE}) or 
 #'        whole interval recording (\code{FALSE}).
 #' @param summarize logical value indicating whether vector of moments should be summarized by taking their mean.
 #' 
 #' @details
-#' Each behavior stream is divided into \code{n_intervals} intervals. The last \code{rest_proportion} of each interval is 
-#' excluded from observation. For example, for a stream length of 100, \code{n_intervals = 20}, and 
-#' \code{rest_proportion = 0.2}, the first interval runs from [0,4), the second interval runs from [5,9], etc. 
+#' Each behavior stream is divided into intervals of length \code{interval_length}. 
+#' The last \code{rest_length} of each interval is excluded from observation. 
+#' For example, for a stream length of 100, \code{interval_length = 20}, and 
+#' \code{rest_length = 5}, the first interval runs from [0,15), the second interval runs from [20,35), etc. 
 #' 
 #' @export 
 #' 
-#' @return If \code{summarize = FALSE}, a matrix with length \code{n_intervals} and width equal to the number
-#' of behavior streams in \code{BS}. If \code{summarize = TRUE}, a vector of proportions of length equal to the 
+#' @return If \code{summarize = FALSE}, a matrix with rows equal to the number of intervals per session and 
+#' columns equal to the number of behavior streams in \code{BS}. 
+#' If \code{summarize = TRUE}, a vector of proportions of length equal to the 
 #' number of behavior streams in \code{BS}. 
 #' 
 #' @examples
 #' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
-#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
-#' interval_recording(BS, 30, partial = TRUE, summarize = FALSE)
-#' interval_recording(BS, 30, partial = TRUE, summarize = TRUE)
-#' colMeans(interval_recording(BS, 30, partial = TRUE, summarize = FALSE))
-#' interval_recording(BS, 30, partial = FALSE)
+#'                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
+#' interval_recording(BS, interval_length = 20, partial = TRUE, summarize = FALSE)
+#' interval_recording(BS, interval_length = 20, partial = TRUE, summarize = TRUE)
+#' colMeans(interval_recording(BS, 20, partial = TRUE, summarize = FALSE))
+#' interval_recording(BS, interval_length = 20, rest_length = 5, partial = FALSE)
 
-
-interval_recording <- function(BS, n_intervals, rest_proportion = 0, partial = TRUE, summarize = TRUE)
-  sapply(BS$b_streams, IntRec_single,
-         stream_length = BS$stream_length, n_intervals = n_intervals, 
-         rest_proportion = rest_proportion, partial = partial, summarize = summarize)
-
-
-
+interval_recording <- function(BS, interval_length, rest_length = 0, partial = TRUE, summarize = TRUE) {
+  n_intervals <- floor(BS$stream_length / interval_length)
+  start_time <- interval_length * (0:(n_intervals - 1))
+  end_time <- start_time + interval_length - rest_length
+  IR <- sapply(BS$b_streams, IntRec_single, start_time = start_time, end_time = end_time, partial = partial)
+  if (summarize) colMeans(IR) else IR
+}
 
 
 ## Process behavior stream using multiple procedures ####
@@ -171,10 +165,9 @@ interval_recording <- function(BS, n_intervals, rest_proportion = 0, partial = T
 #' 
 #' @param BS object of class behavior_stream
 #' @param data_types list of recording procedures to apply to the behavior stream. See details.
-#' @param n_intervals number of intervals into which the behavior stream is divided, for purposes of momentary
-#'        time recording and interval recording procedures.
-#' @param rest_proportion proportion of each interval to exclude from observation for interval recording. See 
-#'        documentation for \code{\link{interval_recording}}.
+#' @param interval_length time length of each interval used to score momentary time recording and interval recording procedures.
+#' @param rest_length portion of each interval to exclude from observation for interval recording. 
+#' See documentation for \code{\link{interval_recording}}.
 #' @param n_aggregate number of observations over which to calculate summary statistics.
 #' 
 #' @details
@@ -195,27 +188,26 @@ interval_recording <- function(BS, n_intervals, rest_proportion = 0, partial = T
 #' 
 #' @examples
 #' BS <- r_behavior_stream(n = 50, mu = 3, lambda = 10, 
-#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
-#' reported_observations(BS, n_intervals = 30)
-#' reported_observations(BS, n_intervals = 30, n_aggregate = 5)
+#'                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
+#' reported_observations(BS, interval_length = 10)
+#' reported_observations(BS, interval_length = 10, n_aggregate = 5)
 
 reported_observations <- function(BS, data_types = c("C","M","E","P","W"),
-                                  n_intervals = 0, rest_proportion = 0, n_aggregate = 1) {
+                                  interval_length = 1, rest_length = 0, n_aggregate = 1) {
   n <- length(BS$b_streams)
   recorded <- data.frame(matrix(NA, n, length(data_types)))
-  data_type_names <- c(C = "CDR", M = "MTR", E = "EC", P = "PIR", W = "WIR")
-  names(recorded) <- data_type_names[data_types]
+  names(recorded) <- data_types
   
   if ("C" %in% data_types) 
     recorded$C <- continuous_duration_recording(BS)  
   if ("M" %in% data_types) 
-    recorded$M <- momentary_time_recording(BS, n_intervals)
+    recorded$M <- momentary_time_recording(BS, interval_length)
   if ("E" %in% data_types) 
     recorded$E <- event_counting(BS)
   if ("P" %in% data_types) 
-    recorded$P <- interval_recording(BS, n_intervals, rest_proportion, partial = TRUE)  
+    recorded$P <- interval_recording(BS, interval_length, rest_length, partial = TRUE)  
   if ("W" %in% data_types) 
-    recorded$W <- interval_recording(BS, n_intervals, rest_proportion, partial = FALSE)  
+    recorded$W <- interval_recording(BS, interval_length, rest_length, partial = FALSE)  
   
   if (n_aggregate == 1) return(recorded) else {
     groups <- list(rep(1:(n / n_aggregate), each = n_aggregate))
@@ -226,79 +218,70 @@ reported_observations <- function(BS, data_types = c("C","M","E","P","W"),
 }
 
 
-
-
-
 ## augmented interval recording ####
 
 #' @title Applies augmented interval recording to a behavior stream
 #' 
-#' @description Divides the observation session into a specified number of intervals. 
+#' @description Divides the observation session into intervals. 
 #' Each interval is scored using partial interval recording, whole interval recording, and  
 #' momentary time sampling (at the beginning of the following interval). The sum of the three
 #' scores is then recorded.
 #' 
 #' @param BS object of class behavior_stream
-#' @param n_intervals number of intervals into which the behavior stream is divided.
-#' @param rest_proportion proportion of each interval to exclude from observation. See details.
+#' @param interval_length time length of each interval.
+#' @param rest_length portion of each interval to exclude from observation. Default is zero. See details.
 #' 
 #' @details
-#' Each behavior stream is divided into \code{n_intervals} intervals. The last \code{rest_proportion} of each interval is 
-#' excluded from observation. For example, for a stream length of 100, \code{n_intervals = 20}, and 
-#' \code{rest_proportion = 0.2}, the first interval runs from [0,4), the second interval runs from [5,9], etc. 
+#' Each behavior stream is divided into intervals of length \code{interval_length}. 
+#' The last \code{rest_length} of each interval is excluded from observation. 
+#' For example, for a stream length of 100, \code{interval_length = 20}, and 
+#' \code{rest_length = 5}, the first interval runs from [0,15), the second interval runs from [20,35), etc. 
 #' 
 #' @export 
 #' 
-#' @return A matrix with length \code{n_intervals} and width equal to the number
-#' of behavior streams in \code{BS}.
+#' @return A matrix with rows equal to the number of intervals per session and 
+#' columns equal to the number of behavior streams in \code{BS}.
 #' 
 #' @examples
 #' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
-#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
-#' augmented_recording(BS, 30)
+#'                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
+#' augmented_recording(BS, interval_length = 20)
 
-augmented_recording <- function(BS, n_intervals, rest_proportion = 0) {
-  PIR <- interval_recording(BS, n_intervals, rest_proportion, partial = TRUE, summarize = FALSE)
-  WIR <- interval_recording(BS, n_intervals, rest_proportion, partial = FALSE, summarize = FALSE)
-  MTS <- momentary_time_recording(BS, n_intervals, summarize = FALSE)
+augmented_recording <- function(BS, interval_length, rest_length = 0) {
+  PIR <- interval_recording(BS, interval_length, rest_length, partial = TRUE, summarize = FALSE)
+  WIR <- interval_recording(BS, interval_length, rest_length, partial = FALSE, summarize = FALSE)
+  MTS <- momentary_time_recording(BS, interval_length, summarize = FALSE)
   list(initial = MTS[1,], AIR = PIR + WIR + MTS[-1,])
 }
 
 
 
-
-
-## intermittent transition recording ####
-
-#' @title Applies intermittent transition recording to a behavior stream
-#' 
-#' @description Divides the observation session into a specified number of intervals. 
-#' Each interval is scored using partial interval recording, whole interval recording, and  
-#' momentary time sampling (at the beginning of the following interval). The sum of the three
-#' scores is then recorded.
-#' 
-#' @param BS object of class behavior_stream
-#' @param n_intervals number of intervals into which the behavior stream is divided.
-#' @param rest_proportion proportion of each interval to exclude from observation. See details.
-#' 
-#' @details
-#' Each behavior stream is divided into \code{n_intervals} intervals. The last \code{rest_proportion} of each interval is 
-#' excluded from observation. For example, for a stream length of 100, \code{n_intervals = 20}, and 
-#' \code{rest_proportion = 0.2}, the first interval runs from [0,4), the second interval runs from [5,9], etc. 
-#' 
-#' @export 
-#' 
-#' @return A matrix with length \code{n_intervals} and width equal to the number
-#' of behavior streams in \code{BS}.
-#' 
-#' @examples
-#' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
-#'                        F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
-#' augmented_recording(BS, 30)
-
-intermittent_transition_recording <- function(BS, n_intervals, rest_proportion = 0) {
-  PIR <- interval_recording(BS, n_intervals, rest_proportion, partial = TRUE, summarize = FALSE)
-  WIR <- interval_recording(BS, n_intervals, rest_proportion, partial = FALSE, summarize = FALSE)
-  MTS <- momentary_time_recording(BS, n_intervals, summarize = FALSE)
-  list(initial = MTS[1,], AIR = PIR + WIR + MTS[-1,])
-}
+# ## intermittent transition recording ####
+# 
+# #' @title Applies intermittent transition recording to a behavior stream
+# #' 
+# #' @description Divides the observation session into intervals. 
+# #' 
+# #' @param BS object of class behavior_stream
+# #' @param interval_length time length of each interval.
+# #' @param rest_length portion of each interval to exclude from observation. Default is zero. See details.
+# #' 
+# #' @details
+# #' Each behavior stream is divided into intervals of length \code{interval_length}. 
+# #' The last \code{rest_length} of each interval is excluded from observation. 
+# #' For example, for a stream length of 100, \code{interval_length = 20}, and 
+# #' \code{rest_length = 5}, the first interval runs from [0,15), the second interval runs from [20,35), etc. 
+# #' 
+# #' @export 
+# #' 
+# #' @return A matrix with length \code{n_intervals} and width equal to the number
+# #' of behavior streams in \code{BS}.
+# #' 
+# #' @examples
+# #' BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
+# #'                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
+# #' augmented_recording(BS, 30)
+# 
+# intermittent_transition_recording <- function(BS, n_intervals, rest_proportion = 0) {
+#   MTS <- momentary_time_recording(BS, n_intervals, summarize = FALSE)
+# }

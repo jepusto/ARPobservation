@@ -2,13 +2,13 @@
 \alias{momentary_time_recording}
 \title{Applies momentary time recording to a behavior stream}
 \usage{
-momentary_time_recording(BS, n_intervals, summarize = TRUE)
+momentary_time_recording(BS, interval_length, summarize = TRUE)
 }
 \arguments{
   \item{BS}{object of class behavior_stream}
 
-  \item{n_intervals}{number of intervals into which the
-  behavior stream is divided.}
+  \item{interval_length}{length of interval between
+  moments.}
 
   \item{summarize}{logical value indicating whether vector
   of moments should be summarized by taking their mean.}
@@ -29,9 +29,9 @@ moments in time.
 }
 \examples{
 BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10,
-                       F_mu = F_exp(), F_lambda = F_exp(), stream_length = 100)
-momentary_time_recording(BS, 30, FALSE)
-momentary_time_recording(BS, 30)
-colMeans(momentary_time_recording(BS, 30, FALSE)[-1,])
+                       F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
+momentary_time_recording(BS, interval_length = 20, FALSE)
+momentary_time_recording(BS, interval_length = 20)
+colMeans(momentary_time_recording(BS, 20, FALSE)[-1,])
 }
 
