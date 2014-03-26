@@ -26,7 +26,7 @@ Both functions must take arguments \code{n} and
 implemented: \itemize{ \item \code{\link{F_exp}} -
 Exponential \item \code{\link{F_gam}} - Gamma \item
 \code{\link{F_gam_mix}} - Mixture of two gammas \item
-\code{\link{F_unif}} - Uniform \item \code{\link{F_const}}
-- Constant }
+\code{\link{F_weib}} - Weibull \item \code{\link{F_unif}} -
+Uniform \item \code{\link{F_const}} - Constant }
 }
 

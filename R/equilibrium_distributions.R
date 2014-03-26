@@ -13,6 +13,7 @@
 #' \item \code{\link{F_exp}} - Exponential
 #' \item \code{\link{F_gam}} - Gamma
 #' \item \code{\link{F_gam_mix}} - Mixture of two gammas
+#' \item \code{\link{F_weib}} - Weibull
 #' \item \code{\link{F_unif}} - Uniform
 #' \item \code{\link{F_const}} - Constant
 #' }
@@ -149,6 +150,42 @@ F_gam_mix <- function(shape1, shape2, scale_ratio, mix)
   r_eq = function(n, mean) rgamma_mix_eq(n, mean, shape1, shape2, scale_ratio, mix))
 
 
+## Weibull distribution ####
+
+pweibull_eq <- function(x, mean, shape) {
+  scale <- mean / gamma(1 + 1 / shape)
+  integrate(function(z) exp(-(z / scale)^shape), 0, x)$value / mean
+}
+
+rweibull_eq <- function(n, mean, shape) mapply(function(p, m) 
+  uniroot(function(y) p - pweibull_eq(y, mean = m, shape = shape), lower = 0, upper = m * 10^3)$root,
+  p = runif(n), m = mean)
+
+#' @title Weibull distribution and related equilibrium distribution
+#' 
+#' @description
+#' Random number generation from a Weibull distribution and the related equilibrium distribution, 
+#' for use with \code{\link{r_behavior_stream}}.
+#' 
+#' @param shape shape parameter
+#' 
+#' @return Object of class \code{\link{eq_dist}} with components \code{r_gen} and \code{r_eq}.
+#' 
+#' The function \code{r_gen(n, mean)} generates random deviates from a Weibull distribution with specified 
+#' \code{mean} and \code{shape} parameters.
+#' 
+#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+#' to the Weibull distribution with specified \code{mean} and \code{shape} parameters.
+#' 
+#' @examples
+#' hist(F_gam(2)$r_gen(1000, 3))
+#' hist(F_gam(2)$r_eq(1000, 3))
+#' 
+#' @export 
+
+F_weib <- function(shape) 
+  eq_dist(r_gen = function(n, mean) rweibull(n, shape = shape, scale = mean / gamma(1 + 1 / shape)),
+          r_eq = function(n, mean) rweibull_eq(n, mean, shape))
 
 
 
