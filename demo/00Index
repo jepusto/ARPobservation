@@ -1,0 +1,3 @@
+MTS_measurands    Plots illustrating the two possible measurands for momentary time sampling data
+CDR_reliability   Plot illustrating the reliability of continuous recording data
+PIR_bias          Plot illustrating the bias of partial interval recording data as a function of incidence

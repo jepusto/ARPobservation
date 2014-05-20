@@ -13,3 +13,6 @@ Version: 0.1.3
 Maintainer: James E. Pustejovsky <jepusto@gmail.com>
 Author: James E. Pustejovsky <jepusto@gmail.com>
 License: GPL-3
+Suggests:
+    plyr,
+    ggplot2
