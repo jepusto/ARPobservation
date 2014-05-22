@@ -15,4 +15,5 @@ Author: James E. Pustejovsky <jepusto@gmail.com>
 License: GPL-3
 Suggests:
     plyr,
-    ggplot2
+    ggplot2,
+    knitr
