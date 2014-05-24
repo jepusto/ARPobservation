@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.1.2)  22 MAY 2014 16:06
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.1.2)  23 MAY 2014 22:25
 entering extended mode
 **Observation-algorithms.tex
 
@@ -158,18 +158,18 @@ tim
 )
 (C:\Users\jep2963\Documents\R\ARPobservation\vignettes\Observation-algorithms.a
 ux)
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count100
@@ -184,18 +184,18 @@ LaTeX Font Info:    ... okay on input line 67.
 \makeMPintoPDFobject=\count105
 \everyMPtoPDFconversion=\toks22
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 69.
+LaTeX Font Info:    Try loading font information for U+msa on input line 63.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 69.
+LaTeX Font Info:    Try loading font information for U+msb on input line 63.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Overfull \hbox (12.69376pt too wide) in paragraph at lines 92--94
+Overfull \hbox (12.69376pt too wide) in paragraph at lines 88--90
 \OT1/cmr/m/n/10 for $\OML/cmm/m/it/10 k \OT1/cmr/m/n/10 = 1\OML/cmm/m/it/10 ; :
 ::; K$\OT1/cmr/m/n/10 . The sum-mary mea-sure-ment is then cal-cu-lated as $[]$
 . 
@@ -205,27 +205,30 @@ Overfull \hbox (12.69376pt too wide) in paragraph at lines 92--94
 (C:\Users\jep2963\Documents\R\ARPobservation\vignettes\Observation-algorithms.a
 ux) ) 
 Here is how much of TeX's memory you used:
- 2136 strings out of 493921
- 27014 string characters out of 3144871
- 82033 words of memory out of 3000000
- 5429 multiletter control sequences out of 15000+200000
- 5944 words of font info for 24 fonts, out of 3000000 for 9000
+ 2159 strings out of 493921
+ 27311 string characters out of 3144871
+ 83056 words of memory out of 3000000
+ 5442 multiletter control sequences out of 15000+200000
+ 11057 words of font info for 44 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 27i,9n,26p,866b,137s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,9n,26p,866b,201s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.p
 fb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb
 ><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
 C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/
 Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Pro
 gram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Progra
-m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Program Fi
-les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files 
-(x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x
-86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Program Files (x86)
-/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Observation-algorithms.pdf (3 pages, 118897 bytes).
+m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program F
+iles (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Program File
+s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Program Files (x
+86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)/
+MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Program Files (x86)/MiKTe
+X 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on Observation-algorithms.pdf (3 pages, 149297 bytes).
 PDF statistics:
- 56 PDF objects out of 1000 (max. 8388607)
+ 68 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

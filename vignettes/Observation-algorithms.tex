@@ -48,23 +48,19 @@
 \newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
 
 \usepackage{alltt}
-%\VignetteEngine{knitr::knitr} 
-%\VignetteIndexEntry{Observation algorithms}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{graphicx}
 
-\newcommand{\Prob}{\text{Pr}}
-\newcommand{\E}{\text{E}}
-\newcommand{\Cov}{\text{Cov}}
-\newcommand{\corr}{\text{corr}}
-\newcommand{\Var}{\text{Var}}
-\newcommand{\iid}{\stackrel{\text{iid}}{\sim}}
-\newcommand{\logit}{\text{logit}}
-\newcommand{\cll}{\text{cll}}
+%\VignetteEngine{knitr::knitr} 
+%\VignetteIndexEntry{Algorithms for direct observation recording}
+
+\author{James E. Pustejovsky\\The University of Texas at Austin}
+\title{Direct observation recording: Algorithms used in \texttt{ARPobservation}}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 
 \begin{document}
+\maketitle
 
 This vignette describes several algorithms that take as input a randomly generated behavior stream and produce as output the summary measurement from a direct observation procedure. Algorithms for the following procedures are included: event counting, continuous recording, momentary time sampling, partial interval recording, and whole interval recording procedures. Let $I(X)$ denote the indicator function, equal to one if condition $X$ is true and zero otherwise. 
 
