@@ -3,6 +3,7 @@ ARPobservation provides a set of tools for simulating the sort of data generated
 * Exponential
 * Gamma with fixed shape parameter
 * Mixture of two gammas
+* Weibull with fixed shape parameter
 * Uniform(0,x)
 * Constant (degenerate)
 
