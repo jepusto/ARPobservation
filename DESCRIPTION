@@ -16,5 +16,6 @@ License: GPL-3
 VignetteBuilder: knitr
 Suggests:
     plyr,
+    reshape2,
     ggplot2,
     knitr
