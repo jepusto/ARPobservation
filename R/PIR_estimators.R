@@ -5,17 +5,23 @@
 
 #' @title Prevalence bounds and confidence interval
 #' 
-#' @description This function calculates a bound for the log of the prevalence ratio of two samples (referred to as baseline and treatment) of partial interval recording (PIR) data as well as an approximate confidence interval
+#' @description Calculates a bound for the log of the prevalence ratio of two samples (referred to as baseline and treatment)
+#' based on partial interval recording (PIR) data.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
 #' @param mu_L the lower limit on the mean event duration
 #' @param active_length length of the active observation interval
-#' @param intervals \code{NA} (default) or the number of intervals in the sample of observations
-#' @param first_level_base logical. Is the first level in the factor or vector \code{phase} the baseline level?
-#' @param conf_level \code{.95} (default) or the desired nominal confidence level of the calculated confidence interval
-#' @param exponentiate logical. Should the log of the bounds and the confidence interval be exponentiated?
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
+#' @param intervals the number of intervals in the sample of observations. Default is \code{NA}.
+#' @param first_level_base Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.
+#' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
+#' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
+#' 
+#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
+#' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
+#' If there are more than two levels in \code{phase} this function will not work. 
+#' By default it is assumed that the first level in \code{phase} is the baseline level, 
+#' but this can be changed by \code{first_level_base} to \code{FALSE}.
 #' 
 #' \code{mu_L} is the lower limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
 #' 
@@ -28,9 +34,8 @@
 #'  @examples 
 #' #Get an estimate and CI for Carl from Moes dataset
 #' data(FMexample)
-#' PIR <- Moes[1:20,4]
-#' phase <- Moes[1:20, 2]
-#' prevalence_bounds(PIR = PIR, phase = phase, mu_L = 10, active_length = 10, first_level_base = FALSE)
+#' with(subset(Moes, Case == "Carl"),
+#'  prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10, active_length = 10, first_level_base = FALSE))
 #' 
 #' @export
 
