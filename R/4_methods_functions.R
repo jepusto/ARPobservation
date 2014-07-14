@@ -24,6 +24,13 @@
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
 #' @return A list containing four elements
+#'
+#'  @examples 
+#' #Get an estimate and CI for Carl from Moes dataset
+#' data(FMexample)
+#' PIR <- Moes[1:20,4]
+#' phase <- Moes[1:20, 2]
+#' prevalence_bounds(PIR = PIR, phase = phase, mu_L = 10, active_length = 10, first_level_base = FALSE)
 #' 
 #' @export
 
@@ -140,6 +147,13 @@ prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
 #' 
 #' @return A list containing four elements
 #' 
+#' @examples 
+#' #get an estimate and CI for Ahmad from the Dunlap dataset
+#' data(FMexample)
+#' PIR <- Dunlap[1:16, 4]
+#' phase <- Dunlap[1:16, 2]
+#' incidence_bounds(PIR = PIR, phase = phase, mu_U = 10, p = .15, active_length = 10, intervals = 60)
+#' 
 #' @export
 incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA, 
                              first_level_base = TRUE,
@@ -227,6 +241,13 @@ incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA,
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
 #' @return A list containing four elements
+#' 
+#' @examples 
+#' #get an estimate and CI for Carl from the Moes dataset
+#' data(FMexample)
+#' PIR <- Moes[1:20,4]
+#' phase <- Moes[1:20, 2]
+#' interim_bounds(PIR = PIR, phase = phase, first_level_base = FALSE)
 #' 
 #' @export
 interim_bounds <- function(PIR, phase, first_level_base = TRUE, 
@@ -496,7 +517,14 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
 #' 
 #' \code{seed} defaults to \code{NULL}, but allows for reproducible code.
 #' 
-#' @return A list containing four elements
+#' @return A dataframe with three rows corresponding to baseline, treatment, and treatment/baseline and six columns
+#' 
+#' @examples 
+#' #get estimate and CIs for Carl from the Moes dataset
+#' data(FMexample)
+#' PIR <- Moes[1:20,4]
+#' phase <- Moes[1:20, 2]
+# 'PIR_MOM(PIR = PIR, phase = phase, intervals = 80, interval_length = 15, rest_length = 5,first_level_base= FALSE, seed = 149568373)
 #' 
 #' @export
 PIR_MOM <- function(PIR, phase, intervals, interval_length, rest_length = 0, first_level_base = TRUE, Bootstraps = 2000, conf_level = 0.95, seed = NULL) {
@@ -575,3 +603,22 @@ PIR_MOM <- function(PIR, phase, intervals, interval_length, rest_length = 0, fir
   return(results)
 }
 
+#' Dunlap et al.(1994) and Moes(1998) data
+#' 
+#' Single case design data from two different studies examining the impact of choice-making on disruptive behavior in academic settings. Thus, baseline is "no choice" and treatment was "choice." Data were extracted from the figures in the publicatons.
+#' 
+#' For the Dunlap dataset Ahmad and Sven were measured with an active interval of 10s with 5s for recording while Wendall had an active interval length of 15s with no time for recording. Sessions were 15 minutes long and each summary measurement was based on K = 60 intervals.
+#' 
+#' For the Moes dataset all participants were observed with an active interval of 10s with 5s. Sessions were 20 minutes long and each summary measurement was based on K = 80 intervals.
+#' 
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format A data frame with 53940 rows and 10 variables
+#' @name FMexample
+#' @aliases Moes Dunlap
+#' @references 
+#' Dunlap, G., DePerczel, M., Clarke, S., Wilson, D., Wright, S., White, R., & Gomez, A. (1994). Choice making to promote adaptive behavior for students with emotional and behavioral challenges. Journal of Applied Behavior Analysis, 27 (3), 505-518.
+#' 
+#' Moes, D. R. (1998). Integrating choice-making opportunities within teacher-assigned academic tasks to facilitate the performance of children with autism. Research and Practice for Persons with Severe Disabilities, 23 (4), 319-328.
+NULL

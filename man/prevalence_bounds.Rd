@@ -38,4 +38,11 @@ The \code{PIR} vector can be in any order corresponding to the factor or vector 
 
 \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 }
+\examples{
+#Get an estimate and CI for Carl from Moes dataset
+data(FMexample)
+PIR <- Moes[1:20,4]
+phase <- Moes[1:20, 2]
+prevalence_bounds(PIR = PIR, phase = phase, mu_L = 10, active_length = 10, first_level_base = FALSE)
+}
 

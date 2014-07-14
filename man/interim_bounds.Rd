@@ -29,4 +29,11 @@ This function calculates a bound for the log of the ratio of interim time of two
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
 \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 }
+\examples{
+#get an estimate and CI for Carl from the Moes dataset
+data(FMexample)
+PIR <- Moes[1:20,4]
+phase <- Moes[1:20, 2]
+interim_bounds(PIR = PIR, phase = phase, first_level_base = FALSE)
+}
 
