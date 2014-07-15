@@ -13,27 +13,28 @@ interim_bounds(PIR, phase, first_level_base = TRUE, conf_level = 0.95,
 
 \item{first_level_base}{logical. Is the first level in the factor or vector \code{phase} the baseline level?}
 
-\item{conf_level}{\code{.95} (default) or the desired nominal confidence level of the calculated confidence interval}
+\item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
 
-\item{intervals}{\code{NA} (default) or the number of intervals in the sample of observations}
+\item{intervals}{the number of intervals in the sample of observations. Default is \code{NA}}
 
-\item{exponentiate}{logical. Should the log of the bounds and the confidence interval be exponentiated?}
+\item{exponentiate}{Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.}
 }
 \value{
-A list containing four elements
+A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
 }
 \description{
-This function calculates a bound for the log of the ratio of interim time of two samples (referred to as baseline and treatment) of partial interval recording (PIR) data as well as an approximate confidence interval
+Calculates a bound for the log of the ratio of interim time of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
 }
 \details{
-The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
-\code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
+The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level,
+but this can be changed by setting \code{first_level_base} to \code{FALSE}.
+
+\code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. If intervals is sent as a vector instead of a single value, the first value in the vector will be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 }
 \examples{
 #get an estimate and CI for Carl from the Moes dataset
-data(FMexample)
-PIR <- Moes[1:20,4]
-phase <- Moes[1:20, 2]
-interim_bounds(PIR = PIR, phase = phase, first_level_base = FALSE)
+data(Moes)
+with(subset(Moes, Case == "Carl"),
+interim_bounds(PIR = outcome, phase = Phase, first_level_base = FALSE))
 }
 

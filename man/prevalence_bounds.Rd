@@ -24,7 +24,7 @@ prevalence_bounds(PIR, phase, mu_L, active_length, intervals = NA,
 \item{exponentiate}{Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.}
 }
 \value{
-A list containing four elements
+A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
 }
 \description{
 Calculates a bound for the log of the prevalence ratio of two samples (referred to as baseline and treatment)
@@ -35,7 +35,9 @@ The \code{PIR} vector can be in any order corresponding to the factor or vector 
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1".
 If there are more than two levels in \code{phase} this function will not work.
 By default it is assumed that the first level in \code{phase} is the baseline level,
-but this can be changed by \code{first_level_base} to \code{FALSE}.
+but this can be changed by setting \code{first_level_base} to \code{FALSE}.
+
+For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 
 \code{mu_L} is the lower limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
 
@@ -45,8 +47,10 @@ but this can be changed by \code{first_level_base} to \code{FALSE}.
 }
 \examples{
 #Get an estimate and CI for Carl from Moes dataset
-data(FMexample)
+data(Moes)
 with(subset(Moes, Case == "Carl"),
- prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10, active_length = 10, first_level_base = FALSE))
+ prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10,
+ active_length = active_length, intervals = intervals,
+ first_level_base = FALSE))
 }
 

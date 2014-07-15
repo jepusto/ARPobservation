@@ -17,22 +17,25 @@ incidence_bounds(PIR, phase, mu_U, p, active_length, intervals = NA,
 
 \item{active_length}{length of the active observation interval}
 
-\item{intervals}{\code{NA} (default) or the number of intervals in the sample of observations}
+\item{intervals}{the number of intervals in the sample of observations. Default is \code{NA}}
 
-\item{first_level_base}{logical. Is the first level in the factor or vector \code{phase} the baseline level?}
+\item{first_level_base}{Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.}
 
-\item{conf_level}{\code{.95} (default) or the desired nominal confidence level of the calculated confidence interval}
+\item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
 
-\item{exponentiate}{logical. Should the log of the bounds and the confidence interval be exponentiated?}
+\item{exponentiate}{Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.}
 }
 \value{
-A list containing four elements
+A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the incidence ratio.
 }
 \description{
-This function calculates a bound for the log of the incidence ratio of two samples (referred to as baseline and treatment) of partial interval recording (PIR) data as well as an approximate confidence interval
+Calculates a bound for the log of the incidence ratio of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
 }
 \details{
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
+
+
+#' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 
 \code{mu_U} is the upper limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
 
@@ -42,9 +45,9 @@ The \code{PIR} vector can be in any order corresponding to the factor or vector 
 }
 \examples{
 #get an estimate and CI for Ahmad from the Dunlap dataset
-data(FMexample)
-PIR <- Dunlap[1:16, 4]
-phase <- Dunlap[1:16, 2]
-incidence_bounds(PIR = PIR, phase = phase, mu_U = 10, p = .15, active_length = 10, intervals = 60)
+data(Dunlap)
+with(subset(Dunlap, Case == "Ahmad"),
+incidence_bounds(PIR = outcome, phase = Phase, mu_U = 10, p = .15,
+active_length = active_length, intervals = intervals))
 }
 

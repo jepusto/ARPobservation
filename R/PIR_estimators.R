@@ -21,7 +21,9 @@
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 #' If there are more than two levels in \code{phase} this function will not work. 
 #' By default it is assumed that the first level in \code{phase} is the baseline level, 
-#' but this can be changed by \code{first_level_base} to \code{FALSE}.
+#' but this can be changed by setting \code{first_level_base} to \code{FALSE}.
+#' 
+#' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 #' 
 #' \code{mu_L} is the lower limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
 #' 
@@ -29,13 +31,15 @@
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
-#' @return A list containing four elements
+#' @return A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
 #'
 #'  @examples 
 #' #Get an estimate and CI for Carl from Moes dataset
-#' data(FMexample)
+#' data(Moes)
 #' with(subset(Moes, Case == "Carl"),
-#'  prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10, active_length = 10, first_level_base = FALSE))
+#'  prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10, 
+#'  active_length = active_length, intervals = intervals, 
+#'  first_level_base = FALSE))
 #' 
 #' @export
 
@@ -65,6 +69,10 @@ prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
   } else{
     base_phase <- levels(phase)[which(levels(phase) != phase[1])]
   }
+  #change vectors to single values
+  mu_L <- mu_L[1]
+  active_length <- active_length[1]
+  intervals <- intervals[1]
   
   #calculates n for both samples
   base_n <- length(which(phase == base_phase))
@@ -124,25 +132,28 @@ prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
     upper_CI <- exp(upper_CI)
   }
   
-  return(list(lower_bound = lower_bound, upper_bound = upper_bound, 
-              lower_CI = lower_CI, upper_CI = upper_CI))
+  return(list(estimate_bounds = c(lower_bound = lower_bound,upper_bound = upper_bound), 
+              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)))
 }
 
 #' Incidence bounds and confidence interval
 #' 
-#' @description This function calculates a bound for the log of the incidence ratio of two samples (referred to as baseline and treatment) of partial interval recording (PIR) data as well as an approximate confidence interval
+#' @description Calculates a bound for the log of the incidence ratio of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
 #' @param mu_U the upper limit on the mean event duration
 #' @param p the probability that the interim time between behavioral events is less than the active interval
 #' @param active_length length of the active observation interval
-#' @param intervals \code{NA} (default) or the number of intervals in the sample of observations
-#' @param first_level_base logical. Is the first level in the factor or vector \code{phase} the baseline level?
-#' @param conf_level \code{.95} (default) or the desired nominal confidence level of the calculated confidence interval
-#' @param exponentiate logical. Should the log of the bounds and the confidence interval be exponentiated?
+#' @param intervals the number of intervals in the sample of observations. Default is \code{NA}
+#' @param first_level_base Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.
+#' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
+#' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
 #' 
 #' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
+#' 
+#' 
+#' #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 #' 
 #' \code{mu_U} is the upper limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
 #' 
@@ -150,14 +161,14 @@ prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
-#' @return A list containing four elements
+#' @return A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the incidence ratio.
 #' 
 #' @examples 
 #' #get an estimate and CI for Ahmad from the Dunlap dataset
-#' data(FMexample)
-#' PIR <- Dunlap[1:16, 4]
-#' phase <- Dunlap[1:16, 2]
-#' incidence_bounds(PIR = PIR, phase = phase, mu_U = 10, p = .15, active_length = 10, intervals = 60)
+#' data(Dunlap)
+#' with(subset(Dunlap, Case == "Ahmad"),
+#' incidence_bounds(PIR = outcome, phase = Phase, mu_U = 10, p = .15, 
+#' active_length = active_length, intervals = intervals))
 #' 
 #' @export
 incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA, 
@@ -179,6 +190,11 @@ incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA,
   } else{
     base_phase <- levels(phase)[which(levels(phase) != phase[1])]
   }
+  
+  mu_U <- mu_U[1]
+  active_length <- active_length[1]
+  intervals <- intervals[1]
+  
   
   base_n <- length(which(phase == base_phase))
   treat_n <- length(which(phase != base_phase))
@@ -228,31 +244,33 @@ incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA,
     exp(upper_CI)
   }
                    
-  return(list(lower_bound = lower_bound, upper_bound = upper_bound, 
-              lower_CI = lower_CI, upper_CI = upper_CI))
+  return(list(estimate_bounds = c(lower_bound = lower_bound,upper_bound = upper_bound), 
+              estimate_CI = c(lower_CI = lower_CI,upper_CI = upper_CI)))
 }
 
 #' @title Interim bounds and confidence interval
 #' 
-#' @description This function calculates a bound for the log of the ratio of interim time of two samples (referred to as baseline and treatment) of partial interval recording (PIR) data as well as an approximate confidence interval
+#' @description Calculates a bound for the log of the ratio of interim time of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
 #' @param first_level_base logical. Is the first level in the factor or vector \code{phase} the baseline level?
-#' @param conf_level \code{.95} (default) or the desired nominal confidence level of the calculated confidence interval
-#' @param intervals \code{NA} (default) or the number of intervals in the sample of observations
-#' @param exponentiate logical. Should the log of the bounds and the confidence interval be exponentiated?
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
-#' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
+#' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
+
+#' @param intervals the number of intervals in the sample of observations. Default is \code{NA}
+#' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
+#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level,
+#' but this can be changed by setting \code{first_level_base} to \code{FALSE}.
 #' 
-#' @return A list containing four elements
+#' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. If intervals is sent as a vector instead of a single value, the first value in the vector will be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
+#' 
+#' @return A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
 #' 
 #' @examples 
 #' #get an estimate and CI for Carl from the Moes dataset
-#' data(FMexample)
-#' PIR <- Moes[1:20,4]
-#' phase <- Moes[1:20, 2]
-#' interim_bounds(PIR = PIR, phase = phase, first_level_base = FALSE)
+#' data(Moes)
+#' with(subset(Moes, Case == "Carl"),
+#' interim_bounds(PIR = outcome, phase = Phase, first_level_base = FALSE))
 #' 
 #' @export
 interim_bounds <- function(PIR, phase, first_level_base = TRUE, 
@@ -272,6 +290,7 @@ interim_bounds <- function(PIR, phase, first_level_base = TRUE,
   } else{
     base_phase <- levels(phase)[which(levels(phase) != phase[1])]
   }
+  intervals <- intervals[1]
   
   base_mean <- mean(PIR[which(phase == base_phase)])
   base_variance <- var(PIR[which(phase == base_phase)])
@@ -353,8 +372,8 @@ interim_bounds <- function(PIR, phase, first_level_base = TRUE,
     upper_CI <- exp(upper_CI)
   }
   
-  return(list(lower_bound = f_lower, upper_bound = f_upper,
-              lower_CI = lower_CI, upper_CI = upper_CI))
+  return(list(estimate_bounds = c(lower_bound = f_lower,upper_bound = f_upper),
+              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)))
 }
 
 #estimate the value of zeta based on the expected value of zeta and the estimate of phi
@@ -500,36 +519,35 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
 
 #' @title Moment estimator for prevalence and incidence and bootstrap confidence intervals
 #' 
-#' @description This function provides estimates of prevalance and incidence for two samples as well as the log ratios. It provides boostrap confidence intervals using the functions \code{\link{r_behavior_stream}} and \code{\link{interval_recording}} to generate the replicates.
+#' @description Estimates prevalance and incidence for two samples as well as the log ratios. Also provides boostrap confidence intervals using the functions \code{\link{r_behavior_stream}} and \code{\link{interval_recording}} to generate the replicates.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
 #' @param intervals the number of intervals in the sample of observations
 #' @param interval_length the total length of the intervals
-#' @param rest_length \code{0} (default) or length of the portion of the interval devoted to recording
-#' @param first_level_base logical. Is the first level in the factor or vector \code{phase} the baseline level?
-#' @param Bootstraps \code{2000} (default) or the desired number of bootstrap replicates
-#' @param conf_level \code{.95} (default) or the desired nominal confidence level of the calculated confidence interval
-#' @param seed \code{NULL} (default) or a seed value set in order to make bootstrap results reproducible
+#' @param rest_length length of the portion of the interval devoted to recording. Default is \code{0}
+#' @param first_level_base Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.
+#' @param Bootstraps desired number of bootstrap replicates. Default is \code{2000}
+#' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
+#' @param seed seed value set in order to make bootstrap results reproducible. Default is \code{null}
 #' 
 #' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
 #' 
-#' \code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions.
+#' \code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions. If vectors of values are provided for these variables, it is assumed that the first value in each vector is constant across all observations.
 #' 
 #' \code{interval_length} This is the length of each individual interval. Sometimes a portion of the interval is set aside for recording purposes. The length of that recording interval is what the value of \code{rest_length} should be set to, although the default assumption is that there is no recording time. The length of the active interval is calculated to be \code{interval_length - rest_length}.
 #' 
 #' \code{bootstraps} defaults to 2000. This is believed to be a sufficient number. At the default, PIR_MOM takes just under six seconds to run on an Intel Core i5-2410M processor.
 #' 
-#' \code{seed} defaults to \code{NULL}, but allows for reproducible code.
-#' 
 #' @return A dataframe with three rows corresponding to baseline, treatment, and treatment/baseline and six columns
 #' 
 #' @examples 
 #' #get estimate and CIs for Carl from the Moes dataset
-#' data(FMexample)
-#' PIR <- Moes[1:20,4]
-#' phase <- Moes[1:20, 2]
-# 'PIR_MOM(PIR = PIR, phase = phase, intervals = 80, interval_length = 15, rest_length = 5,first_level_base= FALSE, seed = 149568373)
+#' data(Moes)
+#' with(subset(Moes, Case == "Carl"),
+#' PIR_MOM(PIR = outcome, phase = Phase, intervals = intervals, 
+#' interval_length = (active_length + rest_length), rest_length = rest_length, 
+#' first_level_base= FALSE, seed = 149568373))
 #' 
 #' @export
 PIR_MOM <- function(PIR, phase, intervals, interval_length, rest_length = 0, first_level_base = TRUE, Bootstraps = 2000, conf_level = 0.95, seed = NULL) {
@@ -549,6 +567,10 @@ PIR_MOM <- function(PIR, phase, intervals, interval_length, rest_length = 0, fir
   } else{
     base_phase <- levels(phase)[which(levels(phase) != phase[1])]
   }
+  
+  intervals <- intervals[1]
+  interval_length <- interval_length[1]
+  rest_length <- rest_length[1]
   
   base_mean <- mean(PIR[which(phase == base_phase)])
   base_variance <- var(PIR[which(phase == base_phase)])
@@ -608,22 +630,53 @@ PIR_MOM <- function(PIR, phase, intervals, interval_length, rest_length = 0, fir
   return(results)
 }
 
-#' Dunlap et al.(1994) and Moes(1998) data
+#' Dunlap et al.(1994) data
 #' 
-#' Single case design data from two different studies examining the impact of choice-making on disruptive behavior in academic settings. Thus, baseline is "no choice" and treatment was "choice." Data were extracted from the figures in the publicatons.
+#' Single case design data measured with partial interval recording from a study of the effect of providing choice between academic activities on the disruptive behavior of three elementary school students with emotional and behavioral disorders. For this data "no choice" is the baseline phase. Data were extracted from the figures in the publicaton.
 #' 
-#' For the Dunlap dataset Ahmad and Sven were measured with an active interval of 10s with 5s for recording while Wendall had an active interval length of 15s with no time for recording. Sessions were 15 minutes long and each summary measurement was based on K = 60 intervals.
+#' @usage Dunlap
 #' 
-#' For the Moes dataset all participants were observed with an active interval of 10s with 5s. Sessions were 20 minutes long and each summary measurement was based on K = 80 intervals.
+#' @format A data frame with 58 observations on 7 variables
 #' 
+#' \itemize{
+#' \item [,1] \code{Case} The participant for whom the observation took place
+#' \item [,2] \code{Phase} The level of the observation ("Choice" vs. "No Choice")
+#' \item [,3] \code{Session} The observation session # for each participant
+#' \item [,4] \code{outcome} The summary PIR measurement for the observation session
+#' \item [,5] \code{active_length} The length of the active observation interval, in seconds
+#' \item [,6] \code{rest_length} The length of the recording interval, in seconds
+#' \item [,7] \code{intervals} The total number of intervals in the observation session 
+#' }
 #' 
 #' @docType data
 #' @keywords datasets
 #' @format A data frame with 53940 rows and 10 variables
-#' @name FMexample
-#' @aliases Moes Dunlap
+#' @name Dunlap
 #' @references 
 #' Dunlap, G., DePerczel, M., Clarke, S., Wilson, D., Wright, S., White, R., & Gomez, A. (1994). Choice making to promote adaptive behavior for students with emotional and behavioral challenges. Journal of Applied Behavior Analysis, 27 (3), 505-518.
+NULL
+
+#' Moes(1998) data
 #' 
+#' @description Single-case design data from a study that using partial interval recording (PIR) examining the impact of choice-making in a homework tutoring context on disruptive behavior. In this data "no choice" is the baseline phase. Data were extracted from the figure in the publication.
+#' @usage Moes
+#' 
+#' @format A data frame with 80 observations on 7 variables
+#' 
+#' \itemize{
+#' \item [,1] \code{Case} The participant for whom the observation took place
+#' \item [,2] \code{Phase} The level of the observation ("Choice" vs. "No Choice")
+#' \item [,3] \code{Session} The observation session # for each participant
+#' \item [,4] \code{outcome} The summary PIR measurement for the observation session
+#' \item [,5] \code{active_length} The length of the active observation interval, in seconds
+#' \item [,6] \code{rest_length} The length of the recording interval, in seconds
+#' \item [,7] \code{intervals} The total number of intervals in the observation session 
+#' }
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format A data frame with 53940 rows and 10 variables
+#' @name Moes
+#' @references 
 #' Moes, D. R. (1998). Integrating choice-making opportunities within teacher-assigned academic tasks to facilitate the performance of children with autism. Research and Practice for Persons with Severe Disabilities, 23 (4), 319-328.
 NULL

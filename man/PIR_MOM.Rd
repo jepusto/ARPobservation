@@ -16,37 +16,37 @@ PIR_MOM(PIR, phase, intervals, interval_length, rest_length = 0,
 
 \item{interval_length}{the total length of the intervals}
 
-\item{rest_length}{\code{0} (default) or length of the portion of the interval devoted to recording}
+\item{rest_length}{length of the portion of the interval devoted to recording. Default is \code{0}}
 
-\item{first_level_base}{logical. Is the first level in the factor or vector \code{phase} the baseline level?}
+\item{first_level_base}{Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.}
 
-\item{Bootstraps}{\code{2000} (default) or the desired number of bootstrap replicates}
+\item{Bootstraps}{desired number of bootstrap replicates. Default is \code{2000}}
 
-\item{conf_level}{\code{.95} (default) or the desired nominal confidence level of the calculated confidence interval}
+\item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
 
-\item{seed}{\code{NULL} (default) or a seed value set in order to make bootstrap results reproducible}
+\item{seed}{seed value set in order to make bootstrap results reproducible. Default is \code{null}}
 }
 \value{
 A dataframe with three rows corresponding to baseline, treatment, and treatment/baseline and six columns
 }
 \description{
-This function provides estimates of prevalance and incidence for two samples as well as the log ratios. It provides boostrap confidence intervals using the functions \code{\link{r_behavior_stream}} and \code{\link{interval_recording}} to generate the replicates.
+Estimates prevalance and incidence for two samples as well as the log ratios. Also provides boostrap confidence intervals using the functions \code{\link{r_behavior_stream}} and \code{\link{interval_recording}} to generate the replicates.
 }
 \details{
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
 
-\code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions.
+\code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions. If vectors of values are provided for these variables, it is assumed that the first value in each vector is constant across all observations.
 
 \code{interval_length} This is the length of each individual interval. Sometimes a portion of the interval is set aside for recording purposes. The length of that recording interval is what the value of \code{rest_length} should be set to, although the default assumption is that there is no recording time. The length of the active interval is calculated to be \code{interval_length - rest_length}.
 
 \code{bootstraps} defaults to 2000. This is believed to be a sufficient number. At the default, PIR_MOM takes just under six seconds to run on an Intel Core i5-2410M processor.
-
-\code{seed} defaults to \code{NULL}, but allows for reproducible code.
 }
 \examples{
 #get estimate and CIs for Carl from the Moes dataset
-data(FMexample)
-PIR <- Moes[1:20,4]
-phase <- Moes[1:20, 2]
+data(Moes)
+with(subset(Moes, Case == "Carl"),
+PIR_MOM(PIR = outcome, phase = Phase, intervals = intervals,
+interval_length = (active_length + rest_length), rest_length = rest_length,
+first_level_base= FALSE, seed = 149568373))
 }
 
