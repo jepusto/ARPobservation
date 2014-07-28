@@ -18,7 +18,7 @@
 Dunlap
 }
 \description{
-Single case design data measured with partial interval recording from a study of the effect of providing choice between academic activities on the disruptive behavior of three elementary school students with emotional and behavioral disorders. For this data "no choice" is the baseline phase. Data were extracted from the figures in the publicaton.
+Single case design data measured with partial interval recording from a study of the effect of providing Choice between academic activities on the disruptive behavior of three elementary school students with emotional and behavioral disorders. For this data "No Choice" is the baseline phase. Data were extracted from the figures in the publicaton.
 }
 \references{
 Dunlap, G., DePerczel, M., Clarke, S., Wilson, D., Wright, S., White, R., & Gomez, A. (1994). Choice making to promote adaptive behavior for students with emotional and behavioral challenges. Journal of Applied Behavior Analysis, 27 (3), 505-518.

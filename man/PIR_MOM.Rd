@@ -4,8 +4,7 @@
 \title{Moment estimator for prevalence and incidence and bootstrap confidence intervals}
 \usage{
 PIR_MOM(PIR, phase, intervals, interval_length, rest_length = 0,
-  first_level_base = TRUE, Bootstraps = 2000, conf_level = 0.95,
-  seed = NULL)
+  base_level = NULL, Bootstraps = 2000, conf_level = 0.95, seed = NULL)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}
@@ -18,7 +17,7 @@ PIR_MOM(PIR, phase, intervals, interval_length, rest_length = 0,
 
 \item{rest_length}{length of the portion of the interval devoted to recording. Default is \code{0}}
 
-\item{first_level_base}{Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.}
+\item{base_level}{an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}}
 
 \item{Bootstraps}{desired number of bootstrap replicates. Default is \code{2000}}
 
@@ -33,7 +32,8 @@ A dataframe with three rows corresponding to baseline, treatment, and treatment/
 Estimates prevalance and incidence for two samples as well as the log ratios. Also provides boostrap confidence intervals using the functions \code{\link{r_behavior_stream}} and \code{\link{interval_recording}} to generate the replicates.
 }
 \details{
-The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
+The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level,
+#' but but the baseline level can be specified via the \code{base_level} variable
 
 \code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions. If vectors of values are provided for these variables, it is assumed that the first value in each vector is constant across all observations.
 
@@ -47,6 +47,6 @@ data(Moes)
 with(subset(Moes, Case == "Carl"),
 PIR_MOM(PIR = outcome, phase = Phase, intervals = intervals,
 interval_length = (active_length + rest_length), rest_length = rest_length,
-first_level_base= FALSE, seed = 149568373))
+base_level = "No Choice", seed = 149568373))
 }
 

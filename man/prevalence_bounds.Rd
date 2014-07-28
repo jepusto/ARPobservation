@@ -4,7 +4,7 @@
 \title{Prevalence bounds and confidence interval}
 \usage{
 prevalence_bounds(PIR, phase, mu_L, active_length, intervals = NA,
-  first_level_base = TRUE, conf_level = 0.95, exponentiate = FALSE)
+  base_level = NULL, conf_level = 0.95, exponentiate = FALSE)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}
@@ -17,7 +17,7 @@ prevalence_bounds(PIR, phase, mu_L, active_length, intervals = NA,
 
 \item{intervals}{the number of intervals in the sample of observations. Default is \code{NA}.}
 
-\item{first_level_base}{Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.}
+\item{base_level}{an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}}
 
 \item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
 
@@ -35,7 +35,7 @@ The \code{PIR} vector can be in any order corresponding to the factor or vector 
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1".
 If there are more than two levels in \code{phase} this function will not work.
 By default it is assumed that the first level in \code{phase} is the baseline level,
-but this can be changed by setting \code{first_level_base} to \code{FALSE}.
+but the baseline level can be specified via the \code{base_level} variable
 
 For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 
@@ -51,6 +51,6 @@ data(Moes)
 with(subset(Moes, Case == "Carl"),
  prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10,
  active_length = active_length, intervals = intervals,
- first_level_base = FALSE))
+ base_level = "No Choice"))
 }
 

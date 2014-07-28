@@ -4,7 +4,7 @@
 \title{Incidence bounds and confidence interval}
 \usage{
 incidence_bounds(PIR, phase, mu_U, p, active_length, intervals = NA,
-  first_level_base = TRUE, conf_level = 0.95, exponentiate = FALSE)
+  base_level = NULL, conf_level = 0.95, exponentiate = FALSE)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}
@@ -19,7 +19,7 @@ incidence_bounds(PIR, phase, mu_U, p, active_length, intervals = NA,
 
 \item{intervals}{the number of intervals in the sample of observations. Default is \code{NA}}
 
-\item{first_level_base}{Logical value indicating if the first level of \code{phase} is the baseline level. Default is \code{TRUE}.}
+\item{base_level}{an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}}
 
 \item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
 
@@ -32,7 +32,7 @@ A list containing two named vectors. The first vector, \code{estimate_bounds}, c
 Calculates a bound for the log of the incidence ratio of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
 }
 \details{
-The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level. This behavior can be changed by \code{first_level_base} to \code{FALSE}.
+The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level, but the baseline level can be specified via the \code{base_level} variable
 
 
 #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
