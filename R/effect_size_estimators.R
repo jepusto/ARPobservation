@@ -1,10 +1,7 @@
-#Many of the functions in this code re-use code from the previous functions. Commenting
-#is not duplicated across functions so if something appears to be insufficientily commented
-#check previous functions for explanations.
+## Generic error-checking function common to all of these functions ###
 
-#This is a generic error-checking function common to all of these functions.
 phase_validation <- function(observations, phase, base_level){
-  
+
   #recasts phase as a factor if it is just a vector
   phase <- factor(phase)
   
@@ -17,14 +14,62 @@ phase_validation <- function(observations, phase, base_level){
     stop('The length of \'observations\' and the length of \'phase\' need to be the same')
   }
   
-  #Sets a value for the name of the level of the base phase, if not already specified
-  if(is.null(base_level)){
-    base_level <- phase[1]
-  } else{
-    base_level = base_level
+  # Set a value for the name of the level of the base phase, if not already specified
+  if(is.null(base_level)) base_level <- levels(phase)[1]
+  # Determine treatment level
+  treat_level <- levels(phase)[(base_level != levels(phase))]
+  
+  return(c(base_level, treat_level))
+}
+
+#' @title Calculate log-response ratio and variance
+#' 
+#' @description Estimates the bias corrected log-response ratio and the variance of the log-response ratio
+#' 
+#' @param observations  Vector of observations
+#' @param phase         Factor or vector indicating levels of the PIR measurements.
+#' @param base_level    Optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}
+#' @param bias_correct  Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{null}
+#' 
+#' @details The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}. 
+#' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
+#' If there are more than two levels in \code{phase} this function will not work. 
+#' By default it is assumed that the first level of \code{phase} is the baseline level, 
+#' but the baseline level can be specified via the \code{base_level} variable
+#' 
+#' @return A list containing two elements. 
+#' The first element, \code{lRR}, is the estimated log-response ratio. 
+#' The second element, \code{V_lRR}, is the estimated variance of the log-response ratio.
+#'
+#' @examples 
+#' #Get a log ratio and variance estimate for Carl from Moes dataset
+#' data(Moes)
+#' with(subset(Moes, Case == "Carl"),
+#' logRespRatio(observations = outcome, phase = Phase, base_level = "No Choice"))
+#' 
+#' @export
+
+logRespRatio <- function(observations, phase, base_level = NULL, bias_correct = TRUE) {
+  
+  level_labels <- phase_validation(observations = observations, phase = phase, base_level = base_level)
+    
+  # calculate summary statistics for both samples, sort so that base level is first
+  nObs <- table(phase)[level_labels]
+  means <- tapply(observations, phase, mean)[level_labels]
+  variances <- tapply(observations, phase, mean)[level_labels]
+  
+  if (!all(means > 0)) stop('The mean of one or both phases is at the floor of 0.')
+  
+  if (bias_correct == TRUE) {
+    BC <- log(means) - variances / (2 * nObs * means^2)
+    lRR <- as.numeric(BC[2] - BC[1])
+  } else {
+    lRR <- log(means[2]) - log(means[1])
   }
   
-  return(base_level)
+  V_lRR <- sum(variances / (nObs * means^2))
+  
+  return(list(lRR = lRR, V_lRR = V_lRR))
 }
 
 #' @title Prevalence bounds and confidence interval
