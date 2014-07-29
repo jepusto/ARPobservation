@@ -207,7 +207,7 @@ prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
 #' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level, but the baseline level can be specified via the \code{base_level} variable
 #' 
 #' 
-#' #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
+#' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 #' 
 #' \code{mu_U} is the upper limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
 #' 
