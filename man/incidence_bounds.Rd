@@ -3,13 +3,15 @@
 \alias{incidence_bounds}
 \title{Incidence bounds and confidence interval}
 \usage{
-incidence_bounds(PIR, phase, mu_U, p, active_length, intervals = NA,
-  base_level = NULL, conf_level = 0.95, exponentiate = FALSE)
+incidence_bounds(PIR, phase, base_level, mu_U, p, active_length,
+  intervals = NA, conf_level = 0.95, exponentiate = FALSE)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}
 
 \item{phase}{factor or vector indicating levels of the PIR measurements.}
+
+\item{base_level}{a character string or value indicating the name of the baseline level.}
 
 \item{mu_U}{the upper limit on the mean event duration}
 
@@ -18,8 +20,6 @@ incidence_bounds(PIR, phase, mu_U, p, active_length, intervals = NA,
 \item{active_length}{length of the active observation interval}
 
 \item{intervals}{the number of intervals in the sample of observations. Default is \code{NA}}
-
-\item{base_level}{an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}}
 
 \item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
 
@@ -32,7 +32,7 @@ A list containing two named vectors. The first vector, \code{estimate_bounds}, c
 Calculates a bound for the log of the incidence ratio of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
 }
 \details{
-The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level, but the baseline level can be specified via the \code{base_level} variable
+The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 
 
 #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
@@ -47,7 +47,7 @@ The \code{PIR} vector can be in any order corresponding to the factor or vector 
 #get an estimate and CI for Ahmad from the Dunlap dataset
 data(Dunlap)
 with(subset(Dunlap, Case == "Ahmad"),
-incidence_bounds(PIR = outcome, phase = Phase, mu_U = 10, p = .15,
-active_length = active_length, intervals = intervals))
+incidence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice",
+mu_U = 10, p = .15, active_length = active_length, intervals = intervals))
 }
 

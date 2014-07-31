@@ -3,21 +3,21 @@
 \alias{prevalence_bounds}
 \title{Prevalence bounds and confidence interval}
 \usage{
-prevalence_bounds(PIR, phase, mu_L, active_length, intervals = NA,
-  base_level = NULL, conf_level = 0.95, exponentiate = FALSE)
+prevalence_bounds(PIR, phase, base_level, mu_L, active_length, intervals = NA,
+  conf_level = 0.95, exponentiate = FALSE)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}
 
 \item{phase}{factor or vector indicating levels of the PIR measurements.}
 
+\item{base_level}{a character string or value indicating the name of the baseline level.}
+
 \item{mu_L}{the lower limit on the mean event duration}
 
 \item{active_length}{length of the active observation interval}
 
 \item{intervals}{the number of intervals in the sample of observations. Default is \code{NA}.}
-
-\item{base_level}{an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}}
 
 \item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
 
@@ -34,8 +34,7 @@ based on partial interval recording (PIR) data.
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}.
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1".
 If there are more than two levels in \code{phase} this function will not work.
-By default it is assumed that the first level in \code{phase} is the baseline level,
-but the baseline level can be specified via the \code{base_level} variable
+A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 
 For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 
@@ -49,8 +48,7 @@ For all of the following variables, the function assumes that if a vector of val
 #Get an estimate and CI for Carl from Moes dataset
 data(Moes)
 with(subset(Moes, Case == "Carl"),
- prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10,
- active_length = active_length, intervals = intervals,
- base_level = "No Choice"))
+ prevalence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice",
+ mu_L = 10, active_length = active_length, intervals = intervals))
 }
 

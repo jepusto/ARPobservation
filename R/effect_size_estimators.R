@@ -5,6 +5,10 @@ phase_validation <- function(observations, phase, base_level){
   #recasts phase as a factor if it is just a vector
   phase <- factor(phase)
   
+  if(!any(levels(phase) == base_level)){
+    stop('Specified base level does not match a level in the data.')
+  }
+  
   #Checks to be sure there are only two levels
   if(length(levels(phase)) != 2){
     stop('This function requires exactly two levels in the phase variable')
@@ -14,9 +18,6 @@ phase_validation <- function(observations, phase, base_level){
     stop('The length of \'observations\' and the length of \'phase\' need to be the same')
   }
   
-  # Set a value for the name of the level of the base phase, if not already specified
-  if(is.null(base_level)) base_level <- levels(phase)[1]
-  # Determine treatment level
   treat_level <- levels(phase)[(base_level != levels(phase))]
   
   return(c(base_level, treat_level))
@@ -28,14 +29,13 @@ phase_validation <- function(observations, phase, base_level){
 #' 
 #' @param observations  Vector of observations
 #' @param phase         Factor or vector indicating levels of the PIR measurements.
-#' @param base_level    Optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}
-#' @param bias_correct  Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{null}
+#' @param base_level a character string or value indicating the name of the baseline level.
+#' @param bias_correct  Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{TRUE}
 #' 
 #' @details The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}. 
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
-#' If there are more than two levels in \code{phase} this function will not work. 
-#' By default it is assumed that the first level of \code{phase} is the baseline level, 
-#' but the baseline level can be specified via the \code{base_level} variable
+#' If there are more than two levels in \code{phase} this function will not work.
+#' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive. 
 #' 
 #' @return A list containing two elements. 
 #' The first element, \code{lRR}, is the estimated log-response ratio. 
@@ -49,7 +49,7 @@ phase_validation <- function(observations, phase, base_level){
 #' 
 #' @export
 
-logRespRatio <- function(observations, phase, base_level = NULL, bias_correct = TRUE) {
+logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
   
   level_labels <- phase_validation(observations = observations, phase = phase, base_level = base_level)
     
@@ -79,18 +79,17 @@ logRespRatio <- function(observations, phase, base_level = NULL, bias_correct = 
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
+#' @param base_level a character string or value indicating the name of the baseline level.
 #' @param mu_L the lower limit on the mean event duration
 #' @param active_length length of the active observation interval
 #' @param intervals the number of intervals in the sample of observations. Default is \code{NA}.
-#' @param base_level an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 #' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
 #' 
 #' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 #' If there are more than two levels in \code{phase} this function will not work. 
-#' By default it is assumed that the first level in \code{phase} is the baseline level, 
-#' but the baseline level can be specified via the \code{base_level} variable
+#' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 #' 
 #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 #' 
@@ -106,77 +105,48 @@ logRespRatio <- function(observations, phase, base_level = NULL, bias_correct = 
 #' #Get an estimate and CI for Carl from Moes dataset
 #' data(Moes)
 #' with(subset(Moes, Case == "Carl"),
-#'  prevalence_bounds(PIR = outcome, phase = Phase, mu_L = 10, 
-#'  active_length = active_length, intervals = intervals, 
-#'  base_level = "No Choice"))
+#'  prevalence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice", 
+#'  mu_L = 10, active_length = active_length, intervals = intervals))
 #' 
 #' @export
 
-prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
-                              base_level = NULL,
-                              conf_level = 0.95, exponentiate = FALSE) {
-  #Checks to be sure that the values for PIR are between 0 and 1, inclusive
-  #and none of the values are NA
+prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, intervals = NA, conf_level = 0.95, exponentiate = FALSE) {
   if(length(which(PIR > 1 | PIR < 0)) > 0 | sum(is.na(PIR)) > 0) {
     stop('Values for PIR must be between 0 and 1 and cannot be NA')
   }
   
-  base_level <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
+  level_labels <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
+  
+  # calculate summary statistics for both samples, sort so that base level is first
+  nObs <- table(phase)[level_labels]
+  means <- tapply(PIR, phase, mean)[level_labels]
+  variances <- tapply(PIR, phase, var)[level_labels]
   
   #change vectors to single values
   mu_L <- mu_L[1]
   active_length <- active_length[1]
   intervals <- intervals[1]
   
-  #calculates n for both samples
-  base_n <- length(which(phase == base_level))
-  treat_n <- length(which(phase != base_level))
+  if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
   
-  #calculate mean and variance for the first sample
-  base_mean <- mean(PIR[which(phase == base_level)])
-  base_variance <- var(PIR[which(phase == base_level)])
+  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
   
-  #This checks to see if the mean and variance reach the floor or ceiling.
-  #If not value for intervals is provided (making truncation impossible) the function
-  #stops. Otherwise it will truncate the values appropriately
-  if((base_mean == 0 | base_mean == 1) & is.na(intervals) == TRUE){
-    stop('The baseline mean PIR value is at the floor of 0 or ceiling of 1 and no value of K has been provided to truncate the means.')
-    }
-  if(base_mean == 0){
-    base_mean <- 1/(base_n * intervals)
-  }   
-  if(base_mean == 1){
-    base_mean <- 1-(1/(base_n * intervals))
-  }
-  
-  treat_mean <- mean(PIR[which(phase != base_level)])
-  treat_variance <- var(PIR[which(phase != base_level)])
-  
-  if((treat_mean == 0 | treat_mean == 1) & is.na(intervals) == TRUE){
-    stop('The treatment mean PIR value is at the floor of 0 or ceiling of 1 and no value for K has been provided to truncate the means.')
-  }
-  if(treat_mean == 0){
-    treat_mean <- 1/(treat_n * intervals)
-  }   
-  if(treat_mean == 1){
-    treat_mean <- 1-(1/(treat_n * intervals))
-  }
   
   #Natural log of the ratio of the two means
-  R <- log(treat_mean) - log(base_mean)
+  R <- log(means[2]) - log(means[1])
   
   h <- log(mu_L + active_length) - log(mu_L)
   
   #calculate lower and upper bounds
-  lower_bound <- R - h
-  upper_bound <- R + h
+  lower_bound <- as.numeric(R - h)
+  upper_bound <- as.numeric(R + h)
   
   #variance of the log ratio
-  variance_R <- (base_variance/(base_n * (base_mean^2))) + (treat_variance/(treat_n * (treat_mean^2)))
+  variance_R <- as.numeric((variances[1]/(nObs[1] * (means[1]^2))) + (variances[2]/(nObs[2] * (means[2]^2))))
   
   #calculate the CI
-  lower_CI <- R - (h + (qnorm(1-(1-conf_level)/2)*sqrt(variance_R)))
-  upper_CI <- R + (h + (qnorm(1-(1-conf_level)/2)*sqrt(variance_R)))
+  lower_CI <- as.numeric(R - (h + (qnorm(1-(1-conf_level)/2)*sqrt(variance_R))))
+  upper_CI <- as.numeric(R + (h + (qnorm(1-(1-conf_level)/2)*sqrt(variance_R))))
   
   #exponentiates the values, if desired
   if(exponentiate == TRUE){
@@ -196,15 +166,15 @@ prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
+#' @param base_level a character string or value indicating the name of the baseline level.
 #' @param mu_U the upper limit on the mean event duration
 #' @param p the probability that the interim time between behavioral events is less than the active interval
 #' @param active_length length of the active observation interval
 #' @param intervals the number of intervals in the sample of observations. Default is \code{NA}
-#' @param base_level an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 #' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
 #' 
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level, but the baseline level can be specified via the \code{base_level} variable
+#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 #' 
 #' 
 #' #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
@@ -221,65 +191,45 @@ prevalence_bounds <- function(PIR, phase, mu_L, active_length, intervals = NA,
 #' #get an estimate and CI for Ahmad from the Dunlap dataset
 #' data(Dunlap)
 #' with(subset(Dunlap, Case == "Ahmad"),
-#' incidence_bounds(PIR = outcome, phase = Phase, mu_U = 10, p = .15, 
-#' active_length = active_length, intervals = intervals))
+#' incidence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice", 
+#' mu_U = 10, p = .15, active_length = active_length, intervals = intervals))
 #' 
 #' @export
-incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA, 
-                             base_level = NULL,
-                             conf_level = 0.95, exponentiate = FALSE) {
+incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length, 
+                             intervals = NA, conf_level = 0.95, 
+                             exponentiate = FALSE) {
   
   if(length(which(PIR > 1 | PIR < 0)) > 0 | sum(is.na(PIR)) > 0) {
     stop('Values for PIR must be between 0 and 1 and cannot be NA')
   }
   
-  base_level <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
+  level_labels <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
+  
+  # calculate summary statistics for both samples, sort so that base level is first
+  nObs <- table(phase)[level_labels]
+  means <- tapply(PIR, phase, mean)[level_labels]
+  variances <- tapply(PIR, phase, var)[level_labels]
   
   mu_U <- mu_U[1]
   active_length <- active_length[1]
   intervals <- intervals[1]
   
+  if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
   
-  base_n <- length(which(phase == base_level))
-  treat_n <- length(which(phase != base_level))
+  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
   
-  base_mean <- mean(PIR[which(phase == base_level)])
-  base_variance <- var(PIR[which(phase == base_level)])
   
-  if((base_mean == 0 | base_mean == 1) & is.na(intervals) == TRUE){
-    stop('The baseline mean PIR value is at the floor of 0 or ceiling of 1 and no value of K has been provided to truncate the means.')
-  }
-  if(base_mean == 0){
-    base_mean <- 1/(base_n * intervals)
-  }   
-  if(base_mean == 1){
-    base_mean <- 1-(1/(base_n * intervals))
-  }
-  
-  treat_mean <- mean(PIR[which(phase != base_level)])
-  treat_variance <- var(PIR[which(phase != base_level)])
-  
-  if((treat_mean == 0 | treat_mean == 1) & is.na(intervals) == TRUE){
-    stop('The treatment mean PIR value is at the floor of 0 or ceiling of 1 and no value for K has been provided to truncate the means.')
-  }
-  if(treat_mean == 0){
-    treat_mean <- 1/(treat_n * intervals)
-  }   
-  if(treat_mean == 1){
-    treat_mean <- 1-(1/(treat_n * intervals))
-  }
-  
-  R <- log(treat_mean) - log(base_mean)
+  R <- log(means[2]) - log(means[1])
   
   h <- log(mu_U + active_length) - log(1-p) - log(active_length)
   
-  lower_bound <- R - h
-  upper_bound <- R + h
+  lower_bound <- as.numeric(R - h)
+  upper_bound <- as.numeric(R + h)
   
-  variance_R <- (base_variance/(base_n * (base_mean^2))) + (treat_variance/(treat_n * (treat_mean^2)))
+  variance_R <- as.numeric((variances[1]/(nObs[1] * (means[1]^2))) + (variances[2]/(nObs[2] * (means[2]^2))))
   
-  lower_CI <- R - (h + (qnorm(1-(1-conf_level)/2) * sqrt(variance_R)))
-  upper_CI <- R + (h + (qnorm(1-(1-conf_level)/2) * sqrt(variance_R)))
+  lower_CI <- as.numeric(R - (h + (qnorm(1-(1-conf_level)/2) * sqrt(variance_R))))
+  upper_CI <- as.numeric(R + (h + (qnorm(1-(1-conf_level)/2) * sqrt(variance_R))))
  
   if(exponentiate == TRUE){
     exp(lower_bound)
@@ -298,12 +248,12 @@ incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA,
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
-#' @param base_level an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}
+#' @param base_level a character string or value indicating the name of the baseline level.
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 
 #' @param intervals the number of intervals in the sample of observations. Default is \code{NA}
 #' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level, but the baseline level can be specified via the \code{base_level} variable
+#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. If intervals is sent as a vector instead of a single value, the first value in the vector will be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
@@ -316,42 +266,25 @@ incidence_bounds <- function(PIR, phase, mu_U, p, active_length, intervals = NA,
 #' interim_bounds(PIR = outcome, phase = Phase, base_level = "No Choice"))
 #' 
 #' @export
-interim_bounds <- function(PIR, phase, base_level = NULL, 
+interim_bounds <- function(PIR, phase, base_level, 
                            conf_level = 0.95, intervals = NA, exponentiate = FALSE) {
+  
   if(length(which(PIR > 1 | PIR < 0)) > 0 | sum(is.na(PIR)) > 0) {
     stop('Values for PIR must be between 0 and 1 and cannot be NA')
   }
   
-  base_level <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
+  level_labels <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
   
-  base_mean <- mean(PIR[which(phase == base_level)])
-  base_variance <- var(PIR[which(phase == base_level)])
+  # calculate summary statistics for both samples, sort so that base level is first
+  nObs <- table(phase)[level_labels]
+  means <- tapply(PIR, phase, mean)[level_labels]
+  variances <- tapply(PIR, phase, var)[level_labels]
   
-  if((base_mean == 0 | base_mean == 1) & is.na(intervals) == TRUE){
-    stop('The baseline mean PIR value is at the floor of 0 or ceiling of 1 and no value of K has been provided to truncate the means.')
-  }
-  if(base_mean == 0){
-    base_mean <- 1/(base_n * intervals)
-  }   
-  if(base_mean == 1){
-    base_mean <- 1-(1/(base_n * intervals))
-  }
+  intervals <- intervals[1]
   
-  treat_mean <- mean(PIR[which(phase != base_level)])
-  treat_variance <- var(PIR[which(phase != base_level)])
+  if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
   
-  if((treat_mean == 0 | treat_mean == 1) & is.na(intervals) == TRUE){
-    stop('The treatment mean PIR value is at the floor of 0 or ceiling of 1 and no value for K has been provided to truncate the means.')
-  }
-  if(treat_mean == 0){
-    treat_mean <- 1/(treat_n * intervals)
-  }   
-  if(treat_mean == 1){
-    treat_mean <- 1-(1/(treat_n * intervals))
-  }
-  
-  base_n <- length(which(phase == base_level))
-  treat_n <- length(which(phase != base_level))
+  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
   
   #the logit and complimentary log-log functions
   logit <- function(x) {log(x) - log(1-x)}
@@ -359,25 +292,25 @@ interim_bounds <- function(PIR, phase, base_level = NULL,
   
   #This code checks to see which transformation is the appropriate value for
   #the lower and upper bounds
-  if(base_mean > treat_mean){
-    f_lower <- logit(treat_mean) - logit(base_mean)
-    f_upper <- cll(treat_mean) - cll(base_mean)
+  if(means[1] > means[2]){
+    f_lower <- as.numeric(logit(means[2]) - logit(means[1]))
+    f_upper <- as.numeric(cll(means[2]) - cll(means[1]))
   }else{
-    f_lower <- cll(treat_mean) - cll(base_mean)
-    f_upper <- logit(treat_mean) - logit(base_mean)
+    f_lower <- as.numeric(cll(means[2]) - cll(means[1]))
+    f_upper <- as.numeric(logit(means[2]) - logit(means[1]))
   }
   
   
   #This is the variance of the log ratio of the sample means
-  var_LOR <- (base_variance/(base_n * (base_mean^2) * (1- base_mean)^2)) + 
-             (treat_variance/(treat_n * (treat_mean^2) * (1- treat_mean)^2))
+  var_LOR <- as.numeric((variances[1]/(nObs[1] * (means[1]^2) * (1- means[1])^2)) + 
+             (variances[2]/(nObs[2] * (means[2]^2) * (1- means[2])^2)))
   
   #This is the variance of the complimentary log-log ratio
-  var_CLR <- (base_variance/(base_n * (1- base_mean)^2 * (log(1-base_mean))^2)) + 
-             (treat_variance/(treat_n * (1- treat_mean)^2 *(log(1-treat_mean))^2))
+  var_CLR <- as.numeric((variances[1]/(nObs[1] * (1- means[1])^2 * (log(1-means[1]))^2)) + 
+             (variances[2]/(nObs[2] * (1- means[2])^2 *(log(1-means[2]))^2)))
   
   #The ratio and z_conf is used in determining which variance is appropriate
-  cll_ratio <- cll(treat_mean) - cll(base_mean)
+  cll_ratio <- cll(means[2]) - cll(means[1])
   
   z_conf <- qnorm(1-(1-conf_level)/2)
   
@@ -555,16 +488,15 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
+#' @param base_level a character string or value indicating the name of the baseline level.
 #' @param intervals the number of intervals in the sample of observations
 #' @param interval_length the total length of the intervals
 #' @param rest_length length of the portion of the interval devoted to recording. Default is \code{0}
-#' @param base_level an optional value indicating the name of the baseline level. If nothing is provided, the first level in phase will be treated as the baseline level. Default is \code{NULL}
 #' @param Bootstraps desired number of bootstrap replicates. Default is \code{2000}
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 #' @param seed seed value set in order to make bootstrap results reproducible. Default is \code{null}
 #' 
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. By default it is assumed that the first level in \code{phase} is the baseline level, 
-#' #' but but the baseline level can be specified via the \code{base_level} variable
+#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 #' 
 #' \code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions. If vectors of values are provided for these variables, it is assumed that the first value in each vector is constant across all observations.
 #' 
@@ -583,59 +515,39 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
 #' base_level = "No Choice", seed = 149568373))
 #' 
 #' @export
-PIR_MOM <- function(PIR, phase, intervals, interval_length, rest_length = 0, base_level = NULL, Bootstraps = 2000, conf_level = 0.95, seed = NULL) {
+PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_length = 0, Bootstraps = 2000, conf_level = 0.95, seed = NULL) {
   
   if(length(which(PIR > 1 | PIR < 0)) > 0 | sum(is.na(PIR)) > 0) {
     stop('Values for PIR must be between 0 and 1 and cannot be NA')
   }
   
-  base_level <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
+  level_labels <- phase_validation(observations = PIR, phase = phase, base_level = base_level)
+  
+  # calculate summary statistics for both samples, sort so that base level is first
+  nObs <- table(phase)[level_labels]
+  means <- tapply(PIR, phase, mean)[level_labels]
+  variances <- tapply(PIR, phase, var)[level_labels]
   
   intervals <- intervals[1]
   interval_length <- interval_length[1]
   rest_length <- rest_length[1]
   
-  base_mean <- mean(PIR[which(phase == base_level)])
-  base_variance <- var(PIR[which(phase == base_level)])
+  if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
   
-  if((base_mean == 0 | base_mean == 1) & is.na(intervals) == TRUE){
-    stop('The baseline mean PIR value is at the floor of 0 or ceiling of 1 and no value of K has been provided to truncate the means.')
-  }
-  if(base_mean == 0){
-    base_mean <- 1/(base_n * intervals)
-  }   
-  if(base_mean == 1){
-    base_mean <- 1-(1/(base_n * intervals))
-  }
-  
-  treat_mean <- mean(PIR[which(phase != base_level)])
-  treat_variance <- var(PIR[which(phase != base_level)])
-  
-  if((treat_mean == 0 | treat_mean == 1) & is.na(intervals) == TRUE){
-    stop('The treatment mean PIR value is at the floor of 0 or ceiling of 1 and no value for K has been provided to truncate the means.')
-  }
-  if(treat_mean == 0){
-    treat_mean <- 1/(treat_n * intervals)
-  }   
-  if(treat_mean == 1){
-    treat_mean <- 1-(1/(treat_n * intervals))
-  }
-  
-  base_n <- length(which(phase == base_level))
-  treat_n <- length(which(phase != base_level))
+  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
   
   #Get an estimate of phi and zeta using the moment estimator for baseline and treatment phases
-  base_ests <- PIR_inv(ExY = base_mean, VarY = base_variance,
-                       nObs = base_n, active = interval_length - rest_length,
+  base_ests <- PIR_inv(ExY = means[1], VarY = variances[1],
+                       nObs = nObs[1], active = interval_length - rest_length,
                        L = intervals * interval_length, K = intervals)  
   
 
-  treat_ests <- PIR_inv(ExY = treat_mean, VarY = treat_variance,
-                      nObs = treat_n, active = interval_length - rest_length, 
+  treat_ests <- PIR_inv(ExY = means[2], VarY = variances[2],
+                      nObs = nObs[2], active = interval_length - rest_length, 
                       L = intervals * interval_length, K = intervals)
   
   #Bootstrap the confidence intervals
-  results <- PIRbootstrappair(nObs = c(base_n, treat_n),
+  results <- PIRbootstrappair(nObs = c(nObs[1], nObs[2]),
                    phi = c(base_ests[1], treat_ests[1]),
                    zeta = c(base_ests[2], treat_ests[2]),
                    active = interval_length - rest_length,
