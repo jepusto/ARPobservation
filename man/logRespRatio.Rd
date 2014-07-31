@@ -26,12 +26,7 @@ Estimates the bias corrected log-response ratio and the variance of the log-resp
 The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}.
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1".
 If there are more than two levels in \code{phase} this function will not work.
-<<<<<<< HEAD
 A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
-=======
-By default it is assumed that the first level of \code{phase} is the baseline level,
-but the baseline level can be specified via the \code{base_level} variable
->>>>>>> a0ebe1df99e061f35177caf5496d955496868e8a
 }
 \examples{
 #Get a log ratio and variance estimate for Carl from Moes dataset
