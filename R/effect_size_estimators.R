@@ -56,7 +56,7 @@ logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
   # calculate summary statistics for both samples, sort so that base level is first
   nObs <- table(phase)[level_labels]
   means <- tapply(observations, phase, mean)[level_labels]
-  variances <- tapply(observations, phase, mean)[level_labels]
+  variances <- tapply(observations, phase, var)[level_labels]
   
   if (!all(means > 0)) stop('The mean of one or both phases is at the floor of 0.')
   
