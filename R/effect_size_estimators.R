@@ -47,6 +47,7 @@ phase_validation <- function(observations, phase, base_level){
 #' with(subset(Moes, Case == "Carl"),
 #' logRespRatio(observations = outcome, phase = Phase, base_level = "No Choice"))
 #' 
+#' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
 
 logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
@@ -108,6 +109,7 @@ logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
 #'  prevalence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice", 
 #'  mu_L = 10, active_length = active_length, intervals = intervals))
 #' 
+#' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
 
 prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, intervals = NA, conf_level = 0.95, exponentiate = FALSE) {
@@ -194,6 +196,7 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
 #' incidence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice", 
 #' mu_U = 10, p = .15, active_length = active_length, intervals = intervals))
 #' 
+#' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
 incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length, 
                              intervals = NA, conf_level = 0.95, 
@@ -265,6 +268,7 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
 #' with(subset(Moes, Case == "Carl"),
 #' interim_bounds(PIR = outcome, phase = Phase, base_level = "No Choice"))
 #' 
+#' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
 interim_bounds <- function(PIR, phase, base_level, 
                            conf_level = 0.95, intervals = NA, exponentiate = FALSE) {
@@ -514,6 +518,7 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
 #' interval_length = (active_length + rest_length), rest_length = rest_length, 
 #' base_level = "No Choice", seed = 149568373))
 #' 
+#' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
 PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_length = 0, Bootstraps = 2000, conf_level = 0.95, seed = NULL) {
   

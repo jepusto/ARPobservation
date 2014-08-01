@@ -51,4 +51,7 @@ with(subset(Moes, Case == "Carl"),
  prevalence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice",
  mu_L = 10, active_length = active_length, intervals = intervals))
 }
+\author{
+Daniel Swan <dswan@utexas.edu>
+}
 

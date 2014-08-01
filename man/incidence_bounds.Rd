@@ -50,4 +50,7 @@ with(subset(Dunlap, Case == "Ahmad"),
 incidence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice",
 mu_U = 10, p = .15, active_length = active_length, intervals = intervals))
 }
+\author{
+Daniel Swan <dswan@utexas.edu>
+}
 

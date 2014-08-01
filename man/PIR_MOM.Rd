@@ -48,4 +48,7 @@ PIR_MOM(PIR = outcome, phase = Phase, intervals = intervals,
 interval_length = (active_length + rest_length), rest_length = rest_length,
 base_level = "No Choice", seed = 149568373))
 }
+\author{
+Daniel Swan <dswan@utexas.edu>
+}
 

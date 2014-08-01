@@ -34,4 +34,7 @@ data(Moes)
 with(subset(Moes, Case == "Carl"),
 logRespRatio(observations = outcome, phase = Phase, base_level = "No Choice"))
 }
+\author{
+Daniel Swan <dswan@utexas.edu>
+}
 
