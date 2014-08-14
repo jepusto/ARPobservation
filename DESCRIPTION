@@ -18,4 +18,5 @@ Suggests:
     plyr,
     reshape2,
     ggplot2,
-    knitr
+    knitr,
+    testthat
