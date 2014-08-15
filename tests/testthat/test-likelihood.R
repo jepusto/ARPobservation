@@ -3,10 +3,6 @@ context("Evaluating the functioning of the likelihood estimator")
 library(plyr)
 library(reshape2)
 
-test_that("testthat is running", {
-  expect_true(FALSE)
-})
-
 test_that("As phi gets very close to zero, the psi values become constant and the log likelihood approaches a known value",{
   
   phi <- 10^seq(-3,-6,-1)

@@ -10,8 +10,8 @@ p_1 <- function(x,phi,zeta) phi + (1 - phi) * exp(-1 * x * zeta / (phi * (1- phi
 
 #calculates a vector of probabilities that an event is occuring at each U time point, given the interval record up to that time
 
-PIRpsi<- function(phi, zeta, U, c, d){
-    psi <- vector(mode = "numeric", length = length(U))
+PIRpsi <- function(phi, zeta, U, c, d) {
+  psi <- vector(mode = "numeric", length = length(U))
   psi[1] <- phi
   for(i in 2:length(U)){
     psi[i] <- ((psi[i-1] * p_1(c + d,phi,zeta) + (1 - psi[i-1]) * (p_0(c + d,phi,zeta) - p_0(d, phi, zeta) * exp(-1 * zeta * c / (1-phi)))) / (1 - (1-psi[i-1]) * exp(-1 * zeta * c/(1-phi))))^U[i-1] * p_0(d,phi,zeta)^(1-U[i-1]) 
