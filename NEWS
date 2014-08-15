@@ -1,5 +1,7 @@
 ARPobservation 1.0.1
 =======================
+* Added log-response ratio effect size estimators.
+* Added various estimators for summarized PIR data.
 * Added study_planning demo
 
 ARPobservation 1.0

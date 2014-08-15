@@ -11,6 +11,7 @@ Description: ARPobservation provides a set of tools for simulating data
     interval recording, and whole interval recording.
 Version: 1.0.99
 Maintainer: James E. Pustejovsky <jepusto@gmail.com>
+Contributor: Daniel Swan <dswan@utexas.edu>
 Author: James E. Pustejovsky <jepusto@gmail.com>
 License: GPL-3
 VignetteBuilder: knitr

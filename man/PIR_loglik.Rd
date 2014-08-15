@@ -6,11 +6,11 @@
 PIR_loglik(phi, zeta, U, c, d)
 }
 \arguments{
-\item{phi}{proposed value for prevalence}
+\item{phi}{value for prevalence}
 
-\item{zeta}{proposed value for incidence}
+\item{zeta}{value for incidence}
 
-\item{U}{a vector containing the session-level data for a PIR observation}
+\item{U}{a vector containing interval-level PIR data}
 
 \item{c}{the length of the active interval}
 
@@ -23,11 +23,13 @@ The value of the log-likelihood
 Calculates the log-likelihood of within-session PIR data
 }
 \details{
-\code{phi} must be a value between 0 and 1, inclusive of 0 and 1. \code{zeta} must be a value greater than 0.
+\code{phi} must be a value between 0 and 1, inclusive of 0 and 1. \
+code{zeta} must be a value greater than 0.
 
 The vector \code{U} should only contain values of 1 or 0.
 
-\code{c} must be some positive value in whatever time units the observation took place in (typically seconds). \code{d} must be some non-negative value - a \code{d} of zero represents a PIR observation where no time was set aside for recording.
+\code{c} must be some positive value in whatever time units the observation took place in (typically seconds). \code{d} must be some non-negative value - a
+\code{d} of zero represents a PIR observation where no time was set aside for recording.
 }
 \author{
 Daniel Swan <dswan@utexas.edu>
