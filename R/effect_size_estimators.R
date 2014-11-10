@@ -500,7 +500,7 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 #' @param seed seed value set in order to make bootstrap results reproducible. Default is \code{null}
 #' 
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
 #' 
 #' \code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions. If vectors of values are provided for these variables, it is assumed that the first value in each vector is constant across all observations.
 #' 
