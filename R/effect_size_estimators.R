@@ -344,7 +344,7 @@ interim_bounds <- function(PIR, phase, base_level,
   }
   
   return(list(estimate_bounds = c(lower_bound = f_lower,upper_bound = f_upper),
-              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)
+              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI),
               estimate_SE = c(lower_SE = sqrt(var_f_lower), 
                               upper_SE = sqrt(var_f_upper))))
 }
