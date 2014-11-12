@@ -100,7 +100,7 @@ logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
-#' @return A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
+#' @return A list containing two named vectors and a single named number. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. The named number, \code{estimate_SE}, contains the standard error of the estimate.
 #'
 #'  @examples 
 #' #Get an estimate and CI for Carl from Moes dataset
@@ -158,8 +158,9 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
     upper_CI <- exp(upper_CI)
   }
   
-  return(list(estimate_bounds = c(lower_bound = lower_bound,upper_bound = upper_bound), 
-              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)))
+  return(list(estimate_bounds = c(lower_bound = lower_bound, upper_bound = upper_bound), 
+              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI), 
+              estimate_SE = sqrt(variance_R)))
 }
 
 #' Incidence bounds and confidence interval
@@ -187,7 +188,7 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
-#' @return A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the incidence ratio.
+#' @return A list containing two named vectors and a single named number. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the incidence ratio. The named number, \code{estimate_SE}, contains the standard error of the estimate.
 #' 
 #' @examples 
 #' #get an estimate and CI for Ahmad from the Dunlap dataset
@@ -242,7 +243,8 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
   }
                    
   return(list(estimate_bounds = c(lower_bound = lower_bound,upper_bound = upper_bound), 
-              estimate_CI = c(lower_CI = lower_CI,upper_CI = upper_CI)))
+              estimate_CI = c(lower_CI = lower_CI,upper_CI = upper_CI),
+              estimate_SE = sqrt(variance_R)))
 }
 
 #' @title Interim bounds and confidence interval
@@ -260,7 +262,7 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. If intervals is sent as a vector instead of a single value, the first value in the vector will be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
-#' @return A list containing two named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
+#' @return A list containing three named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. The third vector, \code{estimate_SE}, contains the standard errors for the upper and lower bounds. 
 #' 
 #' @examples 
 #' #get an estimate and CI for Carl from the Moes dataset
@@ -342,7 +344,9 @@ interim_bounds <- function(PIR, phase, base_level,
   }
   
   return(list(estimate_bounds = c(lower_bound = f_lower,upper_bound = f_upper),
-              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)))
+              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)
+              estimate_SE = c(lower_SE = sqrt(var_f_lower), 
+                              upper_SE = sqrt(var_f_upper))))
 }
 
 #estimate the value of zeta based on the expected value of zeta and the estimate of phi
