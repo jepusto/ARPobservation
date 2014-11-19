@@ -440,17 +440,11 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
                                  active = active, K = K, rest = rest, 
                                  iterations = iterations)
   
-  #This trims the means so that they are not at 0 or 1
-  sampleData0$meanTrim <- pmin(pmax(sampleData0$mean, 1 / (nObs[1] * K)), 
-                               1 - 1 / (nObs[1] * K))
   
   #Returns a dataframe of estimates of phi and zeta
-  ests0 <- with(sampleData0, PIR_inv(ExY = meanTrim, VarY = variance, 
+  ests0 <- with(sampleData0, PIR_inv(ExY = mean, VarY = variance, 
                                      nObs = nObs[1], active = active, K = K, 
                                      L = L))
-  #truncates the estimates so they are not at zero
-  ests0$ptrunc <- pmax(ests0$phi, 1/(nObs*K))
-  ests0$ztrunc <- pmax(ests0$zeta, 1/(active*nObs*K))
   
   #get the confidence interval bounds for the first sample
   pbounds0 <- quantile(ests0$phi, probs = c(alpha/2, 1-alpha/2))
@@ -461,22 +455,18 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
                                  active = active, K = K, rest = rest, 
                                  iterations = iterations)
   
-  sampleData1$meanTrim <- pmin(pmax(sampleData1$mean, 1 / (nObs[2] * K)), 
-                               1 - 1 / (nObs[2] * K))
   
-  ests1 <- with(sampleData1, PIR_inv(ExY = meanTrim, VarY = variance, 
+  ests1 <- with(sampleData1, PIR_inv(ExY = mean, VarY = variance, 
                                      nObs = nObs[2], active = active, K = K, 
                                      L = L))
-  ests1$ptrunc <- pmax(ests1$phi, 1/(nObs*K))
-  ests1$ztrunc <- pmax(ests1$zeta, 1/(active*nObs*K))
   pbounds1 <- quantile(ests1$phi, probs = c(alpha/2, 1-alpha/2))
   zbounds1 <- quantile(ests1$zeta, probs = c(alpha/2, 1-alpha/2))
   
   #calculate log ratio value and confidence interval bounds
-  plogratio <- log(ests1$ptrunc/ests0$ptrunc)
+  plogratio <- log(ests1$phi/ests0$phi)
   plogbounds <- quantile(plogratio, probs = c(alpha/2, 1-alpha/2))
   
-  zlogratio <- log(ests1$ztrunc/ests0$ztrunc)
+  zlogratio <- log(ests1$zeta/ests0$zeta)
   zlogbounds <- quantile(zlogratio, probs = c(alpha/2, 1-alpha/2))
   
   results <- cbind(phi = c(phi[1], phi[2], log(as.numeric(phi[2])/as.numeric(phi[1]))),
@@ -542,8 +532,6 @@ PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_len
   rest_length <- rest_length[1]
   
   if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
-  
-  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
   
   #Get an estimate of phi and zeta using the moment estimator for baseline and treatment phases
   base_ests <- PIR_inv(ExY = means[1], VarY = variances[1],
