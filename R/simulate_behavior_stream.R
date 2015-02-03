@@ -112,4 +112,118 @@ r_behavior_stream <- function(n, mu, lambda, F_event, F_interim, stream_length,
   return(BS)
 }
 
+# generate a single PIR behavior stream
+r_interval_single <- function(mu, lambda, stream_length, F_event, F_interim, 
+                         interval_length, coding, rest_length = 0){
+  BS <- r_behavior_stream(n = 1, mu = mu, lambda = lambda, 
+                          F_event = F_event, F_interim = F_interim, 
+                          stream_length = stream_length)
+  
+  if(coding == "PIR"){
+  sample <- interval_recording(BS = BS, interval_length = interval_length, rest_length = rest_length, summarize = FALSE)
+  }
+  
+  if(coding == "WIR"){
+    sample <- interval_recording(BS = BS, interval_length = interval_length, rest_length = rest_length, partial = FALSE, summarize = FALSE)
+  }
+  
+  if(coding == "MTS"){
+    sample <- momentary_time_recording(BS = BS, interval_length = interval_length, summarize = FALSE)
+  }
+  sample
+}
 
+#' @title Generates random partial interval recording behavior streams
+#' 
+#' @description
+#' Random generation of behavior streams (based on an alternating
+#' renewal process) of a specified length and with specified mean event 
+#' durations, mean interim times, event distribution, and interim distribution,
+#' which are then coded as partial interval recording data with given interval length
+#' and rest length.
+#' 
+#' @param n number of behavior streams to generate
+#' @param mu mean event duration
+#' @param lambda mean interim time
+#' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
+#' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
+#' @param stream_length length of behavior stream
+#' @param interval_length length of the active observation interval
+#' @param rest_length length of the recording interval
+#' @details Generates behavior streams by repeatedly drawing random event durations and 
+#' random interim times from the distributions as specified, until the sum of the durations and interim
+#' times exceeds the requested stream length.
+#' @export
+r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim, interval_length, rest_length){
+  samples <- replicate(n,r_interval_single(mu = mu, lambda = lambda,
+                                               stream_length = stream_length,
+                                               interval_length = interval_length,
+                                               rest_length = rest_length,
+                                               F_event = F_event,
+                                               F_interim = F_interim,
+                                               coding = "PIR"))[,1,]
+  t(samples)
+}
+
+#' @title Generates random whole interval recording behavior streams
+#' 
+#' @description
+#' Random generation of behavior streams (based on an alternating
+#' renewal process) of a specified length and with specified mean event 
+#' durations, mean interim times, event distribution, and interim distribution,
+#' which are then coded as whole interval recording data with given interval length
+#' and rest length.
+#' 
+#' @param n number of behavior streams to generate
+#' @param mu mean event duration
+#' @param lambda mean interim time
+#' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
+#' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
+#' @param stream_length length of behavior stream
+#' @param interval_length length of the active observation interval
+#' @param rest_length length of the recording interval
+#' @details Generates behavior streams by repeatedly drawing random event durations and 
+#' random interim times from the distributions as specified, until the sum of the durations and interim
+#' times exceeds the requested stream length.
+#' @export
+
+r_WIR <- function(n, mu, lambda, stream_length, F_event, F_interim, interval_length, rest_length){
+  samples <- replicate(n,r_interval_single(mu = mu, lambda = lambda,
+                                      stream_length = stream_length,
+                                      interval_length = interval_length,
+                                      rest_length = rest_length,
+                                      F_event = F_event,
+                                      F_interim = F_interim,
+                                      coding = "WIR"))[,1,]
+  t(samples)
+}
+
+#' @title Generates random momentary time sampling behavior streams
+#' 
+#' @description
+#' Random generation of behavior streams (based on an alternating
+#' renewal process) of a specified length and with specified mean event 
+#' durations, mean interim times, event distribution, and interim distribution,
+#' which are then coded as whole interval recording data with given interval length
+#' between moments.
+#' 
+#' @param n number of behavior streams to generate
+#' @param mu mean event duration
+#' @param lambda mean interim time
+#' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
+#' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
+#' @param stream_length length of behavior stream
+#' @param interval_length length of time between moments
+#' @details Generates behavior streams by repeatedly drawing random event durations and 
+#' random interim times from the distributions as specified, until the sum of the durations and interim
+#' times exceeds the requested stream length.
+#' @export
+r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim, interval_length){
+  samples <- replicate(n,r_interval_single(mu = mu, lambda = lambda,
+                                           stream_length = stream_length,
+                                           interval_length = interval_length,
+                                           F_event = F_event,
+                                           F_interim = F_interim,
+                                           coding = "MTS"))[,1,]
+  t(samples)
+}
