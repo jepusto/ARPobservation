@@ -125,9 +125,9 @@ r_behavior_stream <- function(n, mu, lambda, F_event, F_interim, stream_length,
 #' @param n number of behavior streams to generate
 #' @param mu mean event duration
 #' @param lambda mean interim time
+#' @param stream_length length of behavior stream
 #' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
 #' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
-#' @param stream_length length of behavior stream
 #' @param interval_length total interval length
 #' @param rest_length length of any recording time in each interval
 #' @param summarize logical value indicating whether the behavior streams should by summarized by taking their mean
@@ -188,9 +188,9 @@ r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' @param n number of behavior streams to generate
 #' @param mu mean event duration
 #' @param lambda mean interim time
+#' @param stream_length length of behavior stream
 #' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
 #' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
-#' @param stream_length length of behavior stream
 #' @param interval_length total interval length
 #' @param rest_length length of any recording time in each interval
 #' @param summarize logical value indicating whether the behavior streams should by summarized by taking their mean
@@ -251,9 +251,9 @@ r_WIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' @param n number of behavior streams to generate
 #' @param mu mean event duration
 #' @param lambda mean interim time
+#' @param stream_length length of behavior stream
 #' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
 #' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
-#' @param stream_length length of behavior stream
 #' @param interval_length length of time between moments
 #' @param summarize logical value indicating whether the vector of moments should be summarized by taking their mean, excluding the first moment in each row.
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
@@ -307,9 +307,9 @@ r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' @param n number of behavior streams to generate
 #' @param mu mean event duration
 #' @param lambda mean interim time
+#' @param stream_length length of behavior stream
 #' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
 #' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
-#' @param stream_length length of behavior stream
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
 #' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
 #' distributions are used for event durations and interim times.
@@ -354,9 +354,9 @@ r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_inte
 #' @param n number of behavior streams to generate
 #' @param mu mean event duration
 #' @param lambda mean interim time
+#' @param stream_length length of behavior stream
 #' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
 #' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
-#' @param stream_length length of behavior stream
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
 #' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
 #' distributions are used for event durations and interim times.
