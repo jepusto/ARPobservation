@@ -5,7 +5,8 @@
 \title{Generates random partial interval recording behavior streams}
 \usage{
 r_PIR(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
-  rest_length, equilibrium = TRUE, p0 = 0, tuning = 2)
+  rest_length, summarize = FALSE, equilibrium = TRUE, p0 = 0,
+  tuning = 2)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}
@@ -24,6 +25,8 @@ r_PIR(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
 
 \item{rest_length}{length of any recording time in each interval}
 
+\item{summarize}{logical value indicating whether the behavior streams should by summarized by taking their mean}
+
 \item{equilibrium}{logical; if \code{TRUE}, then equilibrium initial conditions are used;
 if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating
 distributions are used for event durations and interim times.}
@@ -35,7 +38,7 @@ default is zero (i.e., behavior stream always starts with an interim time).}
 Adjusting this may be useful in order to speed computation time .}
 }
 \value{
-A matrix with rows equal to \code{n} and a number of columns equal to the number intervals per session
+If \code{summarize = FALSE}, a matrix with rows equal to \code{n} and a number of columns equal to the number intervals per session. If \code{summarize = TRUE} a vector of means of length \code{n}.
 }
 \description{
 Random generation of behavior streams (based on an alternating
@@ -48,5 +51,15 @@ and rest length.
 Generates behavior streams by repeatedly drawing random event durations and
 random interim times from the distributions as specified, until the sum of the durations and interim
 times exceeds the requested stream length. Then applies a partial interval recording filter to the generated behavior streams.
+}
+\examples{
+#An unsummarized set of PIR observations
+r_PIR(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
+      F_interim = F_exp(), interval_length = 1, rest_length = 0)
+
+#A summarized set of of PIR observations
+r_PIR(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
+      F_interim = F_exp(), interval_length = 1, rest_length = 0,
+      summarize = TRUE)
 }
 

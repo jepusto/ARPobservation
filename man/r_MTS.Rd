@@ -5,7 +5,7 @@
 \title{Generates random momentary time sampling behavior streams}
 \usage{
 r_MTS(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
-  equilibrium = TRUE, p0 = 0, tuning = 2)
+  summarize = FALSE, equilibrium = TRUE, p0 = 0, tuning = 2)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}
@@ -22,6 +22,8 @@ r_MTS(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
 
 \item{interval_length}{length of time between moments}
 
+\item{summarize}{logical value indicating whether the vector of moments should be summarized by taking their mean, excluding the first moment in each row.}
+
 \item{equilibrium}{logical; if \code{TRUE}, then equilibrium initial conditions are used;
 if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating
 distributions are used for event durations and interim times.}
@@ -33,7 +35,7 @@ default is zero (i.e., behavior stream always starts with an interim time).}
 Adjusting this may be useful in order to speed computation time .}
 }
 \value{
-A matrix with rows equal to \code{n} and length equal to \code{(stream_length/interval_length) + 1}
+If \code{summarize = FALSE}, a matrix of logicals with rows equal to \code{n} and length equal to \code{(stream_length/interval_length) + 1}. If \code{summarize = TRUE}, a vector of means of length \code{n}.
 }
 \description{
 Random generation of behavior streams (based on an alternating
@@ -46,5 +48,14 @@ between moments.
 Generates behavior streams by repeatedly drawing random event durations and
 random interim times from the distributions as specified, until the sum of the durations and interim
 times exceeds the requested stream length. Then applies a momentary time sampling filter to the generated behavior streams.
+}
+\examples{
+#a set of unsummarized MTS observations
+r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
+      F_interim = F_exp(), interval_length = 1)
+
+#a set of summarized MTS observations
+r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
+      F_interim = F_exp(), interval_length = 1, summarize = TRUE)
 }
 

@@ -44,4 +44,8 @@ Generates behavior streams by repeatedly drawing random event durations and
 random interim times from the distributions as specified, until the sum of the durations and interim
 times exceeds the requested stream length. Then applies a continuous recording filter to the generated behavior streams.
 }
+\examples{
+r_continuous_recording(n = 5, mu = 2, lambda = 4, stream_length = 20,
+                       F_event = F_exp(), F_interim = F_exp())
+}
 
