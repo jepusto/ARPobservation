@@ -5,7 +5,7 @@
 \title{Generates random partial interval recording behavior streams}
 \usage{
 r_PIR(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
-  rest_length)
+  rest_length, equilibrium = TRUE, p0 = 0, tuning = 2)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}
@@ -20,9 +20,22 @@ r_PIR(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
 
 \item{F_interim}{distribution of interim times. Must be of class \code{\link{eq_dist}}.}
 
-\item{interval_length}{length of the active observation interval}
+\item{interval_length}{total interval length}
 
-\item{rest_length}{length of the recording interval}
+\item{rest_length}{length of any recording time in each interval}
+
+\item{equilibrium}{logical; if \code{TRUE}, then equilibrium initial conditions are used;
+if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating
+distributions are used for event durations and interim times.}
+
+\item{p0}{vector of initial state probabilities. Only used if \code{equilibrium = FALSE}, in which case
+default is zero (i.e., behavior stream always starts with an interim time).}
+
+\item{tuning}{controls the size of the chunk of random event durations and interim times.
+Adjusting this may be useful in order to speed computation time .}
+}
+\value{
+A matrix with rows equal to \code{n} and a number of columns equal to the number intervals per session
 }
 \description{
 Random generation of behavior streams (based on an alternating
@@ -34,6 +47,6 @@ and rest length.
 \details{
 Generates behavior streams by repeatedly drawing random event durations and
 random interim times from the distributions as specified, until the sum of the durations and interim
-times exceeds the requested stream length.
+times exceeds the requested stream length. Then applies a partial interval recording filter to the generated behavior streams.
 }
 
