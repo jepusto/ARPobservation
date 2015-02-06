@@ -567,7 +567,7 @@ PIRbootstrappair <- function(nObs, phi, zeta, active, rest, K, iterations, alpha
 #' At the default setting of \code{bootstraps = 2000}, PIR_MOM takes just under six seconds to run on an Intel Core i5-2410M processor.
 #' 
 #' @return A dataframe with six columns and three rows corresponding to baseline, treatment, 
-#' and the ratio of treatment to baseline
+#' and the log of the ratio of treatment to baseline
 #' 
 #' @examples 
 #' 
