@@ -21,18 +21,37 @@ interim_bounds(PIR, phase, base_level, conf_level = 0.95, intervals = NA,
 \item{exponentiate}{Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.}
 }
 \value{
-A list containing three named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. The third vector, \code{estimate_SE}, contains the standard errors for the upper and lower bounds.
+A list with three named entries
+The first entry, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio.
+The second entry, \code{estimate_SE}, contains the standard errors for the upper and lower bounds.
+The third entry, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
 }
 \description{
-Calculates a bound for the log of the ratio of interim time of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
+Calculates a bound for the log of the ratio of interim time of two samples
+(referred to as baseline and treatment) based on partial interval recording (PIR) data,
+assuming that the average event durations are equal across samples and that
+interim times are exponentially distributed.
 }
 \details{
-The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+The interim ratio estimate is based on the assumptions that
+1) the underlying behavior stream follows an Alternating Renewal Process,
+2) the average event durations in each sample are equal, and
+3) interim times follow exponential distributions.
 
-\code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. If intervals is sent as a vector instead of a single value, the first value in the vector will be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
+The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}.
+The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat",
+or "0" and "1". If there are more than two levels in \code{phase} this function will not work.
+A value for \code{base_level} must be specified; if it is a chaaracter string it is case sensitive.
+
+\code{intervals} is the number of intervals in the observations.
+This is a single value and is assumed to be constant across both samples and all observations.
+If intervals is sent as a vector instead of a single value, the first value in the vector will
+be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling
+of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the
+floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 }
 \examples{
-#get an estimate and CI for Carl from the Moes dataset
+# Estimate bounds on the interim time ratio for Carl from the Moes dataset
 data(Moes)
 with(subset(Moes, Case == "Carl"),
 interim_bounds(PIR = outcome, phase = Phase, base_level = "No Choice"))

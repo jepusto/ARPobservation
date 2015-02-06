@@ -1,6 +1,6 @@
-## Generic error-checking function common to all of these functions ###
+# Generic error-checking function common to all of these functions
 
-phase_validation <- function(observations, phase, base_level){
+phase_validation <- function(observations, phase, base_level) {
 
   #recasts phase as a factor if it is just a vector
   phase <- factor(phase)
@@ -25,7 +25,8 @@ phase_validation <- function(observations, phase, base_level){
 
 #' @title Calculate log-response ratio and variance
 #' 
-#' @description Estimates the bias corrected log-response ratio and the variance of the log-response ratio
+#' @description Estimates the log-response ratio (with or without bias correction)
+#' and the variance of the log-response ratio
 #' 
 #' @param observations  Vector of observations
 #' @param phase         Factor or vector indicating levels of the PIR measurements.
@@ -37,12 +38,13 @@ phase_validation <- function(observations, phase, base_level){
 #' If there are more than two levels in \code{phase} this function will not work.
 #' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive. 
 #' 
-#' @return A list containing two elements. 
-#' The first element, \code{lRR}, is the estimated log-response ratio. 
-#' The second element, \code{V_lRR}, is the estimated variance of the log-response ratio.
+#' @return A list with two named entries. 
+#' The first entry, \code{lRR}, is the estimated log-response ratio. 
+#' The second entry, \code{V_lRR}, is the estimated variance of the log-response ratio.
 #'
 #' @examples 
-#' #Get a log ratio and variance estimate for Carl from Moes dataset
+#' 
+#' # Estimate the log response ratio and its variance for Carl from Moes dataset
 #' data(Moes)
 #' with(subset(Moes, Case == "Carl"),
 #' logRespRatio(observations = outcome, phase = Phase, base_level = "No Choice"))
@@ -76,7 +78,7 @@ logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
 #' @title Prevalence bounds and confidence interval
 #' 
 #' @description Calculates a bound for the log of the prevalence ratio of two samples (referred to as baseline and treatment)
-#' based on partial interval recording (PIR) data.
+#' based on partial interval recording (PIR) data, assuming that the behavior follows an Alternating Renewal Process.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
@@ -84,10 +86,14 @@ logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
 #' @param mu_L the lower limit on the mean event duration
 #' @param active_length length of the active observation interval
 #' @param intervals the number of intervals in the sample of observations. Default is \code{NA}.
-#' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
+#' @param conf_level Coverage rate of the confidence interval. Default is \code{.95}.
 #' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
 #' 
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
+#' @details The prevalence ratio estimate is based on the assumptions that 
+#' 1) the underlying behavior stream follows an Alternating Renewal Process and
+#' 2) the average event duration is greater than \code{mu_L}.
+#' 
+#' The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 #' If there are more than two levels in \code{phase} this function will not work. 
 #' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
@@ -100,10 +106,13 @@ logRespRatio <- function(observations, phase, base_level, bias_correct = TRUE) {
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
-#' @return A list containing two named vectors and a single named number. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. The named number, \code{estimate_SE}, contains the standard error of the estimate.
+#' @return A list with three named entries. 
+#' The first entry, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. 
+#' The second entry, \code{estimate_SE}, contains the standard error of the estimate.
+#' The third entry, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. 
 #'
-#'  @examples 
-#' #Get an estimate and CI for Carl from Moes dataset
+#' @examples 
+#' # Estimate bounds on the prevalence ratio for Carl from Moes dataset
 #' data(Moes)
 #' with(subset(Moes, Case == "Carl"),
 #'  prevalence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice", 
@@ -159,27 +168,33 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
   }
   
   return(list(estimate_bounds = c(lower_bound = lower_bound, upper_bound = upper_bound), 
-              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI), 
-              estimate_SE = sqrt(variance_R)))
+              estimate_SE = sqrt(variance_R),
+              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)))
 }
 
 #' Incidence bounds and confidence interval
 #' 
-#' @description Calculates a bound for the log of the incidence ratio of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
+#' @description Calculates a bound for the log of the incidence ratio of two samples 
+#' (referred to as baseline and treatment) based on partial interval recording (PIR) data, 
+#' assuming that the behavior follows an Alternating Renewal Process.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
 #' @param base_level a character string or value indicating the name of the baseline level.
 #' @param mu_U the upper limit on the mean event duration
-#' @param p the probability that the interim time between behavioral events is less than the active interval
+#' @param p upper limit on the probability that the interim time between behavioral events is less than the active interval
 #' @param active_length length of the active observation interval
 #' @param intervals the number of intervals in the sample of observations. Default is \code{NA}
-#' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
+#' @param conf_level Coverage rate of the confidence interval. Default is \code{.95}.
 #' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
 #' 
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+#' @details The incidence ratio estimate is based on the assumptions that 
+#' 1) the underlying behavior stream follows an Alternating Renewal Process,
+#' 2) the average event duration is less than \code{mu_U}, and
+#' 3) the probability of observing an interim time less than the active interval length is less than \code{p}.
 #' 
-#' 
+#' The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+#'  
 #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 #' 
 #' \code{mu_U} is the upper limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
@@ -188,17 +203,22 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
 #' 
 #' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 #' 
-#' @return A list containing two named vectors and a single named number. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the incidence ratio. The named number, \code{estimate_SE}, contains the standard error of the estimate.
+#' @return A list containing two named vectors and a single named number. 
+#' The first entry, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio. 
+#' The second entry, \code{estimate_SE}, contains the standard error of the estimate.
+#' The third entry, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the incidence ratio. 
 #' 
 #' @examples 
-#' #get an estimate and CI for Ahmad from the Dunlap dataset
+#' 
+#' # Estimate bounds on the incidence ratio for Ahmad from the Dunlap dataset
 #' data(Dunlap)
 #' with(subset(Dunlap, Case == "Ahmad"),
 #' incidence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice", 
-#' mu_U = 10, p = .15, active_length = active_length, intervals = intervals))
+#'                  mu_U = 10, p = .15, active_length = active_length, intervals = intervals))
 #' 
 #' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
+
 incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length, 
                              intervals = NA, conf_level = 0.95, 
                              exponentiate = FALSE) {
@@ -243,13 +263,16 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
   }
                    
   return(list(estimate_bounds = c(lower_bound = lower_bound,upper_bound = upper_bound), 
-              estimate_CI = c(lower_CI = lower_CI,upper_CI = upper_CI),
-              estimate_SE = sqrt(variance_R)))
+              estimate_SE = sqrt(variance_R),
+              estimate_CI = c(lower_CI = lower_CI,upper_CI = upper_CI)))
 }
 
 #' @title Interim bounds and confidence interval
 #' 
-#' @description Calculates a bound for the log of the ratio of interim time of two samples (referred to as baseline and treatment) based on partial interval recording (PIR) data.
+#' @description Calculates a bound for the log of the ratio of interim time of two samples 
+#' (referred to as baseline and treatment) based on partial interval recording (PIR) data,
+#' assuming that the average event durations are equal across samples and that 
+#' interim times are exponentially distributed.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
@@ -258,20 +281,38 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
 
 #' @param intervals the number of intervals in the sample of observations. Default is \code{NA}
 #' @param exponentiate Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 #' 
-#' \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. If intervals is sent as a vector instead of a single value, the first value in the vector will be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
+#' @details The interim ratio estimate is based on the assumptions that 
+#' 1) the underlying behavior stream follows an Alternating Renewal Process,
+#' 2) the average event durations in each sample are equal, and 
+#' 3) interim times follow exponential distributions.
 #' 
-#' @return A list containing three named vectors. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. The third vector, \code{estimate_SE}, contains the standard errors for the upper and lower bounds. 
+#' The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
+#' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", 
+#' or "0" and "1". If there are more than two levels in \code{phase} this function will not work. 
+#' A value for \code{base_level} must be specified; if it is a chaaracter string it is case sensitive.
+#' 
+#' \code{intervals} is the number of intervals in the observations. 
+#' This is a single value and is assumed to be constant across both samples and all observations. 
+#' If intervals is sent as a vector instead of a single value, the first value in the vector will 
+#' be used. This value is only relevant if the mean of one of the samples is at the floor or ceiling 
+#' of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the 
+#' floor or ceiling and no value for \code{intervals} is provided, the function will stop.
+#' 
+#' @return A list with three named entries 
+#' The first entry, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. 
+#' The second entry, \code{estimate_SE}, contains the standard errors for the upper and lower bounds. 
+#' The third entry, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. 
 #' 
 #' @examples 
-#' #get an estimate and CI for Carl from the Moes dataset
+#' # Estimate bounds on the interim time ratio for Carl from the Moes dataset
 #' data(Moes)
 #' with(subset(Moes, Case == "Carl"),
 #' interim_bounds(PIR = outcome, phase = Phase, base_level = "No Choice"))
 #' 
 #' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
+
 interim_bounds <- function(PIR, phase, base_level, 
                            conf_level = 0.95, intervals = NA, exponentiate = FALSE) {
   
@@ -344,17 +385,18 @@ interim_bounds <- function(PIR, phase, base_level,
   }
   
   return(list(estimate_bounds = c(lower_bound = f_lower,upper_bound = f_upper),
-              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI),
               estimate_SE = c(lower_SE = sqrt(var_f_lower), 
-                              upper_SE = sqrt(var_f_upper))))
+                              upper_SE = sqrt(var_f_upper)),
+              estimate_CI = c(lower_CI = lower_CI, upper_CI = upper_CI)))
 }
 
-#estimate the value of zeta based on the expected value of zeta and the estimate of phi
-#and the sample mean
+
+# Zeta as a function of phi and E(Y)
+
 PIR_Zeta <- function(phi, ExY, active) -1 * (1-phi) * log((ExY-1)/(phi-1)) / active
 
-#estimate the variance of the sample mean using the expected value of the variance
-#and the estimates of phi and zeta
+# Var(Y) as a function of phi and E(Y)
+
 PIR_VarEx <- function(phi, ExY, active, L, K){
   
   zeta = PIR_Zeta(phi, ExY, active)
@@ -369,14 +411,16 @@ PIR_VarEx <- function(phi, ExY, active, L, K){
   return(vary)
 }
 
-#Finds the root for phi using the variance and mean of the sample
+# Finds the root for phi using the variance and mean
+
 PIR_Phi <- function(ExY, VarY, nObs, active, L, K) {
   fun <- function(phi) PIR_VarEx(phi, ExY, active, L, K) / VarY - 1
   uniroot(fun, interval = c(0, ExY), tol = .Machine$double.eps^0.5)$root
 }
 
-#generates multiple samples of PIR data using the r_behavior_stream and interval_recording
-#functions from ARPobservation. Useful for simulating or performing bootstraps
+# generates multiple samples of PIR data using the r_behavior_stream and interval_recording
+# functions from ARPobservation. Useful for simulating or performing bootstraps
+
 generatePIRData <- function(nObs, phi, zeta, active, K, rest = 0, iterations = 1) {
   
   #necessary to recast as numbers because PIR_MOM sends them as lists with one element
@@ -408,8 +452,9 @@ generatePIRData <- function(nObs, phi, zeta, active, K, rest = 0, iterations = 1
   return(sampleData)
 }
 
-#A packaging function that invokes the previous set of functions to neatly
-#provide an estimate of phi and zeta for a sample or vector of samples
+# A packaging function that invokes the previous set of functions to neatly
+# provide an estimate of phi and zeta for a sample or vector of samples
+
 PIR_inv <- function(ExY, VarY, nObs, active, L, K, varTrunc = 1 / (nObs * K^2)) {
   
   ExY <- pmin(pmax(ExY, 1 / (nObs * K)), 1 - 1 / (nObs * K))
@@ -426,31 +471,33 @@ PIR_inv <- function(ExY, VarY, nObs, active, L, K, varTrunc = 1 / (nObs * K^2)) 
   
 }
 
-#bootstraps the confidence intervals for a pair of samples with estimates of phi and zeta
-PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
+
+# bootstraps the confidence intervals for a pair of samples with estimates of phi and zeta
+
+PIRbootstrappair <- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
                             seed = NULL){
-  #set seed if one is supplied
+  # set seed if one is supplied
   if (!is.null(seed)) set.seed(seed)
 
   #the total length of the observation is the total interval length times the number of intervals
   L = (active + rest) * K
   
-  #Simulate first set of parms
+  # Simulate first set of parms
   sampleData0 <- generatePIRData(nObs = nObs[1], phi = phi[1], zeta = zeta[1],
                                  active = active, K = K, rest = rest, 
                                  iterations = iterations)
   
   
-  #Returns a dataframe of estimates of phi and zeta
+  # Returns a dataframe of estimates of phi and zeta
   ests0 <- with(sampleData0, PIR_inv(ExY = mean, VarY = variance, 
                                      nObs = nObs[1], active = active, K = K, 
                                      L = L))
   
-  #get the confidence interval bounds for the first sample
+  # get the confidence interval bounds for the first sample
   pbounds0 <- quantile(ests0$phi, probs = c(alpha/2, 1-alpha/2))
   zbounds0 <- quantile(ests0$zeta, probs = c(alpha/2, 1-alpha/2))
   
-  #simulate second set of parms
+  # simulate second set of parms
   sampleData1 <- generatePIRData(nObs = nObs[2], phi = phi[2], zeta = zeta[2],
                                  active = active, K = K, rest = rest, 
                                  iterations = iterations)
@@ -462,7 +509,7 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
   pbounds1 <- quantile(ests1$phi, probs = c(alpha/2, 1-alpha/2))
   zbounds1 <- quantile(ests1$zeta, probs = c(alpha/2, 1-alpha/2))
   
-  #calculate log ratio value and confidence interval bounds
+  # calculate log ratio value and confidence interval bounds
   plogratio <- log(ests1$phi/ests0$phi)
   plogbounds <- quantile(plogratio, probs = c(alpha/2, 1-alpha/2))
   
@@ -480,32 +527,51 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
   
 }
 
-#' @title Moment estimator for prevalence and incidence and bootstrap confidence intervals
+#' @title Moment estimator for prevalence and incidence, with bootstrap confidence intervals
 #' 
-#' @description Estimates prevalance and incidence for two samples as well as the log ratios. Also provides boostrap confidence intervals using the functions \code{\link{r_behavior_stream}} and \code{\link{interval_recording}} to generate the replicates.
+#' @description Estimates prevalance and incidence for two samples, 
+#' along with the ratios of each parameter, assuming that the behavior follows 
+#' an `. Also provides boostrap confidence intervals.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
 #' @param base_level a character string or value indicating the name of the baseline level.
 #' @param intervals the number of intervals in the sample of observations
-#' @param interval_length the total length of the intervals
+#' @param interval_length the total length of each interval
 #' @param rest_length length of the portion of the interval devoted to recording. Default is \code{0}
 #' @param Bootstraps desired number of bootstrap replicates. Default is \code{2000}
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 #' @param seed seed value set in order to make bootstrap results reproducible. Default is \code{null}
 #' 
-#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
+#' @details The moment estimators are based on the assumption that the 
+#' underlying behavior stream follows an Alternating Poisson Process, in which both the
+#' event durations and interim times are exponentially distributed.
 #' 
-#' \code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions. If vectors of values are provided for these variables, it is assumed that the first value in each vector is constant across all observations.
+#' @details The \code{PIR} vector can be in any order corresponding to the factor or vector 
+#' \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", 
+#' "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase}
+#' this function will not work. A value for \code{base_level} must be specified - if it is a 
+#' character string it is case sensitive.
 #' 
-#' \code{interval_length} This is the length of each individual interval. Sometimes a portion of the interval is set aside for recording purposes. The length of that recording interval is what the value of \code{rest_length} should be set to, although the default assumption is that there is no recording time. The length of the active interval is calculated to be \code{interval_length - rest_length}.
+#' \code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that 
+#' are assumed to be held constant across both samples and all observation sessions. 
+#' If vectors of values are provided for these variables, it is assumed that the first value 
+#' in each vector is constant across all observations.
 #' 
-#' \code{bootstraps} defaults to 2000. This is believed to be a sufficient number. At the default, PIR_MOM takes just under six seconds to run on an Intel Core i5-2410M processor.
+#' \code{interval_length} This is the total length of each individual interval. 
+#' Sometimes a portion of the interval is set aside for recording purposes, in which case 
+#' \code{rest_length} should be set to the length of time devoted to recording. 
+#' The default assumption is that there is no recording time. 
+#' The length of time devoted to active observation is calculated as \code{interval_length - rest_length}.
 #' 
-#' @return A dataframe with three rows corresponding to baseline, treatment, and treatment/baseline and six columns
+#' At the default setting of \code{bootstraps = 2000}, PIR_MOM takes just under six seconds to run on an Intel Core i5-2410M processor.
+#' 
+#' @return A dataframe with six columns and three rows corresponding to baseline, treatment, 
+#' and the ratio of treatment to baseline
 #' 
 #' @examples 
-#' #get estimate and CIs for Carl from the Moes dataset
+#' 
+#' # Estimate prevalence and incidence ratios for Carl from the Moes dataset
 #' data(Moes)
 #' with(subset(Moes, Case == "Carl"),
 #' PIR_MOM(PIR = outcome, phase = Phase, intervals = intervals, 
@@ -514,6 +580,7 @@ PIRbootstrappair<- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
 #' 
 #' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
+
 PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_length = 0, Bootstraps = 2000, conf_level = 0.95, seed = NULL) {
   
   if(length(which(PIR > 1 | PIR < 0)) > 0 | sum(is.na(PIR)) > 0) {

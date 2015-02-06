@@ -16,12 +16,13 @@ logRespRatio(observations, phase, base_level, bias_correct = TRUE)
 \item{bias_correct}{Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{TRUE}}
 }
 \value{
-A list containing two elements.
-The first element, \code{lRR}, is the estimated log-response ratio.
-The second element, \code{V_lRR}, is the estimated variance of the log-response ratio.
+A list with two named entries.
+The first entry, \code{lRR}, is the estimated log-response ratio.
+The second entry, \code{V_lRR}, is the estimated variance of the log-response ratio.
 }
 \description{
-Estimates the bias corrected log-response ratio and the variance of the log-response ratio
+Estimates the log-response ratio (with or without bias correction)
+and the variance of the log-response ratio
 }
 \details{
 The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}.
@@ -30,7 +31,7 @@ If there are more than two levels in \code{phase} this function will not work.
 A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
 }
 \examples{
-#Get a log ratio and variance estimate for Carl from Moes dataset
+# Estimate the log response ratio and its variance for Carl from Moes dataset
 data(Moes)
 with(subset(Moes, Case == "Carl"),
 logRespRatio(observations = outcome, phase = Phase, base_level = "No Choice"))

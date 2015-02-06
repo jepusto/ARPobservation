@@ -20,18 +20,25 @@ prevalence_bounds(PIR, phase, base_level, mu_L, active_length, intervals = NA,
 
 \item{intervals}{the number of intervals in the sample of observations. Default is \code{NA}.}
 
-\item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
+\item{conf_level}{Coverage rate of the confidence interval. Default is \code{.95}.}
 
 \item{exponentiate}{Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.}
 }
 \value{
-A list containing two named vectors and a single named number. The first vector, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio. The second vector, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio. The named number, \code{estimate_SE}, contains the standard error of the estimate.
+A list with three named entries.
+The first entry, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the prevalence ratio.
+The second entry, \code{estimate_SE}, contains the standard error of the estimate.
+The third entry, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the prevalence ratio.
 }
 \description{
 Calculates a bound for the log of the prevalence ratio of two samples (referred to as baseline and treatment)
-based on partial interval recording (PIR) data.
+based on partial interval recording (PIR) data, assuming that the behavior follows an Alternating Renewal Process.
 }
 \details{
+The prevalence ratio estimate is based on the assumptions that
+1) the underlying behavior stream follows an Alternating Renewal Process and
+2) the average event duration is greater than \code{mu_L}.
+
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}.
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1".
 If there are more than two levels in \code{phase} this function will not work.
@@ -46,7 +53,7 @@ For all of the following variables, the function assumes that if a vector of val
 \code{intervals} is the number of intervals in the observations. This is a single value and is assumed to be constant across both samples and all observations. This value is only relevant if the mean of one of the samples is at the floor or ceiling of 0 or 1. In that case it will be used to truncate the sample mean. If the sample mean is at the floor or ceiling and no value for \code{intervals} is provided, the function will stop.
 }
 \examples{
-#Get an estimate and CI for Carl from Moes dataset
+# Estimate bounds on the prevalence ratio for Carl from Moes dataset
 data(Moes)
 with(subset(Moes, Case == "Carl"),
  prevalence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice",

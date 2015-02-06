@@ -2,7 +2,7 @@
 % Please edit documentation in R/effect_size_estimators.R
 \name{PIR_MOM}
 \alias{PIR_MOM}
-\title{Moment estimator for prevalence and incidence and bootstrap confidence intervals}
+\title{Moment estimator for prevalence and incidence, with bootstrap confidence intervals}
 \usage{
 PIR_MOM(PIR, phase, base_level, intervals, interval_length, rest_length = 0,
   Bootstraps = 2000, conf_level = 0.95, seed = NULL)
@@ -16,7 +16,7 @@ PIR_MOM(PIR, phase, base_level, intervals, interval_length, rest_length = 0,
 
 \item{intervals}{the number of intervals in the sample of observations}
 
-\item{interval_length}{the total length of the intervals}
+\item{interval_length}{the total length of each interval}
 
 \item{rest_length}{length of the portion of the interval devoted to recording. Default is \code{0}}
 
@@ -27,22 +27,21 @@ PIR_MOM(PIR, phase, base_level, intervals, interval_length, rest_length = 0,
 \item{seed}{seed value set in order to make bootstrap results reproducible. Default is \code{null}}
 }
 \value{
-A dataframe with three rows corresponding to baseline, treatment, and treatment/baseline and six columns
+A dataframe with six columns and three rows corresponding to baseline, treatment,
+and the ratio of treatment to baseline
 }
 \description{
-Estimates prevalance and incidence for two samples as well as the log ratios. Also provides boostrap confidence intervals using the functions \code{\link{r_behavior_stream}} and \code{\link{interval_recording}} to generate the replicates.
+Estimates prevalance and incidence for two samples,
+along with the ratios of each parameter, assuming that the behavior follows
+an `. Also provides boostrap confidence intervals.
 }
 \details{
-The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
-
-\code{intervals}, \code{interval_length}, and \code{rest_length} are all single values that are assumed to be held constant across both samples and all observation sessions. If vectors of values are provided for these variables, it is assumed that the first value in each vector is constant across all observations.
-
-\code{interval_length} This is the length of each individual interval. Sometimes a portion of the interval is set aside for recording purposes. The length of that recording interval is what the value of \code{rest_length} should be set to, although the default assumption is that there is no recording time. The length of the active interval is calculated to be \code{interval_length - rest_length}.
-
-\code{bootstraps} defaults to 2000. This is believed to be a sufficient number. At the default, PIR_MOM takes just under six seconds to run on an Intel Core i5-2410M processor.
+The moment estimators are based on the assumption that the
+underlying behavior stream follows an Alternating Poisson Process, in which both the
+event durations and interim times are exponentially distributed.
 }
 \examples{
-#get estimate and CIs for Carl from the Moes dataset
+# Estimate prevalence and incidence ratios for Carl from the Moes dataset
 data(Moes)
 with(subset(Moes, Case == "Carl"),
 PIR_MOM(PIR = outcome, phase = Phase, intervals = intervals,
