@@ -134,46 +134,49 @@ r_behavior_stream <- function(n, mu, lambda, F_event, F_interim, stream_length,
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
 #' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
 #' distributions are used for event durations and interim times.
-#' @param p0 vector of initial state probabilities. Only used if \code{equilibrium = FALSE}, in which case
+#' @param p0 Initial state probability. Only used if \code{equilibrium = FALSE}, in which case
 #' default is zero (i.e., behavior stream always starts with an interim time).
 #' @param tuning controls the size of the chunk of random event durations and interim times.
 #' Adjusting this may be useful in order to speed computation time .
+#' 
 #' @details Generates behavior streams by repeatedly drawing random event durations and 
 #' random interim times from the distributions as specified, until the sum of the durations and interim
 #' times exceeds the requested stream length. Then applies a partial interval recording filter to the generated behavior streams.
+#' 
 #' @return If \code{summarize = FALSE}, a matrix with rows equal to \code{n} and a number of columns equal to the number intervals per session. If \code{summarize = TRUE} a vector of means of length \code{n}.
 #' @export
 #' 
 #' @examples
 #' 
-#' #An unsummarized set of PIR observations
-#' r_PIR(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
-#'       F_interim = F_exp(), interval_length = 1, rest_length = 0)
+#' # An unsummarized set of PIR observations
+#' r_PIR(n = 5, mu = 2, lambda = 4, stream_length = 20, 
+#'        F_event = F_exp(), F_interim = F_exp(), 
+#'        interval_length = 1, rest_length = 0)
 #'       
-#' #A summarized set of of PIR observations
-#' r_PIR(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
-#'       F_interim = F_exp(), interval_length = 1, rest_length = 0,
-#'       summarize = TRUE)
+#' # A summarized set of of PIR observations
+#' r_PIR(n = 5, mu = 2, lambda = 4, stream_length = 20, 
+#'        F_event = F_exp(), F_interim = F_exp(), 
+#'        interval_length = 1, rest_length = 0,
+#'        summarize = TRUE)
 
 r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim, 
-                  interval_length, rest_length, summarize = FALSE, 
+                  interval_length, rest_length = 0, summarize = FALSE, 
                   equilibrium = TRUE, p0 = 0, tuning = 2){
   
-  n_intervals <- stream_length/interval_length
+  n_intervals <- floor(stream_length / interval_length)
   start_time <- interval_length * (0:(n_intervals - 1))
   end_time <- start_time + interval_length - rest_length
   
-  samples <- replicate(n,{
+  samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
                             F_event = F_exp(), F_interim = F_exp(), 
                             stream_length = stream_length, 
                             equilibrium = equilibrium,
-                            p0 = p0, tuning = tuning)
-    
+                            p0 = p0, tuning = tuning)    
     IntRec_single(b_stream = BS, start_time = start_time, end_time = end_time)
   })
   
-  if(summarize) colMeans(samples) else t(samples)
+  if (summarize) colMeans(samples) else t(samples)
 }
   
 #' @title Generates random whole interval recording behavior streams
@@ -197,7 +200,7 @@ r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
 #' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
 #' distributions are used for event durations and interim times.
-#' @param p0 vector of initial state probabilities. Only used if \code{equilibrium = FALSE}, in which case
+#' @param p0 Initial state probability. Only used if \code{equilibrium = FALSE}, in which case
 #' default is zero (i.e., behavior stream always starts with an interim time).
 #' @param tuning controls the size of the chunk of random event durations and interim times.
 #' Adjusting this may be useful in order to speed computation time .
@@ -209,34 +212,35 @@ r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' 
 #' @examples
 #' 
-#' #An unsummarized set of WIR observations
-#' r_WIR(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
-#'       F_interim = F_exp(), interval_length = 1, rest_length = 0)
+#' # An unsummarized set of WIR observations
+#' r_WIR(n = 5, mu = 2, lambda = 4, stream_length = 20, 
+#'        F_event = F_exp(), F_interim = F_exp(), 
+#'        interval_length = 1, rest_length = 0)
 #'       
-#' #A summarized set of of WIR observations
-#' r_WIR(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
-#'       F_interim = F_exp(), interval_length = 1, rest_length = 0,
-#'       summarize = TRUE)
+#' # A summarized set of of WIR observations
+#' r_WIR(n = 5, mu = 2, lambda = 4, stream_length = 20, 
+#'        F_event = F_exp(), F_interim = F_exp(), 
+#'        interval_length = 1, rest_length = 0,
+#'        summarize = TRUE)
 
 r_WIR <- function(n, mu, lambda, stream_length, F_event, F_interim, 
-                  interval_length, rest_length, summarize = FALSE, 
+                  interval_length, rest_length = 0, summarize = FALSE, 
                   equilibrium = TRUE, p0 = 0, tuning = 2){
   
-  n_intervals <- stream_length/interval_length
+  n_intervals <- floor(stream_length / interval_length)
   start_time <- interval_length * (0:(n_intervals - 1))
   end_time <- start_time + interval_length - rest_length
   
-  samples <- replicate(n,{
+  samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
                                    F_event = F_exp(), F_interim = F_exp(), 
                                    stream_length = stream_length, 
                                    equilibrium = equilibrium,
                                    p0 = p0, tuning = tuning)
-    
     IntRec_single(b_stream = BS, start_time = start_time, end_time = end_time, partial = FALSE)
   })
   
-  if(summarize) colMeans(samples) else t(samples)
+  if (summarize) colMeans(samples) else t(samples)
 }
 
 #' @title Generates random momentary time sampling behavior streams
@@ -259,32 +263,35 @@ r_WIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
 #' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
 #' distributions are used for event durations and interim times.
-#' @param p0 vector of initial state probabilities. Only used if \code{equilibrium = FALSE}, in which case
+#' @param p0 Initial state probability. Only used if \code{equilibrium = FALSE}, in which case
 #' default is zero (i.e., behavior stream always starts with an interim time).
 #' @param tuning controls the size of the chunk of random event durations and interim times.
-#' Adjusting this may be useful in order to speed computation time .
+#' Adjusting this may be useful in order to speed computation time.
+#' 
 #' @details Generates behavior streams by repeatedly drawing random event durations and 
 #' random interim times from the distributions as specified, until the sum of the durations and interim
 #' times exceeds the requested stream length. Then applies a momentary time sampling filter to the generated behavior streams.
+#' 
 #' @return If \code{summarize = FALSE}, a matrix of logicals with rows equal to \code{n} and length equal to \code{(stream_length/interval_length) + 1}. If \code{summarize = TRUE}, a vector of means of length \code{n}.
 #' @export
 #' 
 #' @examples
 #' 
-#' #a set of unsummarized MTS observations
-#' r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(), 
-#'       F_interim = F_exp(), interval_length = 1)
+#' # A set of unsummarized MTS observations
+#' r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20, 
+#'        F_event = F_exp(), F_interim = F_exp(), interval_length = 1)
 #'       
-#' #a set of summarized MTS observations
-#' r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20, F_event = F_exp(),
-#'       F_interim = F_exp(), interval_length = 1, summarize = TRUE)
+#' # A set of summarized MTS observations
+#' r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20, 
+#'        F_event = F_exp(), F_interim = F_exp(), 
+#'        interval_length = 1, summarize = TRUE)
 
 r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                   interval_length, summarize = FALSE, equilibrium = TRUE, 
-                  p0 = 0, tuning = 2){
+                  p0 = 0, tuning = 2) {
   
   moments <- seq(interval_length * summarize, stream_length, interval_length)
-  samples <- replicate(n,{
+  samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
                              F_event = F_exp(), F_interim = F_exp(), 
                              stream_length = stream_length, 
@@ -313,13 +320,15 @@ r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
 #' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
 #' distributions are used for event durations and interim times.
-#' @param p0 vector of initial state probabilities. Only used if \code{equilibrium = FALSE}, in which case
+#' @param p0 Initial state probability. Only used if \code{equilibrium = FALSE}, in which case
 #' default is zero (i.e., behavior stream always starts with an interim time).
 #' @param tuning controls the size of the chunk of random event durations and interim times.
 #' Adjusting this may be useful in order to speed computation time .
+#' 
 #' @details Generates behavior streams by repeatedly drawing random event durations and 
 #' random interim times from the distributions as specified, until the sum of the durations and interim
 #' times exceeds the requested stream length. Then applies a continuous recording filter to the generated behavior streams.
+#' 
 #' @return A vector of proportions of length \code{n}.
 #' @export
 #' 
@@ -328,9 +337,9 @@ r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' r_continuous_recording(n = 5, mu = 2, lambda = 4, stream_length = 20,
 #'                        F_event = F_exp(), F_interim = F_exp())
                         
-r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_interim, equilibrium = TRUE, p0 = 0, tuning = 2){
-  
-  samples <- replicate(n,{
+r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_interim, 
+                                   equilibrium = TRUE, p0 = 0, tuning = 2) {
+  samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
                                    F_event = F_exp(), F_interim = F_exp(), 
                                    stream_length = stream_length, 
@@ -342,7 +351,7 @@ r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_inte
   samples
 }
 
-#' @title Generates random samples of frequency counts
+#' @title Generates random samples of event counts
 #' 
 #' @description
 #' Random generation of behavior streams (based on an alternating
@@ -360,23 +369,25 @@ r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_inte
 #' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
 #' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
 #' distributions are used for event durations and interim times.
-#' @param p0 vector of initial state probabilities. Only used if \code{equilibrium = FALSE}, in which case
+#' @param p0 Initial state probability. Only used if \code{equilibrium = FALSE}, in which case
 #' default is zero (i.e., behavior stream always starts with an interim time).
 #' @param tuning controls the size of the chunk of random event durations and interim times.
 #' Adjusting this may be useful in order to speed computation time .
+#' 
 #' @details Generates behavior streams by repeatedly drawing random event durations and 
 #' random interim times from the distributions as specified, until the sum of the durations and interim
-#' times exceeds the requested stream length. Then applies a frequency counting filter to the generated behavior streams.
+#' times exceeds the requested stream length. Then applies an event counting filter to the generated behavior streams.
+#' 
 #' @return A vector of behavior counts of length \code{n}.
 #' @export
 #' 
 #' @examples
 #' 
-#' r_frequency_counting(n = 5, mu = 2, lambda = 4, stream_length = 20,
+#' r_event_counting(n = 5, mu = 2, lambda = 4, stream_length = 20,
 #'                      F_event = F_exp(), F_interim = F_exp())
 
-r_frequency_counting <- function(n, mu, lambda, stream_length, F_event, F_interim, equilibrium = TRUE, p0 = 0, tuning = 2){
-  
+r_event_counting <- function(n, mu, lambda, stream_length, F_event, F_interim, 
+                                 equilibrium = TRUE, p0 = 0, tuning = 2) {
   samples <- replicate(n,{
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
                                    F_event = F_exp(), F_interim = F_exp(), 

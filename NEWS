@@ -1,5 +1,6 @@
 ARPobservation 1.1
 =======================
+* Added utility functions for directly simulating MTS, PIR, and WIR data. 
 * Added log-response ratio effect size estimators.
 * Added various estimators for summarized PIR data.
 * Added study_planning demo
