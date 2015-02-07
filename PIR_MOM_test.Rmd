@@ -1,0 +1,33 @@
+---
+title: "PIR_MOM"
+author: "James E. Pustejovsky"
+date: "Friday, February 06, 2015"
+output: html_document
+---
+
+```{r}
+options(width = 150)
+library(ARPobservation)
+ARPobservation:::PIRbootstrappair
+
+data(Moes)
+with(subset(Moes, Case == "Carl"),
+     PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
+             intervals = 80, interval_length = 15, rest_length = 5, 
+             Bootstraps = 4000))
+
+with(subset(Moes, Case == "Charles"),
+     PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
+             intervals = 80, interval_length = 15, rest_length = 5, 
+             Bootstraps = 4000))
+
+with(subset(Moes, Case == "Chuck"),
+     PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
+             intervals = 80, interval_length = 15, rest_length = 5, 
+             Bootstraps = 4000))
+
+with(subset(Moes, Case == "James"),
+     PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
+             intervals = 80, interval_length = 15, rest_length = 5, 
+             Bootstraps = 4000))
+```
