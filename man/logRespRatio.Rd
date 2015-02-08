@@ -4,7 +4,8 @@
 \alias{logRespRatio}
 \title{Calculate log-response ratio and variance}
 \usage{
-logRespRatio(observations, phase, base_level, bias_correct = TRUE)
+logRespRatio(observations, phase, base_level, conf_level = 0.95,
+  bias_correct = TRUE)
 }
 \arguments{
 \item{observations}{Vector of observations}

@@ -5,7 +5,8 @@
 \title{Moment estimator for prevalence and incidence, with bootstrap confidence intervals}
 \usage{
 PIR_MOM(PIR, phase, base_level, intervals, interval_length, rest_length = 0,
-  Bootstraps = 2000, conf_level = 0.95, seed = NULL)
+  Bootstraps = 2000, conf_level = 0.95, exponentiate = FALSE,
+  seed = NULL, old = FALSE)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}
@@ -28,7 +29,7 @@ PIR_MOM(PIR, phase, base_level, intervals, interval_length, rest_length = 0,
 }
 \value{
 A dataframe with six columns and three rows corresponding to baseline, treatment,
-and the ratio of treatment to baseline
+and the log of the ratio of treatment to baseline
 }
 \description{
 Estimates prevalance and incidence for two samples,
