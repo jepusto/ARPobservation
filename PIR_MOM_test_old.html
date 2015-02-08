@@ -100,35 +100,35 @@ ARPobservation:::PIRbootstrappair</code></pre>
 with(subset(Moes, Case == &quot;Carl&quot;),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = &quot;No Choice&quot;,
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))</code></pre>
+             Bootstraps = 10000))</code></pre>
 <pre><code>##                  phi     phi_lower_CI phi_upper_CI zeta      zeta_lower_CI zeta_upper_CI
-## No Choice        0.0199  0.01726      0.08188      0.01239   0.005508      0.0145       
-## Choice           0.03856 0.0006846    0.1246       0.0001442 5.655e-05     0.0005262    
-## Choice/No Choice 0.6615  -4.363       1.716        -4.453    -5.485        -2.824</code></pre>
+## No Choice        0.0199  0.01709      0.08377      0.01239   0.005463      0.0145       
+## Choice           0.03856 0.0006846    0.1217       0.0001442 5.655e-05     0.0005381    
+## Choice/No Choice 0.6615  -4.379       1.714        -4.453    -5.484        -2.806</code></pre>
 <pre class="r"><code>with(subset(Moes, Case == &quot;Charles&quot;),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = &quot;No Choice&quot;,
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))</code></pre>
+             Bootstraps = 10000))</code></pre>
 <pre><code>##                  phi      phi_lower_CI phi_upper_CI zeta      zeta_lower_CI zeta_upper_CI
-## No Choice        0.3286   0.2085       0.4571       0.001917  0.0008223     0.005503     
-## Choice           0.008713 0.0006846    0.02578      0.0002541 5.655e-05     0.0007819    
-## Choice/No Choice -3.63    -6.3         -2.442       -2.021    -3.854        -0.5986</code></pre>
+## No Choice        0.3286   0.2062       0.4509       0.001917  0.0008315     0.006104     
+## Choice           0.008713 0.0006846    0.02461      0.0002541 5.655e-05     0.0007576    
+## Choice/No Choice -3.63    -6.256       -2.5         -2.021    -3.907        -0.6269</code></pre>
 <pre class="r"><code>with(subset(Moes, Case == &quot;Chuck&quot;),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = &quot;No Choice&quot;,
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))</code></pre>
+             Bootstraps = 10000))</code></pre>
 <pre><code>##                  phi     phi_lower_CI phi_upper_CI zeta      zeta_lower_CI zeta_upper_CI
-## No Choice        0.2475  0.1504       0.3464       0.002418  0.001099      0.00714      
-## Choice           0.08358 0.01592      0.1723       0.0005184 0.0001743     0.001467     
-## Choice/No Choice -1.085  -2.776       -0.1803      -1.54     -3.071        -0.2572</code></pre>
+## No Choice        0.2475  0.1515       0.3406       0.002418  0.001084      0.007078     
+## Choice           0.08358 0.01591      0.1753       0.0005184 0.0001744     0.001486     
+## Choice/No Choice -1.085  -2.743       -0.1974      -1.54     -3.022        -0.1983</code></pre>
 <pre class="r"><code>with(subset(Moes, Case == &quot;James&quot;),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = &quot;No Choice&quot;,
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))</code></pre>
+             Bootstraps = 10000))</code></pre>
 <pre><code>##                  phi     phi_lower_CI phi_upper_CI zeta      zeta_lower_CI zeta_upper_CI
-## No Choice        0.4649  0.3416       0.5631       0.003499  0.001587      0.01094      
-## Choice           0.02863 0.0006846    0.09914      0.0001369 5.655e-05     0.0005304    
-## Choice/No Choice -2.787  -6.613       -1.496       -3.241    -4.786        -1.599</code></pre>
+## No Choice        0.4649  0.3416       0.5633       0.003499  0.001591      0.01182      
+## Choice           0.02863 0.0006846    0.1002       0.0001369 5.655e-05     0.0005457    
+## Choice/No Choice -2.787  -6.62        -1.459       -3.241    -4.845        -1.579</code></pre>
 
 
 </div>

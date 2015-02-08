@@ -14,20 +14,20 @@ data(Moes)
 with(subset(Moes, Case == "Carl"),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))
+             Bootstraps = 10000))
 
 with(subset(Moes, Case == "Charles"),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))
+             Bootstraps = 10000))
 
 with(subset(Moes, Case == "Chuck"),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))
+             Bootstraps = 10000))
 
 with(subset(Moes, Case == "James"),
      PIR_MOM(PIR = outcome, phase = Phase, base_level = "No Choice",
              intervals = 80, interval_length = 15, rest_length = 5, 
-             Bootstraps = 4000))
+             Bootstraps = 10000))
 ```
