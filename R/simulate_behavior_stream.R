@@ -163,13 +163,15 @@ r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
                   interval_length, rest_length = 0, summarize = FALSE, 
                   equilibrium = TRUE, p0 = 0, tuning = 2){
   
+  if (equilibrium) p0 <- mu / (mu + lambda)
+  
   n_intervals <- floor(stream_length / interval_length)
   start_time <- interval_length * (0:(n_intervals - 1))
   end_time <- start_time + interval_length - rest_length
   
   samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
-                            F_event = F_exp(), F_interim = F_exp(), 
+                            F_event = F_event, F_interim = F_interim, 
                             stream_length = stream_length, 
                             equilibrium = equilibrium,
                             p0 = p0, tuning = tuning)    
@@ -227,13 +229,15 @@ r_WIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
                   interval_length, rest_length = 0, summarize = FALSE, 
                   equilibrium = TRUE, p0 = 0, tuning = 2){
   
+  if (equilibrium) p0 <- mu / (mu + lambda)
+  
   n_intervals <- floor(stream_length / interval_length)
   start_time <- interval_length * (0:(n_intervals - 1))
   end_time <- start_time + interval_length - rest_length
   
   samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
-                                   F_event = F_exp(), F_interim = F_exp(), 
+                                   F_event = F_event, F_interim = F_interim, 
                                    stream_length = stream_length, 
                                    equilibrium = equilibrium,
                                    p0 = p0, tuning = tuning)
@@ -290,10 +294,12 @@ r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim,
                   interval_length, summarize = FALSE, equilibrium = TRUE, 
                   p0 = 0, tuning = 2) {
   
+  if (equilibrium) p0 <- mu / (mu + lambda)
+  
   moments <- seq(interval_length * summarize, stream_length, interval_length)
   samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
-                             F_event = F_exp(), F_interim = F_exp(), 
+                             F_event = F_event, F_interim = F_interim, 
                              stream_length = stream_length, 
                              equilibrium = equilibrium,
                              p0 = p0, tuning = tuning)
@@ -339,9 +345,12 @@ r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim,
                         
 r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                                    equilibrium = TRUE, p0 = 0, tuning = 2) {
+  
+  if (equilibrium) p0 <- mu / (mu + lambda)
+  
   samples <- replicate(n, {
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
-                                   F_event = F_exp(), F_interim = F_exp(), 
+                                   F_event = F_event, F_interim = F_interim, 
                                    stream_length = stream_length, 
                                    equilibrium = equilibrium,
                                    p0 = p0, tuning = tuning)
@@ -388,9 +397,12 @@ r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_inte
 
 r_event_counting <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                                  equilibrium = TRUE, p0 = 0, tuning = 2) {
+  
+  if (equilibrium) p0 <- mu / (mu + lambda)
+  
   samples <- replicate(n,{
     BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
-                                   F_event = F_exp(), F_interim = F_exp(), 
+                                   F_event = F_event, F_interim = F_interim, 
                                    stream_length = stream_length, 
                                    equilibrium = equilibrium,
                                    p0 = p0, tuning = tuning)

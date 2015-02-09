@@ -493,7 +493,7 @@ PIRbootstrappair <- function(nObs, phi, zeta, active, rest, K, iterations, alpha
   # Simulate first set of parms
   sampleData0 <- replicate(n = iterations, r_PIR(n = nObs[1], mu = mu[1],
                                                  lambda = lambda[1],
-                                                 stream_length = K * active,
+                                                 stream_length = L,
                                                  F_event = F_exp(), 
                                                  F_interim = F_exp(),
                                                  interval_length = active + rest,
@@ -514,7 +514,7 @@ PIRbootstrappair <- function(nObs, phi, zeta, active, rest, K, iterations, alpha
   # simulate second set of parms
   sampleData1 <- replicate(n = iterations, r_PIR(n = nObs[2], mu = mu[2],
                                                  lambda = lambda[2],
-                                                 stream_length = K * active,
+                                                 stream_length = L,
                                                  F_event = F_exp(), 
                                                  F_interim = F_exp(),
                                                  interval_length = active + rest,
