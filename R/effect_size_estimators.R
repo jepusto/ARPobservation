@@ -23,24 +23,36 @@ phase_validation <- function(observations, phase, base_level) {
   return(c(base_level, treat_level))
 }
 
-#' @title Calculate log-response ratio and variance
+#' @title Calculate log-response ratio, variance, and confidence interval
 #' 
-#' @description Estimates the log-response ratio (with or without bias correction)
-#' and the variance of the log-response ratio
+#' @description Estimates the log-response ratio (with or without bias correction),
+#' the variance of the log-response ratio, and the confidence interval for a given
+#' confidence level.
 #' 
 #' @param observations  Vector of observations
 #' @param phase         Factor or vector indicating levels of the PIR measurements.
 #' @param base_level a character string or value indicating the name of the baseline level.
+#' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 #' @param bias_correct  Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{TRUE}
+#' @param exponentiate  Logical value indicating if the log-respones ratio should be exponentiated.
 #' 
 #' @details The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}. 
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 #' If there are more than two levels in \code{phase} this function will not work.
-#' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive. 
+#' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+#' If \code{exponentiate = TRUE}, the log-ratio and the confidence interval will be exponentiated,
+#' but the variance will be excluded from the output.
 #' 
-#' @return A list with two named entries. 
+#' @return If \code{exponentiate = FALSE}, a list with three named entries. 
 #' The first entry, \code{lRR}, is the estimated log-response ratio. 
 #' The second entry, \code{V_lRR}, is the estimated variance of the log-response ratio.
+#' The third entry, \code{CI}, is a vector containing the endpoints of a confidence
+#' interval of \code{conf_level} coverage rate.
+#' 
+#' If \code{exponentiate = TRUE}, a list with two named entries.
+#' The first entry, \code{RR}, is the estimated response ratio.  
+#' The second entry, \code{CI}, is a vector containing the endpoints of a confidence
+#' interval of \code{conf_level} coverage rate.
 #'
 #' @examples 
 #' 
@@ -53,7 +65,7 @@ phase_validation <- function(observations, phase, base_level) {
 #' @export
 
 logRespRatio <- function(observations, phase, base_level, conf_level = .95, 
-                         bias_correct = TRUE) {
+                         bias_correct = TRUE, exponentiate = FALSE) {
   
   level_labels <- phase_validation(observations = observations, phase = phase, base_level = base_level)
     
@@ -75,7 +87,11 @@ logRespRatio <- function(observations, phase, base_level, conf_level = .95,
   
   CI <- lRR + c(-1, 1) * qnorm(1-(1-conf_level)/2) * sqrt(V_lRR)
   
+  if(exponentiate){
+    return(list(RR = exp(lRR), CI = exp(CI)))
+  }else{
   return(list(lRR = lRR, V_lRR = V_lRR, CI = CI))
+  }
 }
 
 #' @title Prevalence bounds and confidence interval
@@ -421,6 +437,7 @@ PIR_Phi <- function(ExY, VarY, nObs, active, L, K) {
   uniroot(fun, interval = c(0, ExY), tol = .Machine$double.eps^0.5)$root
 }
 
+# DEPRECATED
 # generates multiple samples of PIR data using the r_behavior_stream and interval_recording
 # functions from ARPobservation. Useful for simulating or performing bootstraps
 
@@ -560,6 +577,9 @@ PIRbootstrappair <- function(nObs, phi, zeta, active, rest, K, iterations, alpha
   
 }
 
+#deprecated version of PIRbootstrappair that didn't use our general purpose
+#data generating code
+
 PIRbootstrappair_old <- function(nObs, phi, zeta, active, rest, K, iterations, alpha,
                              seed = NULL){
   # set seed if one is supplied
@@ -627,6 +647,7 @@ PIRbootstrappair_old <- function(nObs, phi, zeta, active, rest, K, iterations, a
 #' @param rest_length length of the portion of the interval devoted to recording. Default is \code{0}
 #' @param Bootstraps desired number of bootstrap replicates. Default is \code{2000}
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
+#' @param exponentiate a logical indicating whether the row corresponding to the ratio of treatment to baseline should be exponentiated, with the default as \code{FALSE}.
 #' @param seed seed value set in order to make bootstrap results reproducible. Default is \code{null}
 #' 
 #' @details The moment estimators are based on the assumption that the 
@@ -653,7 +674,7 @@ PIRbootstrappair_old <- function(nObs, phi, zeta, active, rest, K, iterations, a
 #' At the default setting of \code{bootstraps = 2000}, PIR_MOM takes just under six seconds to run on an Intel Core i5-2410M processor.
 #' 
 #' @return A dataframe with six columns and three rows corresponding to baseline, treatment, 
-#' and the log of the ratio of treatment to baseline
+#' and the log ratio or ratio (depending upon the value of \code{exponentiate}) of treatment to baseline
 #' 
 #' @examples 
 #' 
@@ -667,7 +688,7 @@ PIRbootstrappair_old <- function(nObs, phi, zeta, active, rest, K, iterations, a
 #' @author Daniel Swan <dswan@@utexas.edu>
 #' @export
 
-PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_length = 0, Bootstraps = 2000, conf_level = 0.95, exponentiate = FALSE, seed = NULL, old = FALSE) {
+PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_length = 0, Bootstraps = 2000, conf_level = 0.95, exponentiate = FALSE, seed = NULL) {
   
   if(length(which(PIR > 1 | PIR < 0)) > 0 | sum(is.na(PIR)) > 0) {
     stop('Values for PIR must be between 0 and 1 and cannot be NA')
@@ -695,17 +716,7 @@ PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_len
                       nObs = nObs[2], active = interval_length - rest_length, 
                       L = intervals * interval_length, K = intervals)
   
-  if(old){
-    results <- PIRbootstrappair_old(nObs = c(nObs[[1]], nObs[[2]]),
-                                    phi = c(base_ests[[1]], treat_ests[[1]]),
-                                    zeta = c(base_ests[[2]], treat_ests[[2]]),
-                                    active = interval_length - rest_length,
-                                    rest = rest_length,
-                                    K = intervals,
-                                    iterations = Bootstraps,
-                                    alpha = 1-conf_level,
-                                    seed = seed)
-  }else{
+  
   #Bootstrap the confidence intervals
   results <- PIRbootstrappair(nObs = c(nObs[[1]], nObs[[2]]),
                    phi = c(base_ests[[1]], treat_ests[[1]]),
@@ -717,7 +728,7 @@ PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_len
                    alpha = 1-conf_level,
                    exponentiate = exponentiate,
                    seed = seed)
-  }
+  
   #Set the row names appropriately based on the levels in the "phase" variable
   if(exponentiate){
     row.names(results) <- c(base_level, 

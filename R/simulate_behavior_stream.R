@@ -158,6 +158,8 @@ r_behavior_stream <- function(n, mu, lambda, F_event, F_interim, stream_length,
 #'        F_event = F_exp(), F_interim = F_exp(), 
 #'        interval_length = 1, rest_length = 0,
 #'        summarize = TRUE)
+#'        
+#' @author Daniel Swan <dswan@@utexas.edu>
 
 r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                   interval_length, rest_length = 0, summarize = FALSE, 
@@ -224,6 +226,8 @@ r_PIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #'        F_event = F_exp(), F_interim = F_exp(), 
 #'        interval_length = 1, rest_length = 0,
 #'        summarize = TRUE)
+#'        
+#' @author Daniel Swan <dswan@@utexas.edu>
 
 r_WIR <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                   interval_length, rest_length = 0, summarize = FALSE, 
@@ -289,6 +293,8 @@ r_WIR <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20, 
 #'        F_event = F_exp(), F_interim = F_exp(), 
 #'        interval_length = 1, summarize = TRUE)
+#'        
+#' @author Daniel Swan <dswan@@utexas.edu>
 
 r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                   interval_length, summarize = FALSE, equilibrium = TRUE, 
@@ -342,6 +348,8 @@ r_MTS <- function(n, mu, lambda, stream_length, F_event, F_interim,
 #' 
 #' r_continuous_recording(n = 5, mu = 2, lambda = 4, stream_length = 20,
 #'                        F_event = F_exp(), F_interim = F_exp())
+#' 
+#' @author Daniel Swan <dswan@@utexas.edu>
                         
 r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                                    equilibrium = TRUE, p0 = 0, tuning = 2) {
@@ -394,6 +402,8 @@ r_continuous_recording <- function(n, mu, lambda, stream_length, F_event, F_inte
 #' 
 #' r_event_counting(n = 5, mu = 2, lambda = 4, stream_length = 20,
 #'                      F_event = F_exp(), F_interim = F_exp())
+#'                      
+#' @author Daniel Swan <dswan@@utexas.edu>
 
 r_event_counting <- function(n, mu, lambda, stream_length, F_event, F_interim, 
                                  equilibrium = TRUE, p0 = 0, tuning = 2) {
