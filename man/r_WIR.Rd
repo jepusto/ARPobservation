@@ -64,4 +64,7 @@ r_WIR(n = 5, mu = 2, lambda = 4, stream_length = 20,
        interval_length = 1, rest_length = 0,
        summarize = TRUE)
 }
+\author{
+Daniel Swan <dswan@utexas.edu>
+}
 

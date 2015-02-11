@@ -1,0 +1,6 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^cran-comments\.md$
+^PIR_MOM_test\.html$
+^PIR_MOM_test\.Rmd$
+^\.travis\.yml$

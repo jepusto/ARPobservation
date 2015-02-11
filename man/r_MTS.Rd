@@ -59,4 +59,7 @@ r_MTS(n = 5, mu = 2, lambda = 4, stream_length = 20,
        F_event = F_exp(), F_interim = F_exp(),
        interval_length = 1, summarize = TRUE)
 }
+\author{
+Daniel Swan <dswan@utexas.edu>
+}
 

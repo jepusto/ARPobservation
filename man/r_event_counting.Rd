@@ -49,4 +49,7 @@ times exceeds the requested stream length. Then applies an event counting filter
 r_event_counting(n = 5, mu = 2, lambda = 4, stream_length = 20,
                      F_event = F_exp(), F_interim = F_exp())
 }
+\author{
+Daniel Swan <dswan@utexas.edu>
+}
 

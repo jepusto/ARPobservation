@@ -26,7 +26,11 @@ The following procedures are currently implemented:
 \item \code{\link{event_counting}}
 \item \code{\link{interval_recording}}
 }
-To apply multiple procedures to the same behavior stream, use \code{\link{reported_observations}}.
+To apply multiple procedures to the same behavior stream, use \code{\link{reported_observations}}. Data can also
+be simulated using the convenience functions \code{\link{r_PIR}}, \code{\link{r_WIR}}, \code{\link{r_MTS}},
+\code{\link{r_continuous_recording}}, and \code{\link{r_event_counting}}. These functions wrap the
+behavior-stream generation step and the observation recording step into a single function. They are more
+memory efficient, but slightly less computationally efficient, than executing each step in turn.
 }
 \author{
 James E. Pustejovsky <jepusto@gmail.com>

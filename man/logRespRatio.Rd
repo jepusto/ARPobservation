@@ -2,9 +2,10 @@
 % Please edit documentation in R/effect_size_estimators.R
 \name{logRespRatio}
 \alias{logRespRatio}
-\title{Calculate log-response ratio and variance}
+\title{Calculate log-response ratio, variance, and confidence interval}
 \usage{
-logRespRatio(observations, phase, base_level, bias_correct = TRUE)
+logRespRatio(observations, phase, base_level, conf_level = 0.95,
+  bias_correct = TRUE, exponentiate = FALSE)
 }
 \arguments{
 \item{observations}{Vector of observations}
@@ -13,22 +14,36 @@ logRespRatio(observations, phase, base_level, bias_correct = TRUE)
 
 \item{base_level}{a character string or value indicating the name of the baseline level.}
 
+\item{conf_level}{Desired coverage rate of the calculated confidence interval. Default is \code{.95}.}
+
 \item{bias_correct}{Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{TRUE}}
+
+\item{exponentiate}{Logical value indicating if the log-respones ratio should be exponentiated.}
 }
 \value{
-A list with two named entries.
+If \code{exponentiate = FALSE}, a list with three named entries.
 The first entry, \code{lRR}, is the estimated log-response ratio.
 The second entry, \code{V_lRR}, is the estimated variance of the log-response ratio.
+The third entry, \code{CI}, is a vector containing the endpoints of a confidence
+interval of \code{conf_level} coverage rate.
+
+If \code{exponentiate = TRUE}, a list with two named entries.
+The first entry, \code{RR}, is the estimated response ratio.
+The second entry, \code{CI}, is a vector containing the endpoints of a confidence
+interval of \code{conf_level} coverage rate.
 }
 \description{
-Estimates the log-response ratio (with or without bias correction)
-and the variance of the log-response ratio
+Estimates the log-response ratio (with or without bias correction),
+the variance of the log-response ratio, and the confidence interval for a given
+confidence level.
 }
 \details{
 The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}.
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1".
 If there are more than two levels in \code{phase} this function will not work.
 A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+If \code{exponentiate = TRUE}, the log-ratio and the confidence interval will be exponentiated,
+but the variance will be excluded from the output.
 }
 \examples{
 # Estimate the log response ratio and its variance for Carl from Moes dataset
