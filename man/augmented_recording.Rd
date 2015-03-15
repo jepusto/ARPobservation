@@ -20,8 +20,7 @@ columns equal to the number of behavior streams in \code{BS}.
 \description{
 Divides the observation session into intervals.
 Each interval is scored using partial interval recording, whole interval recording, and
-momentary time sampling (at the beginning of the following interval). The sum of the three
-scores is then recorded.
+momentary time sampling (at the beginning of the following interval).
 }
 \details{
 Each behavior stream is divided into intervals of length \code{interval_length}.
