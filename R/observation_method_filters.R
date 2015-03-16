@@ -220,12 +220,18 @@ reported_observations <- function(BS, data_types = c("C","M","E","P","W"),
 
 ## augmented interval recording ####
 
+augmented_recording_single <- function(b_stream, moments, start_time, end_time) {
+  MTS <- MTS_single(b_stream, moments)
+  PIR <- IntRec_single(b_stream, start_time, end_time, partial = TRUE)
+  WIR <- IntRec_single(b_stream, start_time, end_time, partial = FALSE)
+  cbind(MTS = MTS, PIR = c(NA, PIR), WIR = c(NA, WIR))
+}
+
 #' @title Applies augmented interval recording to a behavior stream
 #' 
 #' @description Divides the observation session into intervals. 
 #' Each interval is scored using partial interval recording, whole interval recording, and  
-#' momentary time sampling (at the beginning of the following interval). The sum of the three
-#' scores is then recorded.
+#' momentary time sampling (at the beginning of the following interval). 
 #' 
 #' @param BS object of class behavior_stream
 #' @param interval_length time length of each interval.
@@ -248,10 +254,18 @@ reported_observations <- function(BS, data_types = c("C","M","E","P","W"),
 #' augmented_recording(BS, interval_length = 20)
 
 augmented_recording <- function(BS, interval_length, rest_length = 0) {
-  PIR <- interval_recording(BS, interval_length, rest_length, partial = TRUE, summarize = FALSE)
-  WIR <- interval_recording(BS, interval_length, rest_length, partial = FALSE, summarize = FALSE)
-  MTS <- momentary_time_recording(BS, interval_length, summarize = FALSE)
-  list(initial = MTS[1,], AIR = PIR + WIR + MTS[-1,])
+
+  moments <- seq(0, BS$stream_length, interval_length)
+  n_intervals <- floor(BS$stream_length / interval_length)
+  start_time <- interval_length * (0:(n_intervals - 1))
+  end_time <- start_time + interval_length - rest_length
+  
+  AIR_dat <- sapply(BS$b_streams, augmented_recording_single, 
+                moments = moments, start_time = start_time, end_time = end_time)
+  
+  replicates <- length(BS$b_streams)
+  array(AIR_dat, dim = c(n_intervals + 1, 3, replicates),
+        dimnames = list(interval = 0:n_intervals, proc = c("MTS","PIR","WIR"), rep = 1:replicates))
 }
 
 

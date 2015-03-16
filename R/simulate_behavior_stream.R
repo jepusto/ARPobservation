@@ -421,3 +421,70 @@ r_event_counting <- function(n, mu, lambda, stream_length, F_event, F_interim,
   
   samples
 }
+
+#' @title Generates random augmented interval recording behavior streams
+#' 
+#' @description
+#' Random generation of behavior streams (based on an alternating
+#' renewal process) of a specified length and with specified mean event 
+#' durations, mean interim times, event distribution, and interim distribution,
+#' which are then coded as augmented interval recording data with given interval length
+#' and rest length.
+#' 
+#' @param n number of behavior streams to generate
+#' @param mu mean event duration
+#' @param lambda mean interim time
+#' @param stream_length length of behavior stream
+#' @param F_event distribution of event durations. Must be of class \code{\link{eq_dist}}.
+#' @param F_interim distribution of interim times. Must be of class \code{\link{eq_dist}}.
+#' @param interval_length total interval length
+#' @param rest_length length of any recording time in each interval
+#' @param equilibrium logical; if \code{TRUE}, then equilibrium initial conditions are used; 
+#' if \code{FALSE}, then \code{p0} is used to determine initial state and normal generating 
+#' distributions are used for event durations and interim times.
+#' @param p0 Initial state probability. Only used if \code{equilibrium = FALSE}, in which case
+#' default is zero (i.e., behavior stream always starts with an interim time).
+#' @param tuning controls the size of the chunk of random event durations and interim times.
+#' Adjusting this may be useful in order to speed computation time .
+#' 
+#' @details Generates behavior streams by repeatedly drawing random event durations and 
+#' random interim times from the distributions as specified, until the sum of the durations and interim
+#' times exceeds the requested stream length. Then applies an augmented interval recording filter 
+#' to the generated behavior streams.
+#' 
+#' @return An array with rows corresponding the number of intervals per session, 
+#' columns corresponding to MTS, PIR, and WIR records, all replicated n times.
+#' \code{n} times.
+#' @export
+#' 
+#' @examples
+#' 
+#' r_AIR(n = 5, mu = 2, lambda = 4, stream_length = 20, 
+#'        F_event = F_exp(), F_interim = F_exp(), 
+#'        interval_length = 1, rest_length = 0)
+#'        
+#' @author James Pustejovsky <jepusto@@gmail.com>
+
+r_AIR <- function(n, mu, lambda, stream_length, F_event, F_interim, 
+                  interval_length, rest_length = 0, 
+                  equilibrium = TRUE, p0 = 0, tuning = 2) {
+  
+  if (equilibrium) p0 <- mu / (mu + lambda)
+  
+  moments <- seq(0, stream_length, interval_length)
+  n_intervals <- floor(stream_length / interval_length)
+  start_time <- interval_length * (0:(n_intervals - 1))
+  end_time <- start_time + interval_length - rest_length
+
+  samples <- replicate(n, {
+    BS <- r_behavior_stream_single(mu = mu, lambda = lambda, 
+                                   F_event = F_event, F_interim = F_interim, 
+                                   stream_length = stream_length, 
+                                   equilibrium = equilibrium,
+                                   p0 = p0, tuning = tuning)    
+    augmented_recording_single(b_stream = BS, moments = moments, 
+                               start_time = start_time, end_time = end_time)
+  })
+  
+  samples
+}
