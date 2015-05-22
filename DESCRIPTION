@@ -15,6 +15,7 @@ Author: James E. Pustejovsky, with contributions from Daniel M. Swan
 License: GPL-3
 VignetteBuilder: knitr
 Suggests:
+    shiny,
     plyr,
     reshape2,
     ggplot2,
