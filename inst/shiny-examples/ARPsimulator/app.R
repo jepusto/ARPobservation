@@ -1,7 +1,10 @@
 library(shiny)
+library(ARPobservation)
+library(ggplot2)
+source("ARPsimulator.R")
 
 ui <- fluidPage(
-  headerPanel('Single-Case Design Simulator'),
+  headerPanel('Alternating Renewal Process Simulator'),
   
   fluidRow(
 
@@ -12,7 +15,7 @@ ui <- fluidPage(
            conditionalPanel(
              condition = "input.behavior=='Event behavior'",
              numericInput("freq", label = "Frequency (per min)", value = NA, min = 0, step = 0.1),
-             numericInput("dispersion", label = "Variability", value = 1, min = 0),
+             numericInput("dispersion", label = "Variability", value = 1, min = 0.05, step = 0.05),
              numericInput("freq_change", label = "Percentage change in frequency", value = 0, min = -100, step = 10)
            ),
            conditionalPanel(
@@ -24,6 +27,22 @@ ui <- fluidPage(
            )
     ),
 
+    # Study design
+    column(4, h3("Study design"),
+           selectInput("design", label = "Study design", choices = c("Treatment Reversal","Multiple Baseline")),
+           numericInput("cases", label = "Number of cases", value = 3, min = 1),
+           conditionalPanel(
+             condition = "input.design=='Treatment Reversal'",
+             numericInput("phase_pairs", label = "Number of (AB) phases", value = 2, min = 1),
+             numericInput("sessions_TR", label = "Sessions per phase", value = 5, min = 1)
+           ),
+           conditionalPanel(
+             condition = "input.design=='Multiple Baseline'",
+             numericInput("sessions_MB", label = "Total number of Sessions", value = 20, min = 1),
+             htmlOutput("MB_phase_change_UI")
+           )
+    ),
+    
     # Measurement procedures
     column(4, h3("Measurement procedures"),
            htmlOutput("systemUI"),
@@ -31,71 +50,16 @@ ui <- fluidPage(
              condition = "input.system=='Momentary time sampling'||input.system=='Partial interval recording'||input.system=='Whole interval recording'",
              numericInput("interval_length", label = "Interval length (seconds)", value = 15, min = 1)
            ),
-           numericInput("session_length", label = "Session length (min)", value = 5, min = 1) 
-    ),
-    
-    # Study design
-    column(4, h3("Study design"),
-           selectInput("design", label = "Study design", choices = c("Treatment Reversal","Multiple Baseline")),
-           conditionalPanel(
-             condition = "input.design=='Treatment Reversal'",
-             numericInput("cases_TR", label = "Number of cases", value = 1, min = 1, max = 12),
-             numericInput("phase_pairs", label = "Number of (AB) phases", value = 2, min = 1),
-             numericInput("sessions_TR", label = "Sessions per phase", value = 5, min = 1)
-           ),
-           conditionalPanel(
-             condition = "input.design=='Multiple Baseline'",
-             numericInput("cases_MB", label = "Number of cases", value = 3, min = 1, max = 12),
-             numericInput("sessions_MB", label = "Total number of Sessions", value = 5, min = 1),
-             textInput("phase_changes", label = "Phase change times", value = "")
-           )
+           numericInput("session_length", label = "Session length (min)", value = 10, min = 1) 
     )
   ),
   
   # Output
-  plotOutput('SCDplot'),
+  plotOutput('SCDplot', height = "auto"),
   
   actionButton("refresh", label = "Refresh"),
   numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)
 )
-
-input <- NULL
-input$behavior <- "Event behavior"
-input$freq <- 3
-input$dispersion <- 1
-input$freq_change <- -50
-input$duration <- NA
-input$interim_time <- NA
-input$duration_change <- NA
-input$interim_change <- NA
-input$system <- "Partial interval recording"
-input$interval_length <- 15
-input$session_length <- 5
-input$design <- "Multiple Baseline"
-input$cases_TR <- NA
-input$phase_pairs <- NA
-input$sessions_TR <- NA
-input$cases_MB <- 3
-input$sessions_MB <- 30
-input$phase_changes <- "5, 15, 25"
-input$refresh <- NA
-input$samples <- 5
-
-phase_design <- function() {
-  
-}
-
-simulate_measurements <- function() {
-  
-}
-
-graph_MB <- function() {
-  
-}
-
-graph_TR <- function() {
-  
-}
 
 server <- function(input, output) {
 
@@ -108,6 +72,28 @@ server <- function(input, output) {
                                 "State behavior" = choices[-1])
     selectInput("system", label = "Measurement system", choices = choices_available)
   })
+
+  output$MB_phase_change_UI <- renderUI({
+      phase_changes <- trunc(input$sessions_MB * (1:input$cases) / (input$cases + 1))
+      phase_change_list <- paste(phase_changes, collapse = ", ")
+      textInput("phase_change_list", label = "Phase change times", value = phase_change_list)  
+  })
+  
+  design <- reactive(phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
+                        input$sessions_MB, input$phase_change_list, input$samples))
+
+  output$SCDplot <- renderPlot({
+    input$refresh
+    if (go(input$behavior, input$freq, input$duration, input$interim_time)) {
+      dat <- design()$dat
+      dat$Y <- simulate_measurements(dat$trt, input$behavior, 
+                                     input$freq, input$dispersion, input$freq_change, 
+                                     input$duration, input$interim_time, input$duration_change, input$interim_change,
+                                     input$system, input$interval_length, input$session_length)
+      graph_SCD(dat, input$design, design()$phase_changes, input$system)
+    }
+  }, height = function() max(400, 150 * input$cases))
+  
 }
 
 shinyApp(ui = ui, server = server)
