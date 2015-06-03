@@ -2,22 +2,29 @@
 # Design matrix
 #------------------------------
 
+get_phase_changes <- function(design, sessions_TR, phase_pairs, phase_change_list, cases) {
+  if (design=="Treatment Reversal") {
+    phase_changes <- sessions_TR * (1:(2 * phase_pairs - 1))
+  } else {
+    phase_changes <- as.numeric(strsplit(phase_change_list, split = ",")[[1]])
+    phase_changes <- rep(phase_changes, length.out = cases)
+  }
+  return(phase_changes)
+}
+
 phase_design <- function(design, cases, phase_pairs, sessions_TR, 
-                         sessions_MB, phase_change_list, samples) {
+                         sessions_MB, phase_changes, samples) {
   
   case_names <- paste("Case", LETTERS[1:cases])
   
   if (design=="Treatment Reversal") {
     sample_nr <- 1:samples
     session_nr <- 1:(phase_pairs * 2 * sessions_TR)
-    phase_changes <- sessions_TR * (1:(2 * phase_pairs - 1))
     phase <- rep(1:(2 * phase_pairs), each = sessions_TR)
     trt <- rep(rep(c("Base","Treat"), each = sessions_TR), times = phase_pairs)
   } else {
     sample_nr <- 1:samples
     session_nr <- 1:sessions_MB
-    phase_changes <- as.numeric(strsplit(phase_change_list, split = ",")[[1]])
-    phase_changes <- rep(phase_changes, length.out = cases)
     phase <- unlist(lapply(phase_changes, function(t) rep(1:2, times = c(t, sessions_MB - t))))
     trt <- c("Base","Treat")[phase]
   }
@@ -25,8 +32,7 @@ phase_design <- function(design, cases, phase_pairs, sessions_TR,
   dat <- expand.grid(session = session_nr, case = case_names, sample = sample_nr)
   dat$phase <- factor(phase)
   dat$trt <- factor(trt)
-  
-  return(list(dat = dat, phase_changes = phase_changes))
+  return(dat)
 }
 
 #----------------------------
@@ -81,7 +87,7 @@ graph_SCD <- function(dat, design, phase_changes, system) {
                   "Partial interval recording" = "% Partial intervals",
                   "Whole interval recording" = "% Whole intervals"
   )
-  Y_range <- c(0, ifelse(system=="Frequency counting", max(dat$Y), 100))
+  Y_range <- c(0, ifelse(system=="Frequency counting", max(dat$Y) + 1, 100))
   
   SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
     geom_point() + 
@@ -123,13 +129,15 @@ input$phase_change_list <- "5,10,15"
 input$refresh <- NA
 input$samples <- 5
 
-design <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
-                    input$sessions_MB, input$phase_change_list, input$samples)
+phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
+                                   input$phase_change_list, input$cases)
 
-dat <- design$dat
+dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
+                    input$sessions_MB, phase_changes, input$samples)
+
 dat$Y <- simulate_measurements(dat$trt, input$behavior, 
                                input$freq, input$dispersion, input$freq_change, 
                                input$duration, input$interim_time, input$duration_change, input$interim_change,
                                input$system, input$interval_length, input$session_length)
-
-graph_SCD(dat, input$design, design$phase_changes, input$system)
+sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system)
+with(sim_dat, graph_SCD(dat, design, phase_changes, system))

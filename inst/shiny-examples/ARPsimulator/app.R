@@ -30,7 +30,7 @@ ui <- fluidPage(
     # Study design
     column(4, h3("Study design"),
            selectInput("design", label = "Study design", choices = c("Treatment Reversal","Multiple Baseline")),
-           numericInput("cases", label = "Number of cases", value = 3, min = 1),
+           htmlOutput("cases_UI"),
            conditionalPanel(
              condition = "input.design=='Treatment Reversal'",
              numericInput("phase_pairs", label = "Number of (AB) phases", value = 2, min = 1),
@@ -45,19 +45,20 @@ ui <- fluidPage(
     
     # Measurement procedures
     column(4, h3("Measurement procedures"),
+           numericInput("session_length", label = "Session length (min)", value = 10, min = 1),
            htmlOutput("systemUI"),
            conditionalPanel(
              condition = "input.system=='Momentary time sampling'||input.system=='Partial interval recording'||input.system=='Whole interval recording'",
              numericInput("interval_length", label = "Interval length (seconds)", value = 15, min = 1)
-           ),
-           numericInput("session_length", label = "Session length (min)", value = 10, min = 1) 
+           )
     )
   ),
+  
+  fluidRow(column(12, align = "center", actionButton("simulate", label = "Simulate!"))),
   
   # Output
   plotOutput('SCDplot', height = "auto"),
   
-  actionButton("refresh", label = "Refresh"),
   numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)
 )
 
@@ -73,26 +74,34 @@ server <- function(input, output) {
     selectInput("system", label = "Measurement system", choices = choices_available)
   })
 
+  output$cases_UI <- renderUI({
+    cases <- 1 + 2 * (input$design == "Multiple Baseline")
+    numericInput("cases", label = "Number of cases", value = cases, min = 1)
+  })
+  
   output$MB_phase_change_UI <- renderUI({
-      phase_changes <- trunc(input$sessions_MB * (1:input$cases) / (input$cases + 1))
+      cases <- if (is.null(input$cases)) 1 else input$cases
+      phase_changes <- trunc(input$sessions_MB * (1:cases) / (cases + 1))
       phase_change_list <- paste(phase_changes, collapse = ", ")
       textInput("phase_change_list", label = "Phase change times", value = phase_change_list)  
   })
   
-  design <- reactive(phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
-                        input$sessions_MB, input$phase_change_list, input$samples))
+  sim_dat <- eventReactive(input$simulate, {
+    phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
+                                       input$phase_change_list, input$cases)
+    dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
+                           input$sessions_MB, phase_changes, input$samples)
+    dat$Y <- simulate_measurements(dat$trt, input$behavior, 
+                                   input$freq, input$dispersion, input$freq_change, 
+                                   input$duration, input$interim_time, input$duration_change, input$interim_change,
+                                   input$system, input$interval_length, input$session_length)
+    height <- max(400, 150 * input$cases)
+    list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system, height = height)
+  })
 
   output$SCDplot <- renderPlot({
-    input$refresh
-    if (go(input$behavior, input$freq, input$duration, input$interim_time)) {
-      dat <- design()$dat
-      dat$Y <- simulate_measurements(dat$trt, input$behavior, 
-                                     input$freq, input$dispersion, input$freq_change, 
-                                     input$duration, input$interim_time, input$duration_change, input$interim_change,
-                                     input$system, input$interval_length, input$session_length)
-      graph_SCD(dat, input$design, design()$phase_changes, input$system)
-    }
-  }, height = function() max(400, 150 * input$cases))
+    with(sim_dat(), graph_SCD(dat, design, phase_changes, system))
+  }, height = function() sim_dat()$height)
   
 }
 
