@@ -134,43 +134,91 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   SCD_graph + phase_change_lines
 }
 
+#----------------------------
+# Create effect size graph
+#----------------------------
 
-input <- list()
-input$behavior <- "Event behavior"
-input$freq <- 3
-input$dispersion <- 1
-input$freq_change <- -50
-input$duration <- NA
-input$interim_time <- NA
-input$duration_change <- NA
-input$interim_change <- NA
-input$immediacy <- 20
-input$system <- "Frequency counting"
-input$interval_length <- 15
-input$session_length <- 100
-input$design <- "Multiple Baseline"
-input$cases <- 3
-input$phase_pairs <- 2
-input$sessions_TR <- 5
-input$sessions_MB <- 30
-input$phase_change_list <- "5,10,15"
-input$refresh <- NA
-input$samples <- 2
-input$showtruth <- TRUE
+ES_choices <- c("PND","PEM","PAND","IRD","NAP","Tau")
 
-phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
-                                   input$phase_change_list, input$cases)
+graph_ES <- function(dat, effect_size, improvement, showAvgES) {
 
-dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
-                    input$sessions_MB, phase_changes, input$samples)
+  ES_function <- switch(effect_size,
+                        PND = PND,
+                        PEM = PEM,
+                        PAND = PAND,
+                        IRD = IRD,
+                        NAP = NAP,
+                        Tau = Tau)
 
-dat <- simulate_measurements(dat, input$behavior, 
-                               input$freq, input$dispersion, input$freq_change, 
-                               input$duration, input$interim_time, input$duration_change, 
-                               input$interim_change, input$immediacy, 
-                               input$system, input$interval_length, input$session_length)
+  # calculate effect sizes
+  group_by(dat, case, sample) %>%
+    summarize(ES = ES_function(data = Y, phase = trt, base_phase = "Base", increase = improvement==1)) %>%
+    ungroup() -> ES_dat
+  
+  # graph effect sizes
+  X_range <- if (effect_size %in% c("IRD","Tau")) c(-1,1) else c(0,100)
+  cases <- nlevels(ES_dat$case)
+  legend_position <- if (cases > 1) "bottom" else "none"
+  ES_graph <- ggplot(ES_dat, aes(ES, fill = case)) + 
+    geom_density(alpha = 1 / cases) + 
+    coord_cartesian(xlim = X_range) + 
+    theme_minimal() + theme(legend.position = legend_position) + 
+    labs(x = effect_size, y = "distribution", fill = "") 
+  
+  if (showAvgES) {
+    ES_avg <- group_by(ES_dat, case) %>% summarize(ESavg = mean(ES))
+    ES_graph <- ES_graph + 
+      geom_vline(data = ES_avg, aes(xintercept = ESavg, color = case), size = 1, linetype = "dashed")
+  } 
+  
+  ES_graph
+} 
 
-sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
-                system = input$system)
-
-with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
+# library(ARPobservation)
+# library(dplyr)
+# library(ggplot2)
+# source("inst/shiny-examples/ARPsimulator/effect sizes.R")
+# 
+# input <- list()
+# input$behavior <- "Event behavior"
+# input$freq <- 3
+# input$dispersion <- 1
+# input$freq_change <- -50
+# input$duration <- NA
+# input$interim_time <- NA
+# input$duration_change <- NA
+# input$interim_change <- NA
+# input$immediacy <- 20
+# input$system <- "Frequency counting"
+# input$interval_length <- 15
+# input$session_length <- 100
+# input$design <- "Multiple Baseline"
+# input$cases <- 3
+# input$phase_pairs <- 2
+# input$sessions_TR <- 5
+# input$sessions_MB <- 30
+# input$phase_change_list <- "5,10,15"
+# input$refresh <- NA
+# input$samples <- 50
+# input$showtruth <- TRUE
+# input$effect_size <- "NAP"
+# input$improvement <- 2
+# 
+# phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
+#                                    input$phase_change_list, input$cases)
+# 
+# dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
+#                     input$sessions_MB, phase_changes, input$samples)
+# 
+# dat <- simulate_measurements(dat, input$behavior, 
+#                                input$freq, input$dispersion, input$freq_change, 
+#                                input$duration, input$interim_time, input$duration_change, 
+#                                input$interim_change, input$immediacy, 
+#                                input$system, input$interval_length, input$session_length)
+# 
+# sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
+#                 system = input$system)
+# 
+# with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
+# 
+# with(sim_dat, graph_ES(dat, input$effect_size, input$improvement))

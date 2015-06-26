@@ -1,6 +1,8 @@
 library(shiny)
 library(ARPobservation)
+library(dplyr)
 library(ggplot2)
+source("effect sizes.R")
 source("ARPsimulator.R")
 
 ui <- navbarPage(title = "Alternating Renewal Process Simulator",
@@ -14,19 +16,19 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                        choices = c("Event behavior", "State behavior")),
            conditionalPanel(
              condition = "input.behavior=='Event behavior'",
-             numericInput("freq", label = "Frequency (per min)", value = NA, min = 0, step = 0.1),
+             numericInput("freq", label = "Frequency (per min)", value = 1, min = 0, step = 0.1),
              numericInput("dispersion", label = "Variability", value = 1, min = 0.05, step = 0.05),
              numericInput("freq_change", label = "Percentage change in frequency", value = 0, min = -100, step = 10)
            ),
            conditionalPanel(
              condition = "input.behavior=='State behavior'",
-             numericInput("duration", label = "Event duration (seconds)", value = NA, min = 0, step = 1),
-             numericInput("interim_time", label = "Interim time (seconds)", value = NA, min = 0, step = 1),
+             numericInput("duration", label = "Event duration (seconds)", value = 30, min = 0, step = 1),
+             numericInput("interim_time", label = "Interim time (seconds)", value = 60, min = 0, step = 1),
              numericInput("duration_change", label = "Percentage change in event duration", value = 0, min = -100, step = 10),
              numericInput("interim_change", label = "Percentage change in Interim time", value = 0, min = -100, step = 10)
            ),
            sliderInput("immediacy", label = "Immediacy of change (%)", 
-                       min = 0, max = 100, value = 100, step = 1)
+                       min = 0, max = 100, value = 100, step = 5)
     ),
 
     # Study design
@@ -63,17 +65,36 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
   
   tabsetPanel(id = "outputPanel", type = "tabs",
               tabPanel("Graph",  
-                
-                fluidRow(column(12, br())),
-                column(12, align = "center", actionButton("simulate", label = "Simulate!")),
-                plotOutput('SCDplot', height = "auto"),
-  
-                fluidRow(
-                  column(3, numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)),
-                  column(3, offset = 6, checkboxInput("showtruth", label = "Show true trend lines", value = FALSE))
+                column(12, br()),
+                sidebarLayout(
+                  sidebarPanel(width = 3,
+                    numericInput("samplesGraph", label = "Samples per case", value = 1, min = 1, max = 100),
+                    checkboxInput("showtruth", label = "Show true trend lines", value = FALSE),
+                    column(12, align = "center", actionButton("simulateGraph", label = "Simulate!")),
+                    br()
+                  ),
+                  mainPanel(width = 9,
+                    plotOutput('SCDplot', height = "auto")
+                    )
                 )
               ),
-              tabPanel("Effect sizes"))
+              tabPanel("Effect sizes",
+                column(12, br()),
+                sidebarLayout(
+                  sidebarPanel(width = 3,
+                    numericInput("samplesES", label = "Samples per case", value = 100, min = 1, max = 100),
+                    selectInput("effect_size", label = "Effect size measure", choices = ES_choices),
+                    radioButtons("improvement", label = "Direction of improvement", choices = list("increase" = 1, "decrease" = 2), selected = 1),
+                    checkboxInput("showAvgES", label = "Show average", value = FALSE),
+                    column(12, align = "center", actionButton("simulateES", label = "Simulate!")),
+                    br()
+                    ),
+                  mainPanel(width = 9,
+                    plotOutput('ESplot', height = "auto")
+                    )
+                  )
+                )
+              )
   ),
   tabPanel("Help")
 )
@@ -102,23 +123,28 @@ server <- function(input, output) {
       textInput("phase_change_list", label = "Phase change times", value = phase_change_list)  
   })
   
-  sim_dat <- eventReactive(input$simulate, {
+  sim_dat <- eventReactive(c(input$outputPanel, input$simulateGraph, input$simulateES), {
     phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
                                        input$phase_change_list, input$cases)
+    samples <- ifelse(input$outputPanel == "Graph", input$samplesGraph, input$samplesES)
     dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
-                           input$sessions_MB, phase_changes, input$samples)
+                           input$sessions_MB, phase_changes, samples)
     dat <- simulate_measurements(dat, input$behavior, 
                                    input$freq, input$dispersion, input$freq_change, 
                                    input$duration, input$interim_time, input$duration_change,
                                    input$interim_change, input$immediacy, 
                                    input$system, input$interval_length, input$session_length)
-    height <- max(400, 150 * input$cases)
-    list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system, height = height)
+    height <- max(300, 150 * input$cases)
+    list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system, height_SCD = height)
   })
 
   output$SCDplot <- renderPlot({
     with(sim_dat(), graph_SCD(dat, design, phase_changes, system, input$showtruth))
-  }, height = function() sim_dat()$height)
+  }, height = function() sim_dat()$height_SCD)
+
+  output$ESplot <- renderPlot({
+    graph_ES(sim_dat()$dat, input$effect_size, input$improvement, input$showAvgES)
+  }, height = 400)
   
 }
 
