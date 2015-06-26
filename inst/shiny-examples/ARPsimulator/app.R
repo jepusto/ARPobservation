@@ -64,7 +64,7 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                   br())),
   
   tabsetPanel(id = "outputPanel", type = "tabs",
-              tabPanel("Graph",  
+              tabPanel("SCD Graph",  
                 column(12, br()),
                 sidebarLayout(
                   sidebarPanel(width = 3,
@@ -96,7 +96,24 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                 )
               )
   ),
-  tabPanel("Help")
+  tabPanel("Help",
+    navlistPanel(widths = c(3,9),
+      tabPanel("Overview", includeMarkdown("markdown/Overview.md")),
+      tabPanel("Behavioral parameters", includeMarkdown("markdown/Behavioral_parameters.md")),
+      tabPanel("Study design features", includeMarkdown("markdown/Study_design.md")),
+      tabPanel("Measurement procedures", includeMarkdown("markdown/Measurement_procedures.md")),
+      tabPanel("Single-case graph", includeMarkdown("markdown/SCD_graph.md")),
+      tabPanel("Effect size graph", includeMarkdown("markdown/ES_graph.md"))
+    )
+  ),
+  tabPanel("About",
+           navlistPanel(widths = c(3,9),
+                        tabPanel("The Alternating Renewal Process"),
+                        tabPanel("The model for behavior change"),
+                        tabPanel("Effect sizes"),
+                        tabPanel("Further reading")
+           )
+  )
 )
 
 server <- function(input, output) {
@@ -126,7 +143,7 @@ server <- function(input, output) {
   sim_dat <- eventReactive(c(input$outputPanel, input$simulateGraph, input$simulateES), {
     phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
                                        input$phase_change_list, input$cases)
-    samples <- ifelse(input$outputPanel == "Graph", input$samplesGraph, input$samplesES)
+    samples <- ifelse(input$outputPanel == "SCD Graph", input$samplesGraph, input$samplesES)
     dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
                            input$sessions_MB, phase_changes, samples)
     dat <- simulate_measurements(dat, input$behavior, 

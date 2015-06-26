@@ -1,0 +1,17 @@
+### Behavioral parameters
+
+In order to make effective use of the tool, you will have to have some idea about the characteristics of the behavior you are trying to measure. The simulator provides models for two different types of behaviors, called event behaviors and state behaviors. 
+
+* __Event behaviors__ (also known as frequency behaviors) are those where each occurrence is instantaneous (at least approximately), and where the main characteristic of interest is the __frequency__ or __rate__ of occurrence. For example, a child's self-injurious behavior might involve head-smacking, and the researcher would interested in measuring (and ultimately, reducing) the rate of head-smacks.
+* __State behaviors__ (also known as duration behaviors) are those where each occurrence (spell, bout,...) of the behavior lasts some length of time. For example, a student's on-task behavior involves lengths of time where he is on-task and lengths of time where he is off-task, day-dreaming, or engaging in problem behavior. With state behaviors, the researcher is often most interested in measuring (and changing) the __prevalence__ or __percentage duration__ of the behavior, although they may also be interested in the behavior's __frequency__ or __rate of occurrence__ (e.g., one might want to encourage _long_ bouts of on-task behavior, rather than many short bouts, even if the overall percentage duration is the same). 
+
+To use the tool, you will first need to choose which type of behavior to simulate (further decisions are contingent on this choice). Usually this shouldn't be to hard to decide. Select the appropriate option from the first drop-down menu in column 1 of the simulator. 
+
+### Event behaviors
+
+If you are simulating an event behavior, you will need to input four further pieces of information. 
+
+1. First, you will need to specify the __frequency (per min)__ of the behavior during the baseline phase (i.e., before you begin treatment). Do this by inputting a number into the box in column 1 of the simulator. You might have a sense of the behavior's frequency from previous interactions with the participant, or you might need to make a very rough guess.  (Remember, this is all just a hypothetical exercise, and you can always experiment with different values later.) 
+2. In the next input box of column 1, you will need to decide on the __variability__ of the behavior--i.e., how much the frequency of the behavior jumps around from session to session. The default here is set to 1. Values between 0 and 1 will make the pattern of behavior more stable, while values greater than 1 will make the pattern of behavior more erratic. If you have no idea about variability, just leave it on the default of 1.
+3. The third input box of column 1 asks you to specify the __percentage change__ in frequency as a result of the treatment, from -100% (i.e., complete extinction) to +100% (doubling the frequency) or more. The default value of 0% corresponds to no change (i.e., a treatment that has no effect at all--neither beneficial nor harmful). It may seem odd to you to have to specify a value for percentage change--after all, the whole point of conducting the study is to see how much the behavior can be changed!--but again, this is just a hypothetical exercise. If you have no sense of how big a change you might see, you might choose a value here by thinking about what the smallest percentage change would be where you would still consider the treatment to be somewhat effective.  
+4. 
