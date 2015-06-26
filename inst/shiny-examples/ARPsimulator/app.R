@@ -3,8 +3,8 @@ library(ARPobservation)
 library(ggplot2)
 source("ARPsimulator.R")
 
-ui <- fluidPage(
-  headerPanel('Alternating Renewal Process Simulator'),
+ui <- navbarPage(title = "Alternating Renewal Process Simulator",
+  tabPanel("Simulator",
   
   fluidRow(
 
@@ -65,15 +65,17 @@ ui <- fluidPage(
               tabPanel("Graph",  
                 
                 fluidRow(column(12, br())),
+                column(12, align = "center", actionButton("simulate", label = "Simulate!")),
                 plotOutput('SCDplot', height = "auto"),
   
                 fluidRow(
                   column(3, numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)),
-                  column(6, align = "center", actionButton("simulate", label = "Simulate!")),
-                  column(3, checkboxInput("showtruth", label = "Show true trend lines", value = FALSE))
+                  column(3, offset = 6, checkboxInput("showtruth", label = "Show true trend lines", value = FALSE))
                 )
               ),
               tabPanel("Effect sizes"))
+  ),
+  tabPanel("Help")
 )
 
 server <- function(input, output) {

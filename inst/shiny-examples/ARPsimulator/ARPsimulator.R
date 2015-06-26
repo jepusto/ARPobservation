@@ -80,7 +80,7 @@ simulate_measurements <- function(dat, behavior, freq, dispersion, freq_change,
   if (system == "Frequency counting") {
     dat$truth <- session_length / lambda
   } else {
-    dat$truth <- mu / (mu + lambda)
+    dat$truth <- 100 * mu / (mu + lambda)
   }
   
   # compute observed data
@@ -121,7 +121,7 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
     labs(color = "Phase", y = Y_lab) 
   
   if (showtruth) {
-    SCD_graph <- SCD_graph + geom_line(aes(session, truth), size = 1.0)
+    SCD_graph <- SCD_graph + geom_line(data = subset(dat, sample==1), aes(session, truth), size = 1.0)
   }
   
   if (design == "Multiple Baseline") {
