@@ -25,7 +25,8 @@ ui <- fluidPage(
              numericInput("duration_change", label = "Percentage change in event duration", value = 0, min = -100, step = 10),
              numericInput("interim_change", label = "Percentage change in Interim time", value = 0, min = -100, step = 10)
            ),
-           numericInput("immediacy", label = "Immediacy of change (%)", value = 100, min = 0, max = 100, step = 1)
+           sliderInput("immediacy", label = "Immediacy of change (%)", 
+                       min = 0, max = 100, value = 100, step = 1)
     ),
 
     # Study design
@@ -60,7 +61,10 @@ ui <- fluidPage(
   # Output
   plotOutput('SCDplot', height = "auto"),
   
-  numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)
+  fluidRow(
+    column(3, numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)),
+    column(3, checkboxInput("showtruth", label = "Show true trend lines", value = FALSE), offset = 6)
+  )
 )
 
 server <- function(input, output) {
@@ -102,7 +106,7 @@ server <- function(input, output) {
   })
 
   output$SCDplot <- renderPlot({
-    with(sim_dat(), graph_SCD(dat, design, phase_changes, system))
+    with(sim_dat(), graph_SCD(dat, design, phase_changes, system, input$showtruth))
   }, height = function() sim_dat()$height)
   
 }

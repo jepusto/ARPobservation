@@ -99,7 +99,7 @@ simulate_measurements <- function(dat, behavior, freq, dispersion, freq_change,
 # Create SCD graph
 #----------------------------
 
-graph_SCD <- function(dat, design, phase_changes, system) {
+graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   
   Y_lab <- switch(system,
                   "Frequency counting" = "Events",
@@ -110,13 +110,19 @@ graph_SCD <- function(dat, design, phase_changes, system) {
   )
   Y_range <- c(0, ifelse(system=="Frequency counting", max(dat$Y) + 1, 100))
   
+  samples <- max(dat$sample)
+  
   SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
-    geom_point() + 
-    geom_line() + 
+    geom_point(alpha = samples^(-1/4)) + 
+    geom_line(alpha = samples^(-1/2)) + 
     facet_grid(case ~ .) + 
     coord_cartesian(ylim = Y_range) + 
     theme_bw() + theme(legend.position = "bottom") + 
     labs(color = "Phase", y = Y_lab) 
+  
+  if (showtruth) {
+    SCD_graph <- SCD_graph + geom_line(aes(session, truth), size = 1.0)
+  }
   
   if (design == "Multiple Baseline") {
     phase_dat <- data.frame(case = levels(dat$case), phase_change = phase_changes + 0.5)
@@ -129,40 +135,42 @@ graph_SCD <- function(dat, design, phase_changes, system) {
 }
 
 
-# input <- list()
-# input$behavior <- "Event behavior"
-# input$freq <- 3
-# input$dispersion <- 1
-# input$freq_change <- -50
-# input$duration <- NA
-# input$interim_time <- NA
-# input$duration_change <- NA
-# input$interim_change <- NA
-# input$immediacy <- 20
-# input$system <- "Frequency counting"
-# input$interval_length <- 15
-# input$session_length <- 100
-# input$design <- "Multiple Baseline"
-# input$cases <- 3
-# input$phase_pairs <- 2
-# input$sessions_TR <- 5
-# input$sessions_MB <- 30
-# input$phase_change_list <- "5,10,15"
-# input$refresh <- NA
-# input$samples <- 2
-# 
-# phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
-#                                    input$phase_change_list, input$cases)
-# 
-# dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
-#                     input$sessions_MB, phase_changes, input$samples)
-# 
-# dat <- simulate_measurements(dat, input$behavior, 
-#                                input$freq, input$dispersion, input$freq_change, 
-#                                input$duration, input$interim_time, input$duration_change, 
-#                                input$interim_change, input$immediacy, 
-#                                input$system, input$interval_length, input$session_length)
-# 
-# sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system)
-# 
-# with(sim_dat, graph_SCD(dat, design, phase_changes, system))
+input <- list()
+input$behavior <- "Event behavior"
+input$freq <- 3
+input$dispersion <- 1
+input$freq_change <- -50
+input$duration <- NA
+input$interim_time <- NA
+input$duration_change <- NA
+input$interim_change <- NA
+input$immediacy <- 20
+input$system <- "Frequency counting"
+input$interval_length <- 15
+input$session_length <- 100
+input$design <- "Multiple Baseline"
+input$cases <- 3
+input$phase_pairs <- 2
+input$sessions_TR <- 5
+input$sessions_MB <- 30
+input$phase_change_list <- "5,10,15"
+input$refresh <- NA
+input$samples <- 2
+input$showtruth <- TRUE
+
+phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
+                                   input$phase_change_list, input$cases)
+
+dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
+                    input$sessions_MB, phase_changes, input$samples)
+
+dat <- simulate_measurements(dat, input$behavior, 
+                               input$freq, input$dispersion, input$freq_change, 
+                               input$duration, input$interim_time, input$duration_change, 
+                               input$interim_change, input$immediacy, 
+                               input$system, input$interval_length, input$session_length)
+
+sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
+                system = input$system)
+
+with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
