@@ -46,3 +46,12 @@ Tau <- function(data, phase, base_phase, increase = TRUE) {
   nap <- NAP(data = data, phase = phase, base_phase = base_phase, increase = increase)
   2 * nap / 100 - 1
 }
+
+SMD <- function(data, phase, base_phase, ...) {
+  treat_phase <- levels(phase)[(base_phase != levels(phase))]
+  y_bar <- tapply(data, phase, mean)[c(base_phase, treat_phase)]
+  s_sq <- tapply(data, phase, var)[c(base_phase, treat_phase)]
+  n <- table(phase)[c(base_phase, treat_phase)]
+  s_pooled <- sqrt(sum((n - 1) * s_sq) / sum(n - 1))
+  (y_bar[2] - y_bar[1]) / s_pooled
+}

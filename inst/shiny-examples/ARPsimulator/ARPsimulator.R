@@ -138,7 +138,7 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
 # Create effect size graph
 #----------------------------
 
-ES_choices <- c("PND","PEM","PAND","IRD","NAP","Tau")
+ES_choices <- c("PND","PEM","PAND","IRD","NAP","Tau","Within-case SMD")
 
 graph_ES <- function(dat, effect_size, improvement, showAvgES) {
 
@@ -148,7 +148,8 @@ graph_ES <- function(dat, effect_size, improvement, showAvgES) {
                         PAND = PAND,
                         IRD = IRD,
                         NAP = NAP,
-                        Tau = Tau)
+                        Tau = Tau,
+                        "Within-case SMD" = SMD)
 
   # calculate effect sizes
   group_by(dat, case, sample) %>%
@@ -156,11 +157,18 @@ graph_ES <- function(dat, effect_size, improvement, showAvgES) {
     ungroup() -> ES_dat
   
   # graph effect sizes
-  X_range <- if (effect_size %in% c("IRD","Tau")) c(-1,1) else c(0,100)
+  X_range <- switch(effect_size,
+                    PND = c(0,100),
+                    PEM = c(0,100),
+                    PAND = c(0,100),
+                    IRD = c(-1,1),
+                    NAP = c(0,100),
+                    Tau = c(-1,1),
+                    "Within-case SMD" = range(ES_dat$ES))
   cases <- nlevels(ES_dat$case)
   legend_position <- if (cases > 1) "bottom" else "none"
   ES_graph <- ggplot(ES_dat, aes(ES, fill = case)) + 
-    geom_density(alpha = 1 / cases) + 
+    geom_density(alpha = 1 / max(2,cases)) + 
     coord_cartesian(xlim = X_range) + 
     theme_minimal() + theme(legend.position = legend_position) + 
     labs(x = effect_size, y = "distribution", fill = "") 
