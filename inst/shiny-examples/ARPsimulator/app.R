@@ -55,16 +55,25 @@ ui <- fluidPage(
            )
     )
   ),
+
+  fluidRow(column(12, 
+                  br(),
+                  hr(),
+                  br())),
   
-  fluidRow(column(12, align = "center", actionButton("simulate", label = "Simulate!"))),
+  tabsetPanel(id = "outputPanel", type = "tabs",
+              tabPanel("Graph",  
+                
+                fluidRow(column(12, br())),
+                plotOutput('SCDplot', height = "auto"),
   
-  # Output
-  plotOutput('SCDplot', height = "auto"),
-  
-  fluidRow(
-    column(3, numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)),
-    column(3, checkboxInput("showtruth", label = "Show true trend lines", value = FALSE), offset = 6)
-  )
+                fluidRow(
+                  column(3, numericInput("samples", label = "Samples per case", value = 1, min = 1, max = 100)),
+                  column(6, align = "center", actionButton("simulate", label = "Simulate!")),
+                  column(3, checkboxInput("showtruth", label = "Show true trend lines", value = FALSE))
+                )
+              ),
+              tabPanel("Effect sizes"))
 )
 
 server <- function(input, output) {
