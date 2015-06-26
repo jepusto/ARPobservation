@@ -44,33 +44,54 @@ go <- function(behavior, freq, duration, interim_time) {
        (behavior == "State behavior" & !is.na(duration) & !is.na(interim_time))
 }
 
-simulate_measurements <- function(trt, behavior, freq, dispersion, freq_change, 
-                                  duration, interim_time, duration_change, interim_change,
+impact <- function(trt, omega) {
+  n <- length(trt)
+  impact <- c(as.numeric(trt[1]=="Treat"), rep(NA, n - 1))
+  for (j in 2:n) impact[j] <- omega * impact[j - 1] + (1 - omega) * (trt[j]=="Treat")
+  impact
+}
+
+simulate_measurements <- function(dat, behavior, freq, dispersion, freq_change, 
+                                  duration, interim_time, duration_change, 
+                                  interim_change, immediacy,
                                   system, interval_length, session_length) {
+
+  N <- nrow(dat)  
+  omega <- 1 - immediacy / 100
+  impact <- with(dat, unlist(tapply(trt, list(case, sample), impact, omega = omega)))
   
   if (behavior == "Event behavior") {
-    mu <- c(0,0)
-    lambda <- 1 / (freq * c(1, freq_change / 100 + 1))
+    mu <- rep(0, N)
+    lambda <- 1 / (freq * (impact * freq_change / 100 + 1))
     F_event <- F_const()
     F_interim <- F_gam(shape = 1 / dispersion)
   } else {
-    mu <- duration * c(1, duration_change / 100 + 1) / 60
-    lambda <- interim_time * c(1, interim_change / 100 + 1) / 60
+    mu <- duration * (impact * duration_change / 100 + 1) / 60
+    lambda <- interim_time * (impact * interim_change / 100 + 1) / 60
     F_event <- F_exp()
     F_interim <- F_exp()
   }
   
-  BS <- r_behavior_stream(n = length(trt), mu = mu[trt], lambda = lambda[trt],
-                          F_event = F_event, F_interim = F_interim, stream_length = session_length)
+  BS <- r_behavior_stream(n = N, mu = mu, lambda = lambda,
+                          F_event = F_event, F_interim = F_interim, 
+                          stream_length = session_length)
   
-  Y <- switch(system,
+  # compute true trend lines
+  if (system == "Frequency counting") {
+    dat$truth <- session_length / lambda
+  } else {
+    dat$truth <- mu / (mu + lambda)
+  }
+  
+  # compute observed data
+  dat$Y <- switch(system,
               "Frequency counting" = event_counting(BS),
               "Continuous recording" = 100 * continuous_duration_recording(BS),
               "Momentary time sampling" = 100 * momentary_time_recording(BS, interval_length / 60),
               "Partial interval recording" = 100 * interval_recording(BS, interval_length / 60, partial = TRUE),
               "Whole interval recording" = 100 * interval_recording(BS, interval_length / 60, partial = FALSE)
   )
-  return(Y)
+  return(dat)
 }
 
 
@@ -108,36 +129,40 @@ graph_SCD <- function(dat, design, phase_changes, system) {
 }
 
 
-input <- list()
-input$behavior <- "Event behavior"
-input$freq <- 3
-input$dispersion <- 1
-input$freq_change <- -50
-input$duration <- NA
-input$interim_time <- NA
-input$duration_change <- NA
-input$interim_change <- NA
-input$system <- "Frequency counting"
-input$interval_length <- 15
-input$session_length <- 5
-input$design <- "Treatment Reversal"
-input$cases <- 3
-input$phase_pairs <- 2
-input$sessions_TR <- 5
-input$sessions_MB <- 30
-input$phase_change_list <- "5,10,15"
-input$refresh <- NA
-input$samples <- 5
-
-phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
-                                   input$phase_change_list, input$cases)
-
-dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
-                    input$sessions_MB, phase_changes, input$samples)
-
-dat$Y <- simulate_measurements(dat$trt, input$behavior, 
-                               input$freq, input$dispersion, input$freq_change, 
-                               input$duration, input$interim_time, input$duration_change, input$interim_change,
-                               input$system, input$interval_length, input$session_length)
-sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system)
-with(sim_dat, graph_SCD(dat, design, phase_changes, system))
+# input <- list()
+# input$behavior <- "Event behavior"
+# input$freq <- 3
+# input$dispersion <- 1
+# input$freq_change <- -50
+# input$duration <- NA
+# input$interim_time <- NA
+# input$duration_change <- NA
+# input$interim_change <- NA
+# input$immediacy <- 20
+# input$system <- "Frequency counting"
+# input$interval_length <- 15
+# input$session_length <- 100
+# input$design <- "Multiple Baseline"
+# input$cases <- 3
+# input$phase_pairs <- 2
+# input$sessions_TR <- 5
+# input$sessions_MB <- 30
+# input$phase_change_list <- "5,10,15"
+# input$refresh <- NA
+# input$samples <- 2
+# 
+# phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
+#                                    input$phase_change_list, input$cases)
+# 
+# dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
+#                     input$sessions_MB, phase_changes, input$samples)
+# 
+# dat <- simulate_measurements(dat, input$behavior, 
+#                                input$freq, input$dispersion, input$freq_change, 
+#                                input$duration, input$interim_time, input$duration_change, 
+#                                input$interim_change, input$immediacy, 
+#                                input$system, input$interval_length, input$session_length)
+# 
+# sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system)
+# 
+# with(sim_dat, graph_SCD(dat, design, phase_changes, system))

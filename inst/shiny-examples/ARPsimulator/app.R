@@ -24,7 +24,8 @@ ui <- fluidPage(
              numericInput("interim_time", label = "Interim time (seconds)", value = NA, min = 0, step = 1),
              numericInput("duration_change", label = "Percentage change in event duration", value = 0, min = -100, step = 10),
              numericInput("interim_change", label = "Percentage change in Interim time", value = 0, min = -100, step = 10)
-           )
+           ),
+           numericInput("immediacy", label = "Immediacy of change (%)", value = 100, min = 0, max = 100, step = 1)
     ),
 
     # Study design
@@ -91,9 +92,10 @@ server <- function(input, output) {
                                        input$phase_change_list, input$cases)
     dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
                            input$sessions_MB, phase_changes, input$samples)
-    dat$Y <- simulate_measurements(dat$trt, input$behavior, 
+    dat <- simulate_measurements(dat, input$behavior, 
                                    input$freq, input$dispersion, input$freq_change, 
-                                   input$duration, input$interim_time, input$duration_change, input$interim_change,
+                                   input$duration, input$interim_time, input$duration_change,
+                                   input$interim_change, input$immediacy, 
                                    input$system, input$interval_length, input$session_length)
     height <- max(400, 150 * input$cases)
     list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system, height = height)
