@@ -127,40 +127,51 @@ server <- function(input, output) {
                                 "State behavior" = choices[-1])
     selectInput("system", label = "Measurement system", choices = choices_available)
   })
-
+  
   output$cases_UI <- renderUI({
-    cases <- 1 + 2 * (input$design == "Multiple Baseline")
+    cases <- 1L + 2 * (input$design == "Multiple Baseline")
     numericInput("cases", label = "Number of cases", value = cases, min = 1)
   })
   
   output$MB_phase_change_UI <- renderUI({
-      cases <- if (is.null(input$cases)) 1 else input$cases
+      cases <- if (is.null(input$cases)) 1L else input$cases
       phase_changes <- trunc(input$sessions_MB * (1:cases) / (cases + 1))
       phase_change_list <- paste(phase_changes, collapse = ", ")
       textInput("phase_change_list", label = "Phase change times", value = phase_change_list)  
   })
   
   sim_dat <- eventReactive(c(input$outputPanel, input$simulateGraph, input$simulateES), {
+    cases <- if (is.null(input$cases)) 1L else input$cases
+    system <- if (is.null(input$system)) {
+      if (input$behavior=="Event behavior") choices[1] else choices[2]
+    } else {
+      input$system
+    }
     phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
-                                       input$phase_change_list, input$cases)
+                                       input$phase_change_list, cases)
     samples <- ifelse(input$outputPanel == "SCD Graph", input$samplesGraph, input$samplesES)
-    dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
+    dat <- phase_design(input$design, cases, input$phase_pairs, input$sessions_TR, 
                            input$sessions_MB, phase_changes, samples)
     dat <- simulate_measurements(dat, input$behavior, 
                                    input$freq, input$dispersion, input$freq_change, 
                                    input$duration, input$interim_time, input$duration_change,
                                    input$interim_change, input$immediacy, 
-                                   input$system, input$interval_length, input$session_length)
-    height <- max(300, 150 * input$cases)
-    list(dat = dat, design = input$design, phase_changes = phase_changes, system = input$system, height_SCD = height)
+                                   system, input$interval_length, input$session_length)
+    height <- max(300, 150 * cases)
+    list(dat = dat, design = input$design, phase_changes = phase_changes, 
+         system = system, height_SCD = height)
   })
 
   output$SCDplot <- renderPlot({
-    with(sim_dat(), graph_SCD(dat, design, phase_changes, system, input$showtruth))
+    if (input$simulateGraph > 0 | input$simulateES > 0) {
+      with(sim_dat(), graph_SCD(dat, design, phase_changes, system, input$showtruth))
+    }
   }, height = function() sim_dat()$height_SCD)
 
   output$ESplot <- renderPlot({
-    graph_ES(sim_dat()$dat, input$effect_size, input$improvement, input$showAvgES)
+    if (input$simulateGraph > 0 | input$simulateES > 0) {
+      graph_ES(sim_dat()$dat, input$effect_size, input$improvement, input$showAvgES)
+    }
   }, height = 400)
   
 }

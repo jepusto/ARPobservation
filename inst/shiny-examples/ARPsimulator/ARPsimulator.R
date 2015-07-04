@@ -115,11 +115,14 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
     geom_point(alpha = samples^(-1/4)) + 
     geom_line(alpha = samples^(-1/2)) + 
-    facet_grid(case ~ .) + 
     coord_cartesian(ylim = Y_range) + 
     theme_bw() + theme(legend.position = "bottom") + 
     labs(color = "Phase", y = Y_lab) 
   
+  if (nlevels(dat$case) > 1) {
+    SCD_graph <- SCD_graph + facet_grid(case ~ .)
+  }
+
   if (showtruth) {
     SCD_graph <- SCD_graph + geom_line(data = subset(dat, sample==1), aes(session, truth), size = 1.0)
   }
