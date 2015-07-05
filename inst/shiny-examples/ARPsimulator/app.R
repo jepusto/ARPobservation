@@ -2,7 +2,7 @@ library(shiny)
 library(ARPobservation)
 library(dplyr)
 library(ggplot2)
-source("effect sizes.R")
+source("effect_sizes.R")
 source("ARPsimulator.R")
 
 ui <- navbarPage(title = "Alternating Renewal Process Simulator",
