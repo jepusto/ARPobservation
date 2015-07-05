@@ -42,7 +42,7 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
            ),
            conditionalPanel(
              condition = "input.design=='Multiple Baseline'",
-             numericInput("sessions_MB", label = "Total number of Sessions", value = 20, min = 1),
+             numericInput("sessions_MB", label = "Total number of sessions", value = 20, min = 1),
              htmlOutput("MB_phase_change_UI")
            )
     ),
@@ -100,19 +100,13 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
     navlistPanel(widths = c(3,9),
       tabPanel("Overview", includeMarkdown("markdown/Overview.md")),
       tabPanel("Behavioral parameters", includeMarkdown("markdown/Behavioral_parameters.md")),
+      tabPanel("Event behaviors", includeMarkdown("markdown/Event_behaviors.md")),
+      tabPanel("State behaviors", includeMarkdown("markdown/State_behaviors.md")),
       tabPanel("Study design features", includeMarkdown("markdown/Study_design.md")),
       tabPanel("Measurement procedures", includeMarkdown("markdown/Measurement_procedures.md")),
       tabPanel("Single-case graph", includeMarkdown("markdown/SCD_graph.md")),
       tabPanel("Effect size graph", includeMarkdown("markdown/ES_graph.md"))
     )
-  ),
-  tabPanel("About",
-           navlistPanel(widths = c(3,9),
-                        tabPanel("The Alternating Renewal Process"),
-                        tabPanel("The model for behavior change"),
-                        tabPanel("Effect sizes"),
-                        tabPanel("Further reading")
-           )
   )
 )
 
