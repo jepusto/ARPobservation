@@ -8,19 +8,19 @@ The __Effect sizes__ tab in the lower pane of the simulator displays the samplin
 
 The effect size sampling distribution tab has four further options:
 
-1. 
-2. 
-3. The number of __samples per case__ controls how many hypothetical studies will be simulated in order to estimate the sampling distribution of the effect size for each case. 
-4. 
+1. The __effect size measure__ that is calculated for each case. Currently, seven different effect size options are available. See below for more details.
+2. In order to calculate the non-overlap measures of effect size, one must first specify the __direction of improvement__, meaning whether an increase or a decrease in the outcome is desirable. For example, a treatment would normally be intended to _decrease_ problem behavior, whereas another treatment might be intended to _increase_ social initiations.
+3. The number of __samples per case__ controls how many hypothetical studies will be simulated in order to estimate the sampling distribution of the effect size for each case. The default is 100. Increasing the number of samples per case will produce a more accurate estimate of the sampling distribution, at a cost of increased computation time.
+4. The __show average__ check-box controls whether dashed lines are displayed to indicate the average effect size estimate for each case. 
 
 #### Effect size measures
 
-Currently, seven different effect size measures are available, including many of the non-overlap measures as well as the within-case standardized mean difference statistic. These seven measures were selected because they are commonly used as effect sizes for single-case designs. Other effect size measures that account for time trends and auto-correlation are excluded because the basic model embedded in the ARPsimulator assumes stability of baseline trends and independence of measurements across sessions. The seven included effect sizes are:
+Seven different effect size measures are currently implemented, including many of the non-overlap measures as well as the within-case standardized mean difference statistic. These measures were selected because they are commonly used as effect sizes for single-case designs. Other effect size measures that account for time trends and auto-correlation are excluded because the basic model embedded in the ARPsimulator assumes stability of baseline trends and independence of measurements across sessions. The seven included effect sizes are defined as follows. For non-overlap measures, the definitions assume that an increase (decrease) in the outcome represents an improvement.
 
-* __Percentage of non-overlapping data (PND)__
-* __Percentage exceeding the median (PEM)__
-* __Percentage of all non-overlapping data (PAND)__
-* __Improvement rate difference (IRD)__
-* __Non-overlap of all pairs (NAP)__
-* __Tau__
-* __Within-case standardized mean difference (SMD)__
+* __Percentage of non-overlapping data (PND)__ is defined as the percentage of observations in the treatment phase that are greater than (less than) the highest (lowest) observation in the baseline phase. PND is the most commonly used effect size in systematic reviews and syntheses of single-case designs. 
+* __Percentage exceeding the median (PEM)__ is defined as the percentage of observations in the treatment phase that are greater than (less than) the median observation in the baseline phase. Treatment phase observations that are exactly equal to the median of the baseline phase are counted as half an observation. 
+* __Percentage of all non-overlapping data (PAND)__ is defined as the percentage of observations remaining after removing the minimum possible number of observations (from either or both phases) such that the maximum (minimum) observation in the baseline phase is less than the minimum (maximum) observation in the treatment phase.
+* __Improvement rate difference (IRD)__ is a linear transformation of PAND.
+* __Non-overlap of all pairs (NAP)__ is defined as the number of percentage of all possible pairs of one baseline phase observation and one treatment phase observation where the latter is greater than (less than) the former. Exact ties are counted as half of a pair.
+* __Tau__ is equal to the Spearman rank-correlation between the outcome measurements and a binary variable equal to one for the treatment (baseline) phase and zero otherwise. Tau is a linear transformation of NAP. 
+* __Within-case standardized mean difference (SMD)__ is a ratio where the numerator isthe difference between the mean of the treatment phase observations and the mean of the baseline phase observations and the denominator is the within-phase standard deviation of the observations, pooled across the baseline and treatment phases.

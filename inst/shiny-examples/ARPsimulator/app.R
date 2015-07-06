@@ -83,7 +83,10 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                 sidebarLayout(
                   sidebarPanel(width = 3,
                     selectInput("effect_size", label = "Effect size measure", choices = ES_choices),
-                    radioButtons("improvement", label = "Direction of improvement", choices = list("increase" = 1, "decrease" = 2), selected = 1),
+                    conditionalPanel(
+                      condition = "input.effect_size != 'Within-case SMD'",
+                      radioButtons("improvement", label = "Direction of improvement", choices = list("increase" = 1, "decrease" = 2), selected = 1)
+                      ),
                     numericInput("samplesES", label = "Samples per case", value = 100, min = 1, max = 100),
                     checkboxInput("showAvgES", label = "Show average", value = FALSE),
                     column(12, align = "center", actionButton("simulateES", label = "Simulate!")),
@@ -110,7 +113,8 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
   ),
   tabPanel("About",
            navlistPanel(widths = c(3,9),
-                        tabPanel("ARPsimulator", includeMarkdown("markdown/ARPsimulator.md"))
+                        tabPanel("ARPsimulator", includeMarkdown("markdown/ARPsimulator.md")),
+                        tabPanel("Accessing the simulator", includeMarkdown("markdown/Accessing_ARPsimulator.md"))
            )
   )
 )

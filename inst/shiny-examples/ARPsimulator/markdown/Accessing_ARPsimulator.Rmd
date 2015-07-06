@@ -1,0 +1,12 @@
+---
+output: md_document
+---
+
+### Accessing the ARPsimulator
+
+There are two ways to access the ARPsimulator: via a website or on your own computer, using the RStudio software. Since you are reading this now, you have presumably already figure out at least one of these. 
+
+#### Access through the shinyapps.io website
+
+#### Access through RStudio
+
