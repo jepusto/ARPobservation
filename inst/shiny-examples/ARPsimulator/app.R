@@ -60,9 +60,8 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
   ),
 
   fluidRow(column(12, 
-                  br(),
                   hr(),
-                  br())),
+                  h3("Results"))),
   
   tabsetPanel(id = "outputPanel", type = "tabs",
               tabPanel("SCD Graph",  
