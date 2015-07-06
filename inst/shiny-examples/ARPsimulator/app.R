@@ -87,7 +87,7 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                       condition = "input.effect_size != 'Within-case SMD'",
                       radioButtons("improvement", label = "Direction of improvement", choices = list("increase" = 1, "decrease" = 2), selected = 1)
                       ),
-                    numericInput("samplesES", label = "Samples per case", value = 100, min = 1, max = 100),
+                    numericInput("samplesES", label = "Samples per case", value = 100, min = 1, max = 1000),
                     checkboxInput("showAvgES", label = "Show average", value = FALSE),
                     column(12, align = "center", actionButton("simulateES", label = "Simulate!")),
                     br()

@@ -1,8 +1,8 @@
 name: ARPsimulator
 account: jepusto
 server: shinyapps.io
-bundleId: 215574
+bundleId: 215948
 url: https://jepusto.shinyapps.io/ARPsimulator
-when: 1436126872.57549
+when: 1436208078.62263
 asMultiple: FALSE
 asStatic: FALSE

@@ -39,11 +39,6 @@ phase_design <- function(design, cases, phase_pairs, sessions_TR,
 # Generate outcome data
 #----------------------------
 
-go <- function(behavior, freq, duration, interim_time) {
-  (behavior == "Event behavior" & !is.na(freq)) | 
-       (behavior == "State behavior" & !is.na(duration) & !is.na(interim_time))
-}
-
 impact <- function(trt, omega) {
   n <- length(trt)
   impact <- c(as.numeric(trt[1]=="Treat"), rep(NA, n - 1))
