@@ -1,9 +1,0 @@
-,
-  tabPanel("About",
-           navlistPanel(widths = c(3,9),
-                        tabPanel("The Alternating Renewal Process"),
-                        tabPanel("The model for behavior change"),
-                        tabPanel("Effect sizes"),
-                        tabPanel("Further reading")
-           )
-  )
