@@ -18,6 +18,7 @@ Suggests:
     shiny,
     plyr,
     reshape2,
+    dplyr,
     ggplot2,
     knitr,
     testthat

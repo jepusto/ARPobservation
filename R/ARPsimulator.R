@@ -23,7 +23,7 @@ ARPsimulator <- function() {
   
   appDir <- system.file("shiny-examples", "ARPsimulator", package = "ARPobservation")
   if (appDir == "") {
-    stop("Could not find the application director. Try re-installing ARPobservation.", call. = FALSE)
+    stop("Could not find the application directory. Try re-installing ARPobservation.", call. = FALSE)
   }
   
   shiny::runApp(appDir, display.mode = "normal")
