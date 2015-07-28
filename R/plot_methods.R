@@ -40,7 +40,7 @@ plot.behavior_stream <- function(x, session_color = "black", episode_color = "bl
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("This function needs the ggplot2 package to work. Please install it.", call. = FALSE)
   } 
- 
+
   streams <- length(x$b_streams)
   stream_dat <- data.frame(stream = 1:streams, start = 0, end = x$stream_length) 
   
@@ -56,5 +56,3 @@ plot.behavior_stream <- function(x, session_color = "black", episode_color = "bl
     ggplot2::labs(x = "session time", y = "stream") + 
     ggplot2::theme_minimal()
 }
-
-
