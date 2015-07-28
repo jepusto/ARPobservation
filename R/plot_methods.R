@@ -4,7 +4,7 @@
 
 get_segments <- function(bs, stream_length) {
   transitions <- c(0, bs$b_stream, stream_length)
-  s <- trunc((length(bs$b_stream) + 2 * bs$start_state) / 2)
+  s <- trunc((length(bs$b_stream) + bs$start_state + 1) / 2)
   start <- transitions[2 * (1:s) - bs$start_state]
   end <- transitions[2 * (1:s) - bs$start_state + 1]
   data.frame(stream = bs$index, start, end)
