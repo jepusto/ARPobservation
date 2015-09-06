@@ -28,9 +28,9 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
            )
     ),
     
-    # Treatment effects
+    # Behavior change parameters
     column(3, h3("Behavior change"),
-           numericInput("n_trt", label = "Number of treatments", value = 1, min = 1),
+           numericInput("n_trt", label = "Number of treatments", value = 1, min = 1, max = 4),
            conditionalPanel(
              condition = "input.behavior=='Event behavior'",
              numericInput("freq_change", label = "Percentage change in frequency", value = 0, min = -100, step = 10)
