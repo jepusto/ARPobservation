@@ -1,8 +1,22 @@
-### Behavioral parameters
+### Baseline behavioral parameters
 
-In order to make effective use of the ARPsimulator, you will have to have some idea about the characteristics of the behavior you are trying to measure. The simulator provides models for two different types of behaviors, called event behaviors and state behaviors:
+In order to make effective use of the ARPsimulator, you will have to have some idea about the baseline characteristics of the behavior you are trying to measure. The simulator provides models for two different types of behaviors, called event behaviors and state behaviors:
 
 * __Event behaviors__ (also known as frequency behaviors) are those where each occurrence is instantaneous (at least approximately), and where the main characteristic of interest is the __frequency__ or __rate__ of occurrence. For example, a child's self-injurious behavior might involve head-smacking, and the researcher would interested in measuring (and ultimately, reducing) the rate of head-smacks.
 * __State behaviors__ (also known as duration behaviors) are those where each occurrence (spell, bout,...) of the behavior lasts some length of time. For example, a student's on-task behavior involves lengths of time where he is on-task and lengths of time where he is off-task, day-dreaming, or engaging in problem behavior. With state behaviors, the researcher is often most interested in measuring (and changing) the __prevalence__ or __percentage duration__ of the behavior, although they may also be interested in the behavior's __frequency__ or __rate of occurrence__ (e.g., one might want to encourage _long_ bouts of on-task behavior, rather than many short bouts, even if the overall percentage duration is the same). 
 
-To use the tool, you will first need to choose which type of behavior to simulate. (Usually this shouldn't be to hard to decide.) The further choices you will need to make are contingent on the type of behavior you want to simulate. Select the appropriate option from the first drop-down menu in column 1 of the simulator. Then read further about the inputs for event behaviors or for state behaviors.
+To use the tool, you will first need to choose which type of behavior to simulate. (Usually this shouldn't be to hard to decide.) The further choices you will need to make are contingent on the type of behavior you want to simulate. Select the appropriate option from the first drop-down menu in column one of the simulator. Then read further about the inputs for event behaviors or for state behaviors.
+
+#### Event behaviors
+
+If you are simulating an event behavior, you will need to input two further pieces of information. 
+
+* First, you will need to specify the __frequency (per min)__ of the behavior during the baseline phase (i.e., before beginning treatment). Do this by inputting a number into the box in column one of the simulator. You might have a sense of the behavior's frequency from previous interactions with the participant, or you might need to make a very rough guess.  (Remember, this is all just a hypothetical exercise, and you can always experiment with different values later.) 
+* In the third input box of column one, you will need to decide on the __variability__ of the behavior--i.e., how much the frequency of the behavior jumps around from session to session. The default here is set to 1. Values between 0 and 1 will make the pattern of behavior more stable, while values greater than 1 will make the pattern of behavior more erratic. If you have no idea about variability, just leave it on the default of 1.
+
+#### State behaviors
+
+If you are simulating a state behavior, you will need to input three further pieces of information.
+
+* First, you will need to specify values for the average __event duration__ (sometimes called __duration per occurrence__) and the average __interim time__ (sometimes called __inter-response time__) of the behavior during the baseline phase (i.e., before beginning treatment). Do this by inputting values into the second and third boxes in column one of the simulator. Note that both quantities should be specified in seconds. You might have a sense of these characteristics of the behavior from previous interactions with the participant, or you might need to make rough guesses. (Remember, this is all just a hypothetical exercise, and you can always experiment with different values later.) Taken together, these two quantities determine the average percentage of time that the behavior occurs during the baseline phase. (Specifically, the average percentage duration is equal to the average event duration divided by the sum of the average event duration and the average interim time.)
+* In the fourth input box of column one, you will need to decide on the __variability__ of the behavior--i.e., how much the duration and interim time of the behavior jumps around from session to session. The default here is set to 1. Values between 0 and 1 will make the pattern of behavior more stable, while values greater than 1 will make the pattern of behavior more erratic. If you have no idea about variability, just leave it on the default of 1.

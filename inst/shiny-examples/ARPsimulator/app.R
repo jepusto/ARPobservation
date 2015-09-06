@@ -11,29 +11,51 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
   
   fluidRow(
 
-    # Behavioral parameters
-    column(4, h3("Behavioral parameters"),
+    # Baseline behavioral parameters
+    column(3, h3("Baseline behavior"),
            selectInput("behavior", label = "Behavior class", 
                        choices = c("Event behavior", "State behavior")),
            conditionalPanel(
              condition = "input.behavior=='Event behavior'",
              numericInput("freq", label = "Frequency (per min)", value = 1, min = 0, step = 0.1),
-             numericInput("dispersion", label = "Variability", value = 1, min = 0.05, step = 0.05),
-             numericInput("freq_change", label = "Percentage change in frequency", value = 0, min = -100, step = 10)
+             numericInput("freq_dispersion", label = "Variability", value = 1, min = 0.05, step = 0.05)
            ),
            conditionalPanel(
              condition = "input.behavior=='State behavior'",
              numericInput("duration", label = "Event duration (seconds)", value = 30, min = 0, step = 1),
              numericInput("interim_time", label = "Interim time (seconds)", value = 60, min = 0, step = 1),
+             numericInput("state_dispersion", label = "Variability", value = 1, min = 0.05, step = 0.05)
+           )
+    ),
+    
+    # Treatment effects
+    column(3, h3("Behavior change"),
+           numericInput("n_trt", label = "Number of treatments", value = 1, min = 1),
+           conditionalPanel(
+             condition = "input.behavior=='Event behavior'",
+             numericInput("freq_change", label = "Percentage change in frequency", value = 0, min = -100, step = 10)
+           ),
+           conditionalPanel(
+             condition = "input.behavior=='State behavior'",
              numericInput("duration_change", label = "Percentage change in event duration", value = 0, min = -100, step = 10),
              numericInput("interim_change", label = "Percentage change in Interim time", value = 0, min = -100, step = 10)
            ),
            sliderInput("immediacy", label = "Immediacy of change (%)", 
                        min = 0, max = 100, value = 100, step = 5)
     ),
-
+    
+    # Measurement procedures
+    column(3, h3("Measurement procedures"),
+           numericInput("session_length", label = "Session length (min)", value = 10, min = 1),
+           htmlOutput("systemUI"),
+           conditionalPanel(
+             condition = "input.system=='Momentary time sampling'||input.system=='Partial interval recording'||input.system=='Whole interval recording'",
+             numericInput("interval_length", label = "Interval length (seconds)", value = 15, min = 1)
+           )
+    ),
+    
     # Study design
-    column(4, h3("Study design"),
+    column(3, h3("Study design"),
            selectInput("design", label = "Study design", choices = c("Treatment Reversal","Multiple Baseline")),
            htmlOutput("cases_UI"),
            conditionalPanel(
@@ -45,16 +67,6 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
              condition = "input.design=='Multiple Baseline'",
              numericInput("sessions_MB", label = "Total number of sessions", value = 20, min = 1),
              htmlOutput("MB_phase_change_UI")
-           )
-    ),
-    
-    # Measurement procedures
-    column(4, h3("Measurement procedures"),
-           numericInput("session_length", label = "Session length (min)", value = 10, min = 1),
-           htmlOutput("systemUI"),
-           conditionalPanel(
-             condition = "input.system=='Momentary time sampling'||input.system=='Partial interval recording'||input.system=='Whole interval recording'",
-             numericInput("interval_length", label = "Interval length (seconds)", value = 15, min = 1)
            )
     )
   ),
@@ -102,11 +114,10 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
   tabPanel("Help",
     navlistPanel(widths = c(3,9),
       tabPanel("Overview", includeMarkdown("markdown/Overview.md")),
-      tabPanel("Behavioral parameters", includeMarkdown("markdown/Behavioral_parameters.md")),
-      tabPanel("Event behaviors", includeMarkdown("markdown/Event_behaviors.md")),
-      tabPanel("State behaviors", includeMarkdown("markdown/State_behaviors.md")),
-      tabPanel("Study design features", includeMarkdown("markdown/Study_design.md")),
+      tabPanel("Baseline behavior", includeMarkdown("markdown/Behavioral_parameters.md")),
+      tabPanel("Behavior change", includeMarkdown("markdown/Behavior_change.md")),
       tabPanel("Measurement procedures", includeMarkdown("markdown/Measurement_procedures.md")),
+      tabPanel("Study design features", includeMarkdown("markdown/Study_design.md")),
       tabPanel("Single-case graph", includeMarkdown("markdown/SCD_graph.md")),
       tabPanel("Effect size graph", includeMarkdown("markdown/ES_graph.md"))
     )
@@ -156,9 +167,9 @@ server <- function(input, output) {
     dat <- phase_design(input$design, cases, input$phase_pairs, input$sessions_TR, 
                            input$sessions_MB, phase_changes, samples)
     dat <- simulate_measurements(dat, input$behavior, 
-                                   input$freq, input$dispersion, input$freq_change, 
-                                   input$duration, input$interim_time, input$duration_change,
-                                   input$interim_change, input$immediacy, 
+                                   input$freq, input$freq_dispersion, 
+                                   input$duration, input$interim_time, input$state_dispersion, 
+                                   input$freq_change, input$duration_change, input$interim_change, input$immediacy, 
                                    system, input$interval_length, input$session_length)
     height <- max(300, 150 * cases)
     list(dat = dat, design = input$design, phase_changes = phase_changes, 

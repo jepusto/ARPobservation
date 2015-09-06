@@ -46,9 +46,9 @@ impact <- function(trt, omega) {
   impact
 }
 
-simulate_measurements <- function(dat, behavior, freq, dispersion, freq_change, 
-                                  duration, interim_time, duration_change, 
-                                  interim_change, immediacy,
+simulate_measurements <- function(dat, behavior, freq, freq_dispersion, 
+                                  duration, interim_time, state_dispersion, 
+                                  freq_change, duration_change, interim_change, immediacy,
                                   system, interval_length, session_length) {
 
   N <- nrow(dat)  
@@ -59,12 +59,12 @@ simulate_measurements <- function(dat, behavior, freq, dispersion, freq_change,
     mu <- rep(0, N)
     lambda <- 1 / (freq * (impact * freq_change / 100 + 1))
     F_event <- F_const()
-    F_interim <- F_gam(shape = 1 / dispersion)
+    F_interim <- F_gam(shape = 1 / freq_dispersion)
   } else {
     mu <- duration * (impact * duration_change / 100 + 1) / 60
     lambda <- interim_time * (impact * interim_change / 100 + 1) / 60
-    F_event <- F_exp()
-    F_interim <- F_exp()
+    F_event <- F_gam(shape = 1 / state_dispersion)
+    F_interim <- F_gam(shape = 1 / state_dispersion)
   }
   
   BS <- r_behavior_stream(n = N, mu = mu, lambda = lambda,
