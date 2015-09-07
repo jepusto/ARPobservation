@@ -34,12 +34,13 @@ server <- function(input, output) {
   
   trt_effect_params <- reactive({
     trts <- 1:input$n_trt
-    freq_change <- input[paste0("freq_change",trts)]
-    duration_change <- input[paste0("duration_change",trts)]
-    interim_change <- input[paste0("interim_change",trts)]
-    immediacy <- input[paste0("immediacy",trts)]
+    freq_change <- unlist(input[paste0("freq_change",trts)])
+    duration_change <- unlist(input[paste0("duration_change",trts)])
+    interim_change <- unlist(input[paste0("interim_change",trts)])
+    immediacy <- unlist(input[paste0("immediacy",trts)])
     
-    list(freq_change, duration_change, interim_change, immediacy)
+    list(freq_change = freq_change, duration_change = duration_change, 
+         interim_change = interim_change, immediacy = immediacy)
   })
     
   choices <- c("Frequency counting","Continuous recording", 
@@ -74,6 +75,10 @@ server <- function(input, output) {
     })
   })
   
+  MB_phase_changes <- reactive({
+    input[paste0("phase_change_list",1:input$n_trt)]
+  })
+  
   sim_dat <- eventReactive(c(input$outputPanel, input$simulateGraph, input$simulateES), {
     cases <- if (is.null(input$cases)) 1L else input$cases
     system <- if (is.null(input$system)) {
@@ -81,11 +86,14 @@ server <- function(input, output) {
     } else {
       input$system
     }
+
     phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
                                        input$phase_change_list, cases)
     samples <- ifelse(input$outputPanel == "SCD Graph", input$samplesGraph, input$samplesES)
+    
     dat <- phase_design(input$design, cases, input$phase_pairs, input$sessions_TR, 
                         input$sessions_MB, phase_changes, samples)
+    
     dat <- simulate_measurements(dat, input$behavior, 
                                  input$freq, input$freq_dispersion, 
                                  input$duration, input$interim_time, input$state_dispersion, 

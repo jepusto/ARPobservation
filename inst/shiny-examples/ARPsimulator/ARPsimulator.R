@@ -2,31 +2,44 @@
 # Design matrix
 #------------------------------
 
-get_phase_changes <- function(design, sessions_TR, phase_pairs, phase_change_list, cases) {
+get_phase_changes <- function(design, sessions_TR, phase_pattern, MB_phase_changes, cases) {
   if (design=="Treatment Reversal") {
-    phase_changes <- sessions_TR * (1:(2 * phase_pairs - 1))
+    phase_labels <- strsplit(phase_pattern, "")[[1]]
+    phase_changes <- sessions_TR * (1:(length(phase_labels) - 1))
   } else {
-    phase_changes <- as.numeric(strsplit(phase_change_list, split = ",")[[1]])
-    phase_changes <- rep(phase_changes, length.out = cases)
+    phase_changes <- lapply(MB_phase_changes, function(x) as.numeric(strsplit(x, split = ",")[[1]]))
+    phase_changes <- sapply(phase_changes, function(x) rep(x, length.out = cases))
+    phase_changes <- as.list(data.frame(t(phase_changes)))
+    names(phase_changes) <- NULL
   }
   return(phase_changes)
 }
 
-phase_design <- function(design, cases, phase_pairs, sessions_TR, 
-                         sessions_MB, phase_changes, samples) {
+phase_design <- function(design, n_trt, cases, phase_pattern, sessions_TR, 
+                         sessions_MB, phase_changes, n_alternations, randomize_AT, samples) {
   
   case_names <- paste("Case", LETTERS[1:cases])
   
+  sample_nr <- 1:samples
+
   if (design=="Treatment Reversal") {
-    sample_nr <- 1:samples
-    session_nr <- 1:(phase_pairs * 2 * sessions_TR)
-    phase <- rep(1:(2 * phase_pairs), each = sessions_TR)
-    trt <- rep(rep(c("Base","Treat"), each = sessions_TR), times = phase_pairs)
-  } else {
-    sample_nr <- 1:samples
+    phase_labels <- strsplit(phase_pattern, "")[[1]]
+    session_nr <- 1:(length(phase_labels) * sessions_TR)
+    phase <- rep(1:length(phase_labels), each = sessions_TR)
+    trt <- rep(phase_labels, each = sessions_TR)
+  } else if (design=="Multiple Baseline") {
     session_nr <- 1:sessions_MB
-    phase <- unlist(lapply(phase_changes, function(t) rep(1:2, times = c(t, sessions_MB - t))))
-    trt <- c("Base","Treat")[phase]
+    phase <- unlist(lapply(phase_changes, function(t) 
+      rep(1:(n_trt + 1), times = diff(c(0,t,sessions_MB)))))
+    trt <- LETTERS[phase]
+  } else {
+    n <- n_trt + 1
+    session_nr <- 1:(n * n_alternations)
+    if (randomize_AT) {
+      trt <- as.vector(replicate(n_alternations, sample(LETTERS[1:n])))
+    } else {
+      trt <- rep(LETTERS[1:(n_trt + 1)], n_alternations)
+    }
   }
   
   dat <- expand.grid(session = session_nr, case = case_names, sample = sample_nr)
@@ -180,51 +193,91 @@ graph_ES <- function(dat, effect_size, improvement, showAvgES) {
   ES_graph
 } 
 
-# library(ARPobservation)
-# library(dplyr)
-# library(ggplot2)
-# source("inst/shiny-examples/ARPsimulator/effect sizes.R")
-# 
-# input <- list()
-# input$behavior <- "Event behavior"
-# input$freq <- 3
-# input$dispersion <- 1
-# input$freq_change <- -50
-# input$duration <- NA
-# input$interim_time <- NA
-# input$duration_change <- NA
-# input$interim_change <- NA
-# input$immediacy <- 20
-# input$system <- "Frequency counting"
-# input$interval_length <- 15
-# input$session_length <- 100
-# input$design <- "Multiple Baseline"
-# input$cases <- 3
-# input$phase_pairs <- 2
-# input$sessions_TR <- 5
-# input$sessions_MB <- 30
-# input$phase_change_list <- "5,10,15"
-# input$refresh <- NA
-# input$samples <- 50
-# input$showtruth <- TRUE
-# input$effect_size <- "NAP"
-# input$improvement <- 2
-# 
-# phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
-#                                    input$phase_change_list, input$cases)
-# 
-# dat <- phase_design(input$design, input$cases, input$phase_pairs, input$sessions_TR, 
-#                     input$sessions_MB, phase_changes, input$samples)
-# 
-# dat <- simulate_measurements(dat, input$behavior, 
-#                                input$freq, input$dispersion, input$freq_change, 
-#                                input$duration, input$interim_time, input$duration_change, 
-#                                input$interim_change, input$immediacy, 
-#                                input$system, input$interval_length, input$session_length)
-# 
-# sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
-#                 system = input$system)
-# 
-# with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
-# 
-# with(sim_dat, graph_ES(dat, input$effect_size, input$improvement))
+library(ARPobservation)
+library(dplyr)
+library(ggplot2)
+source("inst/shiny-examples/ARPsimulator/effect_sizes.R")
+
+input <- list()
+
+# baseline behavior 
+input$behavior <- "Event behavior"
+input$freq <- 3
+input$freq_dispersion <- 1
+input$duration <- 30
+input$interim_time <- 90
+input$state_dispersion <- 1
+
+# behavior change
+input$n_trt <- 3
+input$freq_change1 <- -50
+input$duration_change1 <- NA
+input$interim_change1 <- NA
+input$immediacy1 <- 20
+input$freq_change2 <- -80
+input$duration_change2 <- NA
+input$interim_change2 <- NA
+input$immediacy2 <- 20
+input$freq_change3 <- -90
+input$duration_change3 <- NA
+input$interim_change3 <- NA
+input$immediacy3 <- 20
+
+# Measurement system
+input$system <- "Frequency counting"
+input$interval_length <- 15
+input$session_length <- 100
+
+# Study design
+input$design <- "Treatment reversal"
+input$cases <- 3
+input$phase_pattern <- "ABCDABCD"
+input$sessions_TR <- 5
+input$sessions_MB <- 30
+input$phase_change_list1 <- "5,10,15"
+input$phase_change_list2 <- "12,17,22"
+input$phase_change_list3 <- "19,24,28"
+input$n_alternations <- 3
+input$randomize_AT <- TRUE
+
+# Miscellaneous
+input$refresh <- NA
+input$samples <- 1
+input$showtruth <- TRUE
+input$effect_size <- "NAP"
+input$improvement <- 2
+
+# Treatment effect parameters (reactive)
+trts <- 1:input$n_trt
+freq_change <- unlist(input[paste0("freq_change",trts)])
+duration_change <- unlist(input[paste0("duration_change",trts)])
+interim_change <- unlist(input[paste0("interim_change",trts)])
+immediacy <- unlist(input[paste0("immediacy",trts)])
+
+trt_effect_params <- list(freq_change = freq_change, duration_change = duration_change, 
+                          interim_change = interim_change, immediacy = immediacy)
+
+
+# MB phase changes (reactive)
+MB_phase_changes <- unlist(input[paste0("phase_change_list",1:input$n_trt)])
+
+
+phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pattern, 
+                                   MB_phase_changes, input$cases)
+
+dat <- phase_design(input$design, input$n_trt, input$cases, input$phase_pairs, input$sessions_TR, 
+                    input$sessions_MB, phase_changes, 
+                    input$n_alternations, input$randomize_AT, input$samples)
+
+dat <- simulate_measurements(dat, input$behavior, 
+                               input$freq, input$dispersion, input$freq_change, 
+                               input$duration, input$interim_time, input$duration_change, 
+                               input$interim_change, input$immediacy, 
+                               input$system, input$interval_length, input$session_length)
+
+sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
+                system = input$system)
+
+with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
+
+with(sim_dat, graph_ES(dat, input$effect_size, input$improvement))
