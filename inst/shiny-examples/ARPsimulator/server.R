@@ -87,18 +87,20 @@ server <- function(input, output) {
       input$system
     }
 
-    phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pairs, 
-                                       input$phase_change_list, cases)
+    phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pattern, 
+                                       MB_phase_changes, input$cases)
+    
     samples <- ifelse(input$outputPanel == "SCD Graph", input$samplesGraph, input$samplesES)
     
-    dat <- phase_design(input$design, cases, input$phase_pairs, input$sessions_TR, 
-                        input$sessions_MB, phase_changes, samples)
+    dat <- phase_design(input$design, input$n_trt, cases, input$phase_pattern, 
+                        input$sessions_TR, input$sessions_MB, phase_changes, 
+                        input$n_alternations, input$randomize_AT, samples)
     
-    dat <- simulate_measurements(dat, input$behavior, 
-                                 input$freq, input$freq_dispersion, 
-                                 input$duration, input$interim_time, input$state_dispersion, 
-                                 input$freq_change, input$duration_change, input$interim_change, input$immediacy, 
+    dat <- simulate_measurements(dat, input$behavior, input$freq, input$freq_dispersion, 
+                                 input$duration, input$interim_time, input$state_dispersion,
+                                 trt_effect_params, 
                                  system, input$interval_length, input$session_length)
+    
     height <- max(300, 150 * cases)
     list(dat = dat, design = input$design, phase_changes = phase_changes, 
          system = system, height_SCD = height)

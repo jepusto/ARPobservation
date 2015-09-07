@@ -35,6 +35,7 @@ phase_design <- function(design, n_trt, cases, phase_pattern, sessions_TR,
   } else {
     n <- n_trt + 1
     session_nr <- 1:(n * n_alternations)
+    phase <- rep(1:n_alternations, each = n)
     if (randomize_AT) {
       trt <- as.vector(replicate(n_alternations, sample(LETTERS[1:n])))
     } else {
@@ -54,28 +55,33 @@ phase_design <- function(design, n_trt, cases, phase_pattern, sessions_TR,
 
 impact <- function(trt, omega) {
   n <- length(trt)
-  impact <- c(as.numeric(trt[1]=="Treat"), rep(NA, n - 1))
-  for (j in 2:n) impact[j] <- omega * impact[j - 1] + (1 - omega) * (trt[j]=="Treat")
-  impact
+  impact <- matrix(c(as.numeric(trt[1]==(levels(trt)[-1])), rep(NA, (n - 1) * (nlevels(trt) - 1))),
+                   nlevels(trt) - 1, n)
+  for (j in 2:n) impact[,j] <- omega * impact[,j - 1] + (1 - omega) * (trt[j]==(levels(trt)[-1]))
+  data.frame(t(impact))
 }
 
 simulate_measurements <- function(dat, behavior, freq, freq_dispersion, 
                                   duration, interim_time, state_dispersion, 
-                                  freq_change, duration_change, interim_change, immediacy,
+                                  trt_effect_params,
                                   system, interval_length, session_length) {
 
   N <- nrow(dat)  
-  omega <- 1 - immediacy / 100
-  impact <- with(dat, unlist(tapply(trt, list(case, sample), impact, omega = omega)))
+  omega <- 1 - trt_effect_params$immediacy / 100
+  group_by(dat, sample, case) %>%
+    do(impact(.$trt, omega = omega)) %>%
+    ungroup() %>% select(-sample, -case) %>%
+    as.matrix() ->
+    X_impact
   
   if (behavior == "Event behavior") {
     mu <- rep(0, N)
-    lambda <- 1 / (freq * (impact * freq_change / 100 + 1))
+    lambda <- 1 / (freq * (X_impact %*% trt_effect_params$freq_change / 100 + 1))
     F_event <- F_const()
     F_interim <- F_gam(shape = 1 / freq_dispersion)
   } else {
-    mu <- duration * (impact * duration_change / 100 + 1) / 60
-    lambda <- interim_time * (impact * interim_change / 100 + 1) / 60
+    mu <- duration * (X_impact %*% trt_effect_params$duration_change / 100 + 1) / 60
+    lambda <- interim_time * (X_impact %*% trt_effect_params$interim_change / 100 + 1) / 60
     F_event <- F_gam(shape = 1 / state_dispersion)
     F_interim <- F_gam(shape = 1 / state_dispersion)
   }
@@ -137,12 +143,12 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   
   if (design == "Multiple Baseline") {
     phase_dat <- data.frame(case = levels(dat$case), phase_change = phase_changes + 0.5)
-    phase_change_lines <- geom_vline(data = phase_dat, aes(xintercept = phase_change), linetype = "dashed")
-  } else {
-    phase_change_lines <- geom_vline(xintercept = phase_changes + 0.5, linetype = "dashed")
+    SCD_graph <- SCD_graph + geom_vline(data = phase_dat, aes(xintercept = phase_change), linetype = "dashed")
+  } else if (design == "Treatment Reversal") {
+    SCD_graph <- SCD_graph + geom_vline(xintercept = phase_changes + 0.5, linetype = "dashed")
   }
   
-  SCD_graph + phase_change_lines
+  SCD_graph
 }
 
 #----------------------------
@@ -193,91 +199,3 @@ graph_ES <- function(dat, effect_size, improvement, showAvgES) {
   ES_graph
 } 
 
-library(ARPobservation)
-library(dplyr)
-library(ggplot2)
-source("inst/shiny-examples/ARPsimulator/effect_sizes.R")
-
-input <- list()
-
-# baseline behavior 
-input$behavior <- "Event behavior"
-input$freq <- 3
-input$freq_dispersion <- 1
-input$duration <- 30
-input$interim_time <- 90
-input$state_dispersion <- 1
-
-# behavior change
-input$n_trt <- 3
-input$freq_change1 <- -50
-input$duration_change1 <- NA
-input$interim_change1 <- NA
-input$immediacy1 <- 20
-input$freq_change2 <- -80
-input$duration_change2 <- NA
-input$interim_change2 <- NA
-input$immediacy2 <- 20
-input$freq_change3 <- -90
-input$duration_change3 <- NA
-input$interim_change3 <- NA
-input$immediacy3 <- 20
-
-# Measurement system
-input$system <- "Frequency counting"
-input$interval_length <- 15
-input$session_length <- 100
-
-# Study design
-input$design <- "Treatment reversal"
-input$cases <- 3
-input$phase_pattern <- "ABCDABCD"
-input$sessions_TR <- 5
-input$sessions_MB <- 30
-input$phase_change_list1 <- "5,10,15"
-input$phase_change_list2 <- "12,17,22"
-input$phase_change_list3 <- "19,24,28"
-input$n_alternations <- 3
-input$randomize_AT <- TRUE
-
-# Miscellaneous
-input$refresh <- NA
-input$samples <- 1
-input$showtruth <- TRUE
-input$effect_size <- "NAP"
-input$improvement <- 2
-
-# Treatment effect parameters (reactive)
-trts <- 1:input$n_trt
-freq_change <- unlist(input[paste0("freq_change",trts)])
-duration_change <- unlist(input[paste0("duration_change",trts)])
-interim_change <- unlist(input[paste0("interim_change",trts)])
-immediacy <- unlist(input[paste0("immediacy",trts)])
-
-trt_effect_params <- list(freq_change = freq_change, duration_change = duration_change, 
-                          interim_change = interim_change, immediacy = immediacy)
-
-
-# MB phase changes (reactive)
-MB_phase_changes <- unlist(input[paste0("phase_change_list",1:input$n_trt)])
-
-
-phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pattern, 
-                                   MB_phase_changes, input$cases)
-
-dat <- phase_design(input$design, input$n_trt, input$cases, input$phase_pairs, input$sessions_TR, 
-                    input$sessions_MB, phase_changes, 
-                    input$n_alternations, input$randomize_AT, input$samples)
-
-dat <- simulate_measurements(dat, input$behavior, 
-                               input$freq, input$dispersion, input$freq_change, 
-                               input$duration, input$interim_time, input$duration_change, 
-                               input$interim_change, input$immediacy, 
-                               input$system, input$interval_length, input$session_length)
-
-sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
-                system = input$system)
-
-with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
-
-with(sim_dat, graph_ES(dat, input$effect_size, input$improvement))
