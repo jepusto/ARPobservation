@@ -2,6 +2,7 @@ library(shiny)
 library(markdown)
 library(ARPobservation)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 source("effect_sizes.R")
 source("ARPsimulator.R")
@@ -33,12 +34,22 @@ server <- function(input, output) {
   })
   
   trt_effect_params <- reactive({
-    trts <- 1:input$n_trt
-    freq_change <- unlist(input[paste0("freq_change",trts)])
-    duration_change <- unlist(input[paste0("duration_change",trts)])
-    interim_change <- unlist(input[paste0("interim_change",trts)])
-    immediacy <- unlist(input[paste0("immediacy",trts)])
     
+    trts <- 1:input$n_trt
+    
+    freq_change <- rep(0, input$n_trt)
+    duration_change <- rep(0, input$n_trt)
+    interim_change <- rep(0, input$n_trt)
+    immediacy <- rep(0, input$n_trt)
+    if (any(grepl("_change",names(input)))) {
+      for (t in trts) {
+        freq_change[t] <- input[[paste0("freq_change",t)]]
+        duration_change[t] <- input[[paste0("duration_change",t)]]
+        interim_change[t] <- input[[paste0("interim_change",t)]]
+        immediacy[t] <- input[[paste0("immediacy",t)]]
+      }
+    }
+
     list(freq_change = freq_change, duration_change = duration_change, 
          interim_change = interim_change, immediacy = immediacy)
   })
@@ -76,7 +87,11 @@ server <- function(input, output) {
   })
   
   MB_phase_changes <- reactive({
-    input[paste0("phase_change_list",1:input$n_trt)]
+    phase_change_list <- c()
+    for (i in 1:(input$n_trt)) {
+      phase_change_list[i] <- input[[paste0("phase_change_list",i)]]
+    }
+    phase_change_list
   })
   
   sim_dat <- eventReactive(c(input$outputPanel, input$simulateGraph, input$simulateES), {
@@ -86,19 +101,20 @@ server <- function(input, output) {
     } else {
       input$system
     }
+    phase_pattern <- if (is.null(input$phase_pattern)) "ABAB" else input$phase_pattern
 
-    phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pattern, 
-                                       MB_phase_changes, input$cases)
+    phase_changes <- get_phase_changes(input$design, input$sessions_TR, phase_pattern, 
+                                       MB_phase_changes(), input$cases)
     
     samples <- ifelse(input$outputPanel == "SCD Graph", input$samplesGraph, input$samplesES)
     
-    dat <- phase_design(input$design, input$n_trt, cases, input$phase_pattern, 
+    dat <- phase_design(input$design, input$n_trt, cases, phase_pattern, 
                         input$sessions_TR, input$sessions_MB, phase_changes, 
                         input$n_alternations, input$randomize_AT, samples)
     
     dat <- simulate_measurements(dat, input$behavior, input$freq, input$freq_dispersion, 
                                  input$duration, input$interim_time, input$state_dispersion,
-                                 trt_effect_params, 
+                                 trt_effect_params(), 
                                  system, input$interval_length, input$session_length)
     
     height <- max(300, 150 * cases)

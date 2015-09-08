@@ -83,7 +83,8 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                            column(12, br()),
                            sidebarLayout(
                              sidebarPanel(width = 3,
-                                          selectInput("effect_size", label = "Effect size measure", choices = ES_choices),
+                                          selectInput("effect_size", label = "Effect size measure", 
+                                                      choices = c("PND","PEM","PAND","IRD","NAP","Tau","Within-case SMD")),
                                           conditionalPanel(
                                             condition = "input.effect_size != 'Within-case SMD'",
                                             radioButtons("improvement", label = "Direction of improvement", choices = list("increase" = 1, "decrease" = 2), selected = 1)

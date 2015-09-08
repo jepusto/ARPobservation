@@ -1,5 +1,6 @@
 library(ARPobservation)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 rm(list=ls())
 source("inst/shiny-examples/ARPsimulator/effect_sizes.R")
@@ -20,15 +21,15 @@ input$n_trt <- 3
 input$freq_change1 <- -50
 input$duration_change1 <- NA
 input$interim_change1 <- NA
-input$immediacy1 <- 20
+input$immediacy1 <- 100
 input$freq_change2 <- -80
 input$duration_change2 <- NA
 input$interim_change2 <- NA
-input$immediacy2 <- 20
+input$immediacy2 <- 100
 input$freq_change3 <- -90
 input$duration_change3 <- NA
 input$interim_change3 <- NA
-input$immediacy3 <- 20
+input$immediacy3 <- 100
 
 # Measurement system
 input$system <- "Frequency counting"
@@ -36,7 +37,7 @@ input$interval_length <- 15
 input$session_length <- 10
 
 # Study design
-input$design <- "Treatment Reversal"
+input$design <- "Alternating Treatment"
 input$cases <- 3
 input$phase_pattern <- "ABCDABCD"
 input$sessions_TR <- 5
@@ -49,7 +50,7 @@ input$randomize_AT <- TRUE
 
 # Miscellaneous
 input$refresh <- NA
-input$samples <- 2
+input$samples <- 1
 input$showtruth <- TRUE
 input$effect_size <- "NAP"
 input$improvement <- 2
@@ -68,7 +69,6 @@ trt_effect_params <- list(freq_change = freq_change, duration_change = duration_
 # MB phase changes (reactive)
 MB_phase_changes <- unlist(input[paste0("phase_change_list",1:input$n_trt)])
 
-
 phase_changes <- get_phase_changes(input$design, input$sessions_TR, input$phase_pattern, 
                                    MB_phase_changes, input$cases)
 
@@ -83,6 +83,9 @@ dat <- simulate_measurements(dat, input$behavior, input$freq, input$freq_dispers
 
 sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
                 system = input$system)
+design <- input$design
+system <- input$system
+
 
 with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
 

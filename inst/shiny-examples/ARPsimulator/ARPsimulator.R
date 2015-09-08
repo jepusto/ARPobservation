@@ -6,11 +6,15 @@ get_phase_changes <- function(design, sessions_TR, phase_pattern, MB_phase_chang
   if (design=="Treatment Reversal") {
     phase_labels <- strsplit(phase_pattern, "")[[1]]
     phase_changes <- sessions_TR * (1:(length(phase_labels) - 1))
+  } else if (design=="Multiple Baseline") {
+    lapply(MB_phase_changes, function(x) as.numeric(strsplit(x, split = ",")[[1]])) %>%
+      sapply(function(x) rep(x, length.out = cases)) %>%
+      as.data.frame() %>%
+      mutate(case = paste("Case", LETTERS[1:cases])) %>%
+      gather("phase",session, -case) ->
+      phase_changes
   } else {
-    phase_changes <- lapply(MB_phase_changes, function(x) as.numeric(strsplit(x, split = ",")[[1]]))
-    phase_changes <- sapply(phase_changes, function(x) rep(x, length.out = cases))
-    phase_changes <- as.list(data.frame(t(phase_changes)))
-    names(phase_changes) <- NULL
+    phase_changes <- NULL
   }
   return(phase_changes)
 }
@@ -29,8 +33,8 @@ phase_design <- function(design, n_trt, cases, phase_pattern, sessions_TR,
     trt <- rep(phase_labels, each = sessions_TR)
   } else if (design=="Multiple Baseline") {
     session_nr <- 1:sessions_MB
-    phase <- unlist(lapply(phase_changes, function(t) 
-      rep(1:(n_trt + 1), times = diff(c(0,t,sessions_MB)))))
+    phase <- unlist(with(phase_changes,tapply(session, case, function(t) 
+      rep(1:(n_trt + 1), times = diff(c(0,t,sessions_MB))))))
     trt <- LETTERS[phase]
   } else {
     n <- n_trt + 1
@@ -126,12 +130,27 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   
   samples <- max(dat$sample)
   
-  SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
-    geom_point(alpha = samples^(-1/4)) + 
-    geom_line(alpha = samples^(-1/2)) + 
-    coord_cartesian(ylim = Y_range) + 
-    theme_bw() + theme(legend.position = "bottom") + 
-    labs(color = "Phase", y = Y_lab) 
+  if (design == "Treatment Reversal") {
+    SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
+      geom_point(alpha = samples^(-1/4)) + 
+      geom_line(alpha = samples^(-1/2)) + 
+      geom_vline(xintercept = phase_changes + 0.5, linetype = "dashed") + 
+      labs(color = "Condition", y = Y_lab) 
+  } else if (design == "Multiple Baseline") {
+    SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
+      geom_point(alpha = samples^(-1/4)) + 
+      geom_line(alpha = samples^(-1/2)) + 
+      geom_vline(data = phase_changes, aes(xintercept = session + 0.5), linetype = "dashed") + 
+      labs(color = "Condition", y = Y_lab) 
+  } else {
+    SCD_graph <- ggplot(dat, aes(session, Y, color = trt, shape = trt, group = interaction(trt,sample))) + 
+      geom_point(alpha = samples^(-1/4)) + 
+      labs(color = "Condition", shape = "Condition", y = Y_lab) 
+  }
+  
+  SCD_graph <- SCD_graph +   
+                coord_cartesian(ylim = Y_range) + 
+                theme_bw() + theme(legend.position = "bottom")
   
   if (nlevels(dat$case) > 1) {
     SCD_graph <- SCD_graph + facet_grid(case ~ .)
@@ -141,21 +160,12 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
     SCD_graph <- SCD_graph + geom_line(data = subset(dat, sample==1), aes(session, truth), size = 1.0)
   }
   
-  if (design == "Multiple Baseline") {
-    phase_dat <- data.frame(case = levels(dat$case), phase_change = phase_changes + 0.5)
-    SCD_graph <- SCD_graph + geom_vline(data = phase_dat, aes(xintercept = phase_change), linetype = "dashed")
-  } else if (design == "Treatment Reversal") {
-    SCD_graph <- SCD_graph + geom_vline(xintercept = phase_changes + 0.5, linetype = "dashed")
-  }
-  
   SCD_graph
 }
 
 #----------------------------
 # Create effect size graph
 #----------------------------
-
-ES_choices <- c("PND","PEM","PAND","IRD","NAP","Tau","Within-case SMD")
 
 graph_ES <- function(dat, effect_size, improvement, showAvgES) {
 
