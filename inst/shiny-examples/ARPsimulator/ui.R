@@ -83,6 +83,11 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                            column(12, br()),
                            sidebarLayout(
                              sidebarPanel(width = 3,
+                                          conditionalPanel(
+                                            condition = "input.n_trt > 1",
+                                            column(6, htmlOutput("phase_pre_UI")),
+                                            column(6, htmlOutput("phase_post_UI"))
+                                          ),
                                           selectInput("effect_size", label = "Effect size measure", 
                                                       choices = c("PND","PEM","PAND","IRD","NAP","Tau","Within-case SMD")),
                                           conditionalPanel(

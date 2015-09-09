@@ -37,7 +37,7 @@ input$interval_length <- 15
 input$session_length <- 10
 
 # Study design
-input$design <- "Alternating Treatment"
+input$design <- "Treatment Reversal"
 input$cases <- 3
 input$phase_pattern <- "ABCDABCD"
 input$sessions_TR <- 5
@@ -50,10 +50,11 @@ input$randomize_AT <- TRUE
 
 # Miscellaneous
 input$refresh <- NA
-input$samples <- 1
+input$samples <- 50
 input$showtruth <- TRUE
 input$effect_size <- "NAP"
 input$improvement <- 2
+input$showAvgES <- TRUE
 
 # Treatment effect parameters (reactive)
 trts <- 1:input$n_trt
@@ -83,10 +84,19 @@ dat <- simulate_measurements(dat, input$behavior, input$freq, input$freq_dispers
 
 sim_dat <- list(dat = dat, design = input$design, phase_changes = phase_changes, 
                 system = input$system)
-design <- input$design
-system <- input$system
 
 
 with(sim_dat, graph_SCD(dat, design, phase_changes, system, input$showtruth))
 
-with(sim_dat, graph_ES(dat, input$effect_size, input$improvement))
+design <- input$design
+system <- input$system
+phase_pre <- "A"
+phase_post <- "C"
+effect_size <- input$effect_size
+improvement <- input$improvement
+showAvgES <- input$showAvgES
+
+ES_dat <- calculate_ES(dat, phase_pre, phase_post, 
+                       input$effect_size, input$improvement)
+
+with(sim_dat, graph_ES(ES_dat, input$effect_size, input$showAvgES))

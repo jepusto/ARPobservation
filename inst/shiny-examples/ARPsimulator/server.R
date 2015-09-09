@@ -127,11 +127,31 @@ server <- function(input, output) {
       with(sim_dat(), graph_SCD(dat, design, phase_changes, system, input$showtruth))
     }
   }, height = function() sim_dat()$height_SCD)
+
+  output$phase_pre_UI <- renderUI({
+    selectInput("phase_pre", label = "Pre phase", choices = LETTERS[1:(input$n_trt + 1)])
+  })
+  
+  output$phase_post_UI <- renderUI({
+    selectInput("phase_post", label = "Post phase", 
+                choices = setdiff(LETTERS[1:(input$n_trt + 1)], input$phase_pre))
+  })
+  
+
+  ES_dat <- reactive({
+    if (input$simulateGraph > 0 | input$simulateES > 0) {
+      ES_dat <- calculate_ES(sim_dat()$dat, input$phase_pre, input$phase_post, 
+                             input$effect_size, input$improvement)
+    } else {
+      ES_dat <- NULL
+    }
+    ES_dat
+  })
   
   output$ESplot <- renderPlot({
     if (input$simulateGraph > 0 | input$simulateES > 0) {
-      graph_ES(sim_dat()$dat, input$effect_size, input$improvement, input$showAvgES)
+      graph_ES(ES_dat(), input$effect_size, input$showAvgES)
     }
-  }, height = 400)
+    }, height = 400)
   
 }

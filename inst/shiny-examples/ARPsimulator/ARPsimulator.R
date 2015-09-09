@@ -163,11 +163,11 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   SCD_graph
 }
 
-#----------------------------
-# Create effect size graph
-#----------------------------
+#------------------------------------------------
+# Create effect size graph and summary table
+#------------------------------------------------
 
-graph_ES <- function(dat, effect_size, improvement, showAvgES) {
+calculate_ES <- function(dat, phase_pre, phase_post, effect_size, improvement) {
 
   ES_function <- switch(effect_size,
                         PND = PND,
@@ -177,12 +177,20 @@ graph_ES <- function(dat, effect_size, improvement, showAvgES) {
                         NAP = NAP,
                         Tau = Tau,
                         "Within-case SMD" = SMD)
-
+  
   # calculate effect sizes
   group_by(dat, case, sample) %>%
-    summarize(ES = ES_function(data = Y, phase = trt, base_phase = "Base", increase = improvement==1)) %>%
-    ungroup() -> ES_dat
+    filter(trt %in% c(phase_pre, phase_post)) %>%
+    summarize(ES = ES_function(data = Y, phase = trt, base_phase = phase_pre, increase = improvement==1)) %>%
+    ungroup()  
+}
+
+summarize_ES <- function(ES_dat) {
   
+}
+
+graph_ES <- function(ES_dat, effect_size, showAvgES) {
+
   # graph effect sizes
   X_range <- switch(effect_size,
                     PND = c(0,100),
