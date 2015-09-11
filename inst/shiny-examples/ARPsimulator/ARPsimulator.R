@@ -169,6 +169,9 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
 
 calculate_ES <- function(dat, phase_pre, phase_post, effect_size, improvement) {
 
+  if (is.null(phase_pre)) phase_pre <- "A"
+  if (is.null(phase_post)) phase_post <- "B"
+  
   ES_function <- switch(effect_size,
                         PND = PND,
                         PEM = PEM,
@@ -186,7 +189,18 @@ calculate_ES <- function(dat, phase_pre, phase_post, effect_size, improvement) {
 }
 
 summarize_ES <- function(ES_dat) {
-  
+  group_by(ES_dat, case) %>%
+    summarize(pct05 = quantile(ES, p = .05),
+              pct10 = quantile(ES, p = .10),
+              pct25 = quantile(ES, p = .25),
+              median = median(ES),
+              mean = mean(ES),
+              pct75 = quantile(ES, p = .75),
+              pct90 = quantile(ES, p = .90),
+              pct95 = quantile(ES, p = .95)) ->
+    ES_summary
+  names(ES_summary)[c(2:4,7:9)] <- paste(c("5th","10th","25th","75th","90th","95th"), "%tile")
+  ES_summary
 }
 
 graph_ES <- function(ES_dat, effect_size, showAvgES) {

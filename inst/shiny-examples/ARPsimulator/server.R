@@ -139,19 +139,15 @@ server <- function(input, output) {
   
 
   ES_dat <- reactive({
-    if (input$simulateGraph > 0 | input$simulateES > 0) {
-      ES_dat <- calculate_ES(sim_dat()$dat, input$phase_pre, input$phase_post, 
+      calculate_ES(sim_dat()$dat, input$phase_pre, input$phase_post, 
                              input$effect_size, input$improvement)
-    } else {
-      ES_dat <- NULL
-    }
-    ES_dat
   })
   
   output$ESplot <- renderPlot({
-    if (input$simulateGraph > 0 | input$simulateES > 0) {
       graph_ES(ES_dat(), input$effect_size, input$showAvgES)
-    }
     }, height = 400)
   
+  output$EStable <- renderTable({
+    summarize_ES(ES_dat())
+  }, include.rownames = FALSE)
 }

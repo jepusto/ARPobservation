@@ -100,3 +100,5 @@ ES_dat <- calculate_ES(dat, phase_pre, phase_post,
                        input$effect_size, input$improvement)
 
 with(sim_dat, graph_ES(ES_dat, input$effect_size, input$showAvgES))
+
+summarize_ES(ES_dat)

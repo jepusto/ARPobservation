@@ -100,7 +100,12 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                                           br()
                              ),
                              mainPanel(width = 9,
-                                       plotOutput('ESplot', height = "auto")
+                                 conditionalPanel(
+                                   condition = "input.simulateGraph > 0 | input.simulateES > 0",
+                                   plotOutput('ESplot', height = "auto"),
+                                   br(),
+                                   tableOutput('EStable')
+                                 )
                              )
                            )
                   )
