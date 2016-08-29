@@ -3,6 +3,7 @@ ARPobservation 1.2
 * Added observation filter and random data generation for augmented interval recording procedure.
 * Added plot method for simulated behavior_stream objects.
 * Added ARPsimulator shiny interface for designing observation recording procedures.
+* Added estimators for interval-level PIR and WIR data, based on an alternating poisson process.
 
 ARPobservation 1.1
 =======================
