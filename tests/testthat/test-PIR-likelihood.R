@@ -10,25 +10,28 @@ test_that("As phi gets very close to zero, the psi values become constant and th
   set.seed(1028194800)
   U <- sample(0:1, 30, replace = TRUE)
   c <- 1
-  d <- 5
+  d <- 0.25
   
   parms <- expand.grid(phi = phi, zeta = zeta)
   
-  results <- mdply(.data = parms, .fun = PIR_loglik, U = U, c = c, d = d, .inform = TRUE)
+  results <- mdply(.data = parms, 
+                   .fun = function(phi, zeta)
+                    PIR_loglik(param = c(logit(phi), log(zeta)), U = U, c = c, d = d),
+                   .inform = TRUE)
   results_wide <- dcast(results, zeta ~ -phi, value.var = "V1")
   
   
-  theoretical <- ((log(1-exp(-1 * zeta * c)) + zeta * c)* sum(U)) - (length(U) * zeta * c)
+  theoretical <- (log(1-exp(-zeta * c)) + zeta * c) * sum(U) - length(U) * zeta * c
   
   all_values <- cbind(results_wide, theoretical)
   
-  psi <- mdply(.data = phi, .fun = PIRpsi, zeta = .25, U = U, c = c, d=d)
+  psi <- mdply(.data = parms, .fun = PIRpsi, U = U, c = c, d = d)
   
-  expect_true(all(apply(psi[,-1], 1, function(x) max(x) - min(x)) < sqrt(.Machine$double.eps)))
-  expect_that(all(abs(all_values[,2] - all_values[,3]) > abs(all_values[,3] - all_values[,4]) & 
-                    abs(all_values[,3] - all_values[,4]) > abs(all_values[,4] - all_values[,5]) & 
-                    abs(all_values[,4] - all_values[,5]) > abs(all_values[,5] - all_values[,6]) & 
-                    abs(all_values[,5] - all_values[,6]) < 10^-3), is_true())  
+  expect_true(all(apply(psi[,-(1:2)], 1, function(x) max(x) - min(x)) < sqrt(.Machine$double.eps)))
+  expect_true(all(abs(all_values[,2] - all_values[,3]) > abs(all_values[,3] - all_values[,4])))
+  expect_true(all(abs(all_values[,3] - all_values[,4]) > abs(all_values[,4] - all_values[,5])))
+  expect_true(all(abs(all_values[,4] - all_values[,5]) > abs(all_values[,5] - all_values[,6])))
+  expect_true(all(abs(all_values[,5] - all_values[,6]) < 10^-3))  
 })
 
 test_that("If d is much larger than 1/zeta, then psis = phi and the log-likelihood approaches a known value",{
@@ -41,7 +44,10 @@ test_that("If d is much larger than 1/zeta, then psis = phi and the log-likeliho
   
   parms <- cbind(zeta, d)
   
-  results <- mdply(.data = parms, .fun = PIR_loglik, phi = phi, U = U, c = c, .inform = TRUE)
+  results <- mdply(.data = parms, 
+                   .fun = function(zeta, d) 
+                     PIR_loglik(param = c(logit(phi), log(zeta)), U = U, c = c, d = d), 
+                   .inform = TRUE)
   results$d <- with(results, d*zeta)
   results_wide <- dcast(results, zeta ~ d, value.var = "V1")
   
@@ -51,11 +57,10 @@ test_that("If d is much larger than 1/zeta, then psis = phi and the log-likeliho
   psi <- mdply(.data = parms[37:45,], .fun = PIRpsi, phi = .25, U = U, c = c)
   
   expect_true(all(apply(psi[,-2:-1], 1, function(x) max(x) - min(x)) < sqrt(.Machine$double.eps)))
-  
-  expect_that(all(abs(all_values[,2] - all_values[,3]) > abs(all_values[,3] - all_values[,4]) & 
-                    abs(all_values[,3] - all_values[,4]) > abs(all_values[,4] - all_values[,5]) & 
-                    abs(all_values[,4] - all_values[,5]) > abs(all_values[,5] - all_values[,6]) & 
-                    abs(all_values[,5] - all_values[,6]) < 10^-3), is_true())
+  expect_true(all(abs(all_values[,2] - all_values[,3]) > abs(all_values[,3] - all_values[,4])))
+  expect_true(all(abs(all_values[,3] - all_values[,4]) > abs(all_values[,4] - all_values[,5])))
+  expect_true(all(abs(all_values[,4] - all_values[,5]) > abs(all_values[,5] - all_values[,6])))
+  expect_true(all(abs(all_values[,5] - all_values[,6]) < 10^-3))
 })
 
 test_that("If all Us = 0, then the loglikelihood is some known value", {
@@ -65,9 +70,13 @@ test_that("If all Us = 0, then the loglikelihood is some known value", {
   c <- 1
   d <- 0
   
-  loglik <-ldply(.data = zeta, .fun = PIR_loglik, phi = phi, U = U, c = c, d = d)
+
+  loglik <- ldply(.data = zeta, 
+                   .fun = function(zeta) 
+                     PIR_loglik(param = c(logit(phi), log(zeta)), U = U, c = c, d = d)
+                 )
   
   theoretical <- log(1-phi) - zeta * c /(1-phi) + (length(U) - 1) * (log(1 - p_0(d, phi, zeta)) - zeta * c/(1-phi))
   
-  expect_that(loglik$V1, equals(theoretical))
+  expect_equal(loglik$V1, theoretical)
 })

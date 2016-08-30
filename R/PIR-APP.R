@@ -238,7 +238,7 @@ PIR_loglik <- function(param, U, c, d) {
   phi <- expit(param[1])
   zeta <- exp(param[2])
   psi <- PIRpsi(phi, zeta, U, c, d)
-  loglik <- sum(U * log(1 - (1 - psi) * exp(-1 * zeta * c / (1 - phi))) + (1 - U) * (log(1 - psi) - zeta * c / (1-phi)))
+  loglik <- sum(U * log(1 - (1 - psi) * exp(-1 * zeta * c / (1 - phi))) + (1 - U) * (log(1 - psi) - zeta * c / (1 - phi)))
   return(loglik)
 }
 
@@ -278,7 +278,7 @@ PIRmle <- function(U, c, d, coding = "PIR", penalty_func = NULL,
   results <- optim(par = c(logit(phi_start), log(zeta_start)), fn = objective, 
                    control = list(fnscale = -1))
   
-  if(coding == "WIR") results$par[1] <- -results$par[1]
+  if (coding == "WIR") results$par[1] <- -results$par[1]
   
   param_trans(results$par, transform = transform)
 
