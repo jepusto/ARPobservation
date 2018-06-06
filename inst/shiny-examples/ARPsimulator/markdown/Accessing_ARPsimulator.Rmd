@@ -22,6 +22,7 @@ In order to run the ARPsimulator on your own computer, you will need to install 
     ```{r, eval=FALSE}
     install.packages("devtools")
     install.packages("ggplot2")
+    install.packages("viridis")
     install.packages("dplyr")
     install.packages("shiny")
     install.packages("markdown")

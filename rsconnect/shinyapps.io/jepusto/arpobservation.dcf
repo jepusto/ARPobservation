@@ -1,0 +1,10 @@
+name: arpobservation
+title:
+username:
+account: jepusto
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 356085
+bundleId: 1414642
+url: https://jepusto.shinyapps.io/arpobservation/
+when: 1528287975.81104

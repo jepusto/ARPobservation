@@ -1,11 +1,11 @@
 ### The Alternating Renewal Process Simulator
 
-Version 0.1
+Version 0.2
 
-Designed and built by James E. Pustejovsky
+Designed and built by James E. Pustejovsky.
 
 * pusto@austin.utexas.edu
-* http://blogs.edb.utexas.edu/pusto/
+* https://www.jepusto.com/
 
 [Source code available on Github](https://github.com/jepusto/ARPobservation/tree/master/inst/shiny-examples/ARPsimulator)
 

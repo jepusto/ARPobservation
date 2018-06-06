@@ -39,6 +39,7 @@ if you have trouble following the steps below.
 
         install.packages("devtools")
         install.packages("ggplot2")
+        install.packages("viridis")
         install.packages("dplyr")
         install.packages("shiny")
         install.packages("markdown")
@@ -52,5 +53,5 @@ if you have trouble following the steps below.
         ARPsimulator()
 
 6.  To exit the simulator, simply close the window in which it appears
-    or click the red "Stop" icon in the upper right-hand corner of the
+    or click the red “Stop” icon in the upper right-hand corner of the
     RStudio console window.
