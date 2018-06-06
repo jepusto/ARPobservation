@@ -49,7 +49,7 @@ plot.behavior_stream <- function(x, session_color = "black", episode_color = "bl
   segment_dat <- lapply(x$b_streams, get_segments, stream_length = x$stream_length)
   segment_dat <- do.call(rbind, segment_dat)
   
-  ggplot2::ggplot(stream_dat, ggplot2::aes(x = start_time, xend = end_time, y = stream, yend = stream)) +
+  ggplot2::ggplot(stream_dat, ggplot2::aes_string(x = "start_time", xend = "end_time", y = "stream", yend = "stream")) +
     ggplot2::geom_segment(color = session_color) + 
     ggplot2::scale_y_discrete(breaks = 1:streams) + 
     ggplot2::coord_cartesian(xlim = c(0, x$stream_length)) + 
