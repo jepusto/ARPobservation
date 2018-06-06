@@ -20,4 +20,3 @@ BS <- r_behavior_stream(n = 5, mu = 3, lambda = 10,
                        F_event = F_exp(), F_interim = F_exp(), stream_length = 100)
 continuous_duration_recording(BS)
 }
-

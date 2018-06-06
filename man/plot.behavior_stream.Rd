@@ -38,4 +38,3 @@ b_streams <- r_behavior_stream(n = 5, mu = 3, lambda = 10,
                                stream_length = 100)
 plot(b_streams)
 }
-

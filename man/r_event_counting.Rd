@@ -54,4 +54,3 @@ r_event_counting(n = 5, mu = 2, lambda = 4, stream_length = 20,
 \author{
 Daniel Swan <dswan@utexas.edu>
 }
-

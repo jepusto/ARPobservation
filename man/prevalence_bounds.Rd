@@ -63,4 +63,3 @@ with(subset(Moes, Case == "Carl"),
 \author{
 Daniel Swan <dswan@utexas.edu>
 }
-

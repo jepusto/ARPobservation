@@ -5,9 +5,9 @@
 get_segments <- function(bs, stream_length) {
   transitions <- c(0, bs$b_stream, stream_length)
   s <- trunc((length(bs$b_stream) + bs$start_state + 1) / 2)
-  start <- transitions[2 * (1:s) - bs$start_state]
-  end <- transitions[2 * (1:s) - bs$start_state + 1]
-  data.frame(stream = bs$index, start, end)
+  start_time <- transitions[2 * (1:s) - bs$start_state]
+  end_time <- transitions[2 * (1:s) - bs$start_state + 1]
+  data.frame(stream = bs$index, start_time, end_time)
 }
 
 #' @title Plot method for \code{behavior_stream} objects
@@ -37,18 +37,19 @@ get_segments <- function(bs, stream_length) {
 #' plot(b_streams)
 
 plot.behavior_stream <- function(x, session_color = "black", episode_color = "blue", episode_thickness = 2, ...) {
+  
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("This function needs the ggplot2 package to work. Please install it.", call. = FALSE)
   } 
 
   streams <- length(x$b_streams)
-  stream_dat <- data.frame(stream = 1:streams, start = 0, end = x$stream_length) 
+  stream_dat <- data.frame(stream = 1:streams, start_time = 0, end_time = x$stream_length) 
   
   for (i in 1:streams) x$b_streams[[i]]$index <- i
   segment_dat <- lapply(x$b_streams, get_segments, stream_length = x$stream_length)
   segment_dat <- do.call(rbind, segment_dat)
   
-  ggplot2::ggplot(stream_dat, ggplot2::aes(x = start, xend = end, y = stream, yend = stream)) +
+  ggplot2::ggplot(stream_dat, ggplot2::aes(x = start_time, xend = end_time, y = stream, yend = stream)) +
     ggplot2::geom_segment(color = session_color) + 
     ggplot2::scale_y_discrete(breaks = 1:streams) + 
     ggplot2::coord_cartesian(xlim = c(0, x$stream_length)) + 

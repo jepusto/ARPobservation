@@ -30,4 +30,3 @@ are implemented:
 \item \code{\link{F_const}} - Constant
 }
 }
-

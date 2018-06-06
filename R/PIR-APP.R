@@ -135,7 +135,7 @@ MTSmle <- function(X, c, penalty_func = NULL,
     est <- BSSest(Tmat, c)
   } else {
     objective <- function(par) MTS_loglik_pen(par, Tmat = Tmat, c = c, penalty_func) 
-    results <- optim(par = c(logit(phi_start), log(zeta_start)), fn = objective, 
+    results <- stats::optim(par = c(logit(phi_start), log(zeta_start)), fn = objective, 
                      control = list(fnscale = -1))
     est <- results$par
   }
@@ -166,8 +166,8 @@ MTSbootstrap <- function(X, c, penalty_func = NULL,
                       phi_start = phi_start, zeta_start = zeta_start, transform = transform))
   
   ests <- param_trans(est, transform = transform)
-  std_devs <- apply(rep_ests, 2, sd)
-  CIs <- apply(rep_ests, 2, quantile, probs = c(p/2, 1 - p/2))
+  std_devs <- apply(rep_ests, 2, stats::sd)
+  CIs <- apply(rep_ests, 2, stats::quantile, probs = c(p/2, 1 - p/2))
   
   data.frame(parm = names(ests), est = ests, sd = std_devs, CI_L = CIs[1,], CI_U = CIs[2,], row.names = NULL)
 }
@@ -275,7 +275,7 @@ PIRmle <- function(U, c, d, coding = "PIR", penalty_func = NULL,
     }
   }
     
-  results <- optim(par = c(logit(phi_start), log(zeta_start)), fn = objective, 
+  results <- stats::optim(par = c(logit(phi_start), log(zeta_start)), fn = objective, 
                    control = list(fnscale = -1))
   
   if (coding == "WIR") results$par[1] <- -results$par[1]
@@ -308,8 +308,8 @@ PIRbootstrap <- function(U, c, d, coding = "PIR", penalty_func = NULL,
                   phi_start = phi_start, zeta_start = zeta_start, transform = transform))
   
   ests <- param_trans(est, transform = transform)
-  std_devs <- apply(rep_ests, 2, sd)
-  CIs <- apply(rep_ests, 2, quantile, probs = c(p/2, 1 - p/2))
+  std_devs <- apply(rep_ests, 2, stats::sd)
+  CIs <- apply(rep_ests, 2, stats::quantile, probs = c(p/2, 1 - p/2))
     
   data.frame(parm = names(ests), est = ests, sd = std_devs, CI_L = CIs[1,], CI_U = CIs[2,], row.names = NULL)
 }
@@ -386,7 +386,7 @@ AIRmle <- function(XUW, c, d, penalty_func = NULL,
     }
   }
   
-  results <- optim(par = c(logit(phi_start), log(zeta_start)), fn = objective, 
+  results <- stats::optim(par = c(logit(phi_start), log(zeta_start)), fn = objective, 
                    control = list(fnscale = -1))
     
   param_trans(results$par, transform = transform)

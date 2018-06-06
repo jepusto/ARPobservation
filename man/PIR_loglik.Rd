@@ -28,4 +28,3 @@ Calculates the log-likelihood of within-session PIR data
 \author{
 Daniel Swan <dswan@utexas.edu>
 }
-

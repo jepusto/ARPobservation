@@ -22,4 +22,3 @@ hist(F_const()$r_gen(1000, 2))
 hist(F_const()$r_eq(1000, 2))
 
 }
-

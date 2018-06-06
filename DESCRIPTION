@@ -14,12 +14,15 @@ Maintainer: James E. Pustejovsky <jepusto@gmail.com>
 Author: James E. Pustejovsky, with contributions from Daniel M. Swan
 License: GPL-3
 VignetteBuilder: knitr
+Imports:
+    stats
 Suggests:
     shiny,
     plyr,
     reshape2,
     dplyr,
     ggplot2,
+    viridis,
     knitr,
     testthat
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

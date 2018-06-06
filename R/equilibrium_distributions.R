@@ -50,8 +50,8 @@ eq_dist <- function(r_gen, r_eq) {
 #' @export 
 
 F_exp <- function()
-  eq_dist(r_gen = function(n, mean) rexp(n, rate = 1 / mean),
-          r_eq = function(n, mean) rexp(n, rate = 1 / mean))
+  eq_dist(r_gen = function(n, mean) stats::rexp(n, rate = 1 / mean),
+          r_eq = function(n, mean) stats::rexp(n, rate = 1 / mean))
 
 
 
@@ -60,12 +60,12 @@ F_exp <- function()
 ## gamma distribution ####
 
 pgamma_eq <- function(x, mean, shape) 
-  x / mean + pgamma(x, shape = shape + 1, scale = mean / shape) - 
-  pgamma(x, shape = shape, scale = mean / shape) * x / mean
+  x / mean + stats::pgamma(x, shape = shape + 1, scale = mean / shape) - 
+  stats::pgamma(x, shape = shape, scale = mean / shape) * x / mean
 
 rgamma_eq <- function(n, mean, shape) mapply(function(p, m) 
-  uniroot(function(y) p - pgamma_eq(y, mean = m, shape = shape), lower = 0, upper = m * 10^5)$root,
-                                             p = runif(n), m = mean)
+  stats::uniroot(function(y) p - pgamma_eq(y, mean = m, shape = shape), lower = 0, upper = m * 10^5)$root,
+                                             p = stats::runif(n), m = mean)
 
 #' @title Gamma distribution and related equilibrium distribution
 #' 
@@ -90,7 +90,7 @@ rgamma_eq <- function(n, mean, shape) mapply(function(p, m)
 #' @export 
 
 F_gam <- function(shape)
-  eq_dist(r_gen = function(n, mean) rgamma(n, shape = shape, scale = mean / shape),
+  eq_dist(r_gen = function(n, mean) stats::rgamma(n, shape = shape, scale = mean / shape),
           r_eq = function(n, mean) rgamma_eq(n, mean, shape))
 
 
@@ -108,9 +108,9 @@ pgamma_mix_eq <- function(x, mean, shape1, shape2, scale_ratio, mix) {
 
 rgamma_mix_eq <- function(n, mean, shape1, shape2, scale_ratio, mix) 
   mapply(function(p, m)
-    uniroot(function(y) p - pgamma_mix_eq(y, mean=m, shape1, shape2, scale_ratio, mix), 
+    stats::uniroot(function(y) p - pgamma_mix_eq(y, mean=m, shape1, shape2, scale_ratio, mix), 
           lower = 0, upper = m * 10^5)$root,
-          p = runif(n), m = mean)
+          p = stats::runif(n), m = mean)
 
 #' @title Mixture of two gamma distributions and related equilibrium distribution
 #' 
@@ -142,10 +142,10 @@ rgamma_mix_eq <- function(n, mean, shape1, shape2, scale_ratio, mix)
 
 F_gam_mix <- function(shape1, shape2, scale_ratio, mix)
   eq_dist(r_gen = function(n, mean) {
-    m <- rbinom(n, 1, mix)
+    m <- stats::rbinom(n, 1, mix)
     shape <- c(shape1, shape2)[2 - m]
     scale <- c(scale_ratio, 1)[2 - m] * mean / (mix * shape1 * scale_ratio + (1 - mix) * shape2) 
-    rgamma(n, shape=shape, scale=scale)
+    stats::rgamma(n, shape=shape, scale=scale)
   }, 
   r_eq = function(n, mean) rgamma_mix_eq(n, mean, shape1, shape2, scale_ratio, mix))
 
@@ -154,12 +154,12 @@ F_gam_mix <- function(shape1, shape2, scale_ratio, mix)
 
 pweibull_eq <- function(x, mean, shape) {
   scale <- mean / gamma(1 + 1 / shape)
-  integrate(function(z) exp(-(z / scale)^shape), 0, x)$value / mean
+  stats::integrate(function(z) exp(-(z / scale)^shape), 0, x)$value / mean
 }
 
 rweibull_eq <- function(n, mean, shape) mapply(function(p, m) 
-  uniroot(function(y) p - pweibull_eq(y, mean = m, shape = shape), lower = 0, upper = m * 10^3)$root,
-  p = runif(n), m = mean)
+  stats::uniroot(function(y) p - pweibull_eq(y, mean = m, shape = shape), lower = 0, upper = m * 10^3)$root,
+  p = stats::runif(n), m = mean)
 
 #' @title Weibull distribution and related equilibrium distribution
 #' 
@@ -184,7 +184,7 @@ rweibull_eq <- function(n, mean, shape) mapply(function(p, m)
 #' @export 
 
 F_weib <- function(shape) 
-  eq_dist(r_gen = function(n, mean) rweibull(n, shape = shape, scale = mean / gamma(1 + 1 / shape)),
+  eq_dist(r_gen = function(n, mean) stats::rweibull(n, shape = shape, scale = mean / gamma(1 + 1 / shape)),
           r_eq = function(n, mean) rweibull_eq(n, mean, shape))
 
 
@@ -214,8 +214,8 @@ F_weib <- function(shape)
 #' @export 
 
 F_unif <- function()
-  eq_dist(r_gen = function(n, mean) runif(n, min = 0, max = 2 * mean),
-          r_eq = function(n, mean) 2 * mean * (1 - sqrt(1 - runif(n))))
+  eq_dist(r_gen = function(n, mean) stats::runif(n, min = 0, max = 2 * mean),
+          r_eq = function(n, mean) 2 * mean * (1 - sqrt(1 - stats::runif(n))))
 
 
 
@@ -243,6 +243,6 @@ F_unif <- function()
 
 F_const <- function() 
   eq_dist(r_gen = function(n, mean) rep(mean, length.out = n),
-          r_eq = function(n, mean) runif(n, min=0, max=mean))
+          r_eq = function(n, mean) stats::runif(n, min=0, max=mean))
   
 

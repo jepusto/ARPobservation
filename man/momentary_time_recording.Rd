@@ -29,4 +29,3 @@ momentary_time_recording(BS, interval_length = 20, FALSE)
 momentary_time_recording(BS, interval_length = 20)
 colMeans(momentary_time_recording(BS, 20, FALSE)[-1,])
 }
-

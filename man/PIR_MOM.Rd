@@ -75,4 +75,3 @@ base_level = "No Choice", seed = 149568373))
 \author{
 Daniel Swan <dswan@utexas.edu>
 }
-

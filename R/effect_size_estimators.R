@@ -72,7 +72,7 @@ logRespRatio <- function(observations, phase, base_level, conf_level = .95,
   # calculate summary statistics for both samples, sort so that base level is first
   nObs <- table(phase)[level_labels]
   means <- tapply(observations, phase, mean)[level_labels]
-  variances <- tapply(observations, phase, var)[level_labels]
+  variances <- tapply(observations, phase, stats::var)[level_labels]
   
   if (!all(means > 0)) stop('The mean of one or both phases is at the floor of 0.')
   
@@ -85,7 +85,7 @@ logRespRatio <- function(observations, phase, base_level, conf_level = .95,
   
   V_lRR <- sum(variances / (nObs * means^2))
   
-  CI <- lRR + c(-1, 1) * qnorm(1-(1-conf_level)/2) * sqrt(V_lRR)
+  CI <- lRR + c(-1, 1) * stats::qnorm(1-(1-conf_level)/2) * sqrt(V_lRR)
   
   if(exponentiate){
     return(list(RR = exp(lRR), CI = exp(CI)))
@@ -150,7 +150,7 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
   # calculate summary statistics for both samples, sort so that base level is first
   nObs <- table(phase)[level_labels]
   means <- tapply(PIR, phase, mean)[level_labels]
-  variances <- tapply(PIR, phase, var)[level_labels]
+  variances <- tapply(PIR, phase, stats::var)[level_labels]
   
   #change vectors to single values
   mu_L <- mu_L[1]
@@ -159,7 +159,7 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
   
   if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
   
-  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
+  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nObs * intervals)),means))
   
   
   #Natural log of the ratio of the two means
@@ -175,8 +175,8 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
   variance_R <- as.numeric((variances[1]/(nObs[1] * (means[1]^2))) + (variances[2]/(nObs[2] * (means[2]^2))))
   
   #calculate the CI
-  lower_CI <- as.numeric(R - (h + (qnorm(1-(1-conf_level)/2)*sqrt(variance_R))))
-  upper_CI <- as.numeric(R + (h + (qnorm(1-(1-conf_level)/2)*sqrt(variance_R))))
+  lower_CI <- as.numeric(R - (h + (stats::qnorm(1-(1-conf_level)/2)*sqrt(variance_R))))
+  upper_CI <- as.numeric(R + (h + (stats::qnorm(1-(1-conf_level)/2)*sqrt(variance_R))))
   
   #exponentiates the values, if desired
   if(exponentiate == TRUE){
@@ -251,7 +251,7 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
   # calculate summary statistics for both samples, sort so that base level is first
   nObs <- table(phase)[level_labels]
   means <- tapply(PIR, phase, mean)[level_labels]
-  variances <- tapply(PIR, phase, var)[level_labels]
+  variances <- tapply(PIR, phase, stats::var)[level_labels]
   
   mu_U <- mu_U[1]
   active_length <- active_length[1]
@@ -259,7 +259,7 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
   
   if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
   
-  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
+  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nObs * intervals)),means))
   
   
   R <- log(means[2]) - log(means[1])
@@ -271,8 +271,8 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
   
   variance_R <- as.numeric((variances[1]/(nObs[1] * (means[1]^2))) + (variances[2]/(nObs[2] * (means[2]^2))))
   
-  lower_CI <- as.numeric(R - (h + (qnorm(1-(1-conf_level)/2) * sqrt(variance_R))))
-  upper_CI <- as.numeric(R + (h + (qnorm(1-(1-conf_level)/2) * sqrt(variance_R))))
+  lower_CI <- as.numeric(R - (h + (stats::qnorm(1-(1-conf_level)/2) * sqrt(variance_R))))
+  upper_CI <- as.numeric(R + (h + (stats::qnorm(1-(1-conf_level)/2) * sqrt(variance_R))))
  
   if(exponentiate == TRUE){
     exp(lower_bound)
@@ -344,13 +344,13 @@ interim_bounds <- function(PIR, phase, base_level,
   # calculate summary statistics for both samples, sort so that base level is first
   nObs <- table(phase)[level_labels]
   means <- tapply(PIR, phase, mean)[level_labels]
-  variances <- tapply(PIR, phase, var)[level_labels]
+  variances <- tapply(PIR, phase, stats::var)[level_labels]
   
   intervals <- intervals[1]
   
   if ((!all(means > 0) | !all(means < 1)) & is.na(intervals))  stop('One of the means is at the floor or ceiling of 0 or 1 and no value for intervals has been provided to perform truncation')
   
-  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nobs * intervals)),means))
+  means <- ifelse(means == 0, 1/(nObs * intervals),ifelse(means == 1, 1 - (1/(nObs * intervals)),means))
   
   #the logit and complimentary log-log functions
   logit <- function(x) {log(x) - log(1-x)}
@@ -378,7 +378,7 @@ interim_bounds <- function(PIR, phase, base_level,
   #The ratio and z_conf is used in determining which variance is appropriate
   cll_ratio <- cll(means[2]) - cll(means[1])
   
-  z_conf <- qnorm(1-(1-conf_level)/2)
+  z_conf <- stats::qnorm(1-(1-conf_level)/2)
   
   if(cll_ratio <= (z_conf * sqrt(var_LOR))){
     var_f_lower <- var_LOR
@@ -434,7 +434,7 @@ PIR_VarEx <- function(phi, ExY, active, L, K){
 
 PIR_Phi <- function(ExY, VarY, nObs, active, L, K) {
   fun <- function(phi) PIR_VarEx(phi, ExY, active, L, K) / VarY - 1
-  uniroot(fun, interval = c(0, ExY), tol = .Machine$double.eps^0.5)$root
+  stats::uniroot(fun, interval = c(0, ExY), tol = .Machine$double.eps^0.5)$root
 }
 
 # DEPRECATED
@@ -443,7 +443,7 @@ PIR_Phi <- function(ExY, VarY, nObs, active, L, K) {
 
 generatePIRData <- function(nObs, phi, zeta, active, K, rest = 0, iterations = 1) {
   
-  #necessary to recast as numbers because PIR_MOM sends them as lists with one element
+  # necessary to recast as numbers because PIR_MOM sends them as lists with one element
   phi <- as.numeric(phi) 
   zeta <- as.numeric(zeta)
   #calculating the means of the distributions of event durations and interim
@@ -465,7 +465,7 @@ generatePIRData <- function(nObs, phi, zeta, active, K, rest = 0, iterations = 1
   
   mean <- colMeans(sampleObs)
   
-  variance <- apply(sampleObs, 2, var)
+  variance <- apply(sampleObs, 2, stats::var)
   
   sampleData <- data.frame(mean = mean, variance = variance)
   
@@ -518,15 +518,15 @@ PIRbootstrappair <- function(nObs, phi, zeta, active, rest, K, iterations, alpha
                                                  summarize = TRUE))
   
   mean0 <- colMeans(sampleData0)
-  variance0 <- apply(sampleData0, 2, var)
+  variance0 <- apply(sampleData0, 2, stats::var)
   
   # Returns a dataframe of estimates of phi and zeta
   ests0 <- PIR_inv(ExY = mean0, VarY = variance0, nObs = nObs[1], 
                    active = active, K = K, L = L)
   
   # get the confidence interval bounds for the first sample
-  pbounds0 <- quantile(ests0$phi, probs = c(alpha/2, 1-alpha/2))
-  zbounds0 <- quantile(ests0$zeta, probs = c(alpha/2, 1-alpha/2))
+  pbounds0 <- stats::quantile(ests0$phi, probs = c(alpha/2, 1-alpha/2))
+  zbounds0 <- stats::quantile(ests0$zeta, probs = c(alpha/2, 1-alpha/2))
   
   # simulate second set of parms
   sampleData1 <- replicate(n = iterations, r_PIR(n = nObs[2], mu = mu[2],
@@ -539,20 +539,20 @@ PIRbootstrappair <- function(nObs, phi, zeta, active, rest, K, iterations, alpha
                                                  summarize = TRUE))
   
   mean1 <- colMeans(sampleData1)
-  variance1 <- apply(sampleData1, 2, var)
+  variance1 <- apply(sampleData1, 2, stats::var)
   
   ests1 <- PIR_inv(ExY = mean1, VarY = variance1, nObs = nObs[2], 
                    active = active, K = K, L = L)
   
-  pbounds1 <- quantile(ests1$phi, probs = c(alpha/2, 1-alpha/2))
-  zbounds1 <- quantile(ests1$zeta, probs = c(alpha/2, 1-alpha/2))
+  pbounds1 <- stats::quantile(ests1$phi, probs = c(alpha/2, 1-alpha/2))
+  zbounds1 <- stats::quantile(ests1$zeta, probs = c(alpha/2, 1-alpha/2))
   
   # calculate log ratio value and confidence interval bounds
   plogratio <- log(ests1$phi/ests0$phi)
-  plogbounds <- quantile(plogratio, probs = c(alpha/2, 1-alpha/2))
+  plogbounds <- stats::quantile(plogratio, probs = c(alpha/2, 1-alpha/2))
   
   zlogratio <- log(ests1$zeta/ests0$zeta)
-  zlogbounds <- quantile(zlogratio, probs = c(alpha/2, 1-alpha/2))
+  zlogbounds <- stats::quantile(zlogratio, probs = c(alpha/2, 1-alpha/2))
   
   if(exponentiate){
     pratbounds <- exp(plogbounds)
@@ -600,8 +600,8 @@ PIRbootstrappair_old <- function(nObs, phi, zeta, active, rest, K, iterations, a
                                      L = L))
   
   # get the confidence interval bounds for the first sample
-  pbounds0 <- quantile(ests0$phi, probs = c(alpha/2, 1-alpha/2))
-  zbounds0 <- quantile(ests0$zeta, probs = c(alpha/2, 1-alpha/2))
+  pbounds0 <- stats::quantile(ests0$phi, probs = c(alpha/2, 1-alpha/2))
+  zbounds0 <- stats::quantile(ests0$zeta, probs = c(alpha/2, 1-alpha/2))
   
   # simulate second set of parms
   sampleData1 <- generatePIRData(nObs = nObs[2], phi = phi[2], zeta = zeta[2],
@@ -612,15 +612,15 @@ PIRbootstrappair_old <- function(nObs, phi, zeta, active, rest, K, iterations, a
   ests1 <- with(sampleData1, PIR_inv(ExY = mean, VarY = variance, 
                                      nObs = nObs[2], active = active, K = K, 
                                      L = L))
-  pbounds1 <- quantile(ests1$phi, probs = c(alpha/2, 1-alpha/2))
-  zbounds1 <- quantile(ests1$zeta, probs = c(alpha/2, 1-alpha/2))
+  pbounds1 <- stats::quantile(ests1$phi, probs = c(alpha/2, 1-alpha/2))
+  zbounds1 <- stats::quantile(ests1$zeta, probs = c(alpha/2, 1-alpha/2))
   
   # calculate log ratio value and confidence interval bounds
   plogratio <- log(ests1$phi/ests0$phi)
-  plogbounds <- quantile(plogratio, probs = c(alpha/2, 1-alpha/2))
+  plogbounds <- stats::quantile(plogratio, probs = c(alpha/2, 1-alpha/2))
   
   zlogratio <- log(ests1$zeta/ests0$zeta)
-  zlogbounds <- quantile(zlogratio, probs = c(alpha/2, 1-alpha/2))
+  zlogbounds <- stats::quantile(zlogratio, probs = c(alpha/2, 1-alpha/2))
   
   results <- cbind(phi = c(phi[1], phi[2], log(as.numeric(phi[2])/as.numeric(phi[1]))),
                    phi_lower_CI = c(pbounds0[1], pbounds1[1], plogbounds[1]),
@@ -699,7 +699,7 @@ PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_len
   # calculate summary statistics for both samples, sort so that base level is first
   nObs <- table(phase)[level_labels]
   means <- tapply(PIR, phase, mean)[level_labels]
-  variances <- tapply(PIR, phase, var)[level_labels]
+  variances <- tapply(PIR, phase, stats::var)[level_labels]
   
   intervals <- intervals[1]
   interval_length <- interval_length[1]

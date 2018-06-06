@@ -44,4 +44,3 @@ interval_recording(BS, interval_length = 20, partial = TRUE, summarize = TRUE)
 colMeans(interval_recording(BS, 20, partial = TRUE, summarize = FALSE))
 interval_recording(BS, interval_length = 20, rest_length = 5, partial = FALSE)
 }
-

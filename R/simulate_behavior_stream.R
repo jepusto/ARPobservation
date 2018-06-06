@@ -4,7 +4,7 @@
 r_behavior_stream_single <- function(mu, lambda, F_event, F_interim, stream_length,
                                      equilibrium, p0, tuning) {
   # initial condition
-  start_state <- rbinom(1, 1, p0)
+  start_state <- stats::rbinom(1, 1, p0)
   
   # draw initial time
   if (equilibrium) {

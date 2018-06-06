@@ -25,4 +25,3 @@ Single case design data measured with partial interval recording from a study of
 Dunlap, G., DePerczel, M., Clarke, S., Wilson, D., Wright, S., White, R., & Gomez, A. (1994). Choice making to promote adaptive behavior for students with emotional and behavioral challenges. Journal of Applied Behavior Analysis, 27 (3), 505-518.
 }
 \keyword{datasets}
-

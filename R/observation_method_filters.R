@@ -211,8 +211,8 @@ reported_observations <- function(BS, data_types = c("C","M","E","P","W"),
   
   if (n_aggregate == 1) return(recorded) else {
     groups <- list(rep(1:(n / n_aggregate), each = n_aggregate))
-    recorded_mean <- aggregate(recorded, groups, mean)
-    recorded_var <- aggregate(recorded, groups, var)
+    recorded_mean <- stats::aggregate(recorded, groups, mean)
+    recorded_var <- stats::aggregate(recorded, groups, stats::var)
     return(list(mean = recorded_mean[,-1], var = recorded_var[,-1]))
   }
 }

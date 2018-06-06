@@ -56,4 +56,3 @@ r_behavior_stream(n = 5, mu = 3, lambda = 10,
                   stream_length = 100, 
                   equilibrium = FALSE, p0 = 0.5)
 }
-

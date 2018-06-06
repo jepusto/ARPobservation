@@ -25,4 +25,3 @@ Single-case design data from a study that using partial interval recording (PIR)
 Moes, D. R. (1998). Integrating choice-making opportunities within teacher-assigned academic tasks to facilitate the performance of children with autism. Research and Practice for Persons with Severe Disabilities, 23 (4), 319-328.
 }
 \keyword{datasets}
-

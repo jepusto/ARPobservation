@@ -45,4 +45,3 @@ BS <- r_behavior_stream(n = 50, mu = 3, lambda = 10,
 reported_observations(BS, interval_length = 10)
 reported_observations(BS, interval_length = 10, n_aggregate = 5)
 }
-

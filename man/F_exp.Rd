@@ -21,4 +21,3 @@ hist(F_exp()$r_gen(1000, 3))
 hist(F_exp()$r_eq(1000, 3))
 
 }
-
