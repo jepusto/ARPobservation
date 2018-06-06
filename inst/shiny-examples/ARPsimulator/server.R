@@ -4,6 +4,7 @@ library(ARPobservation)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(viridis)
 source("effect_sizes.R")
 source("ARPsimulator.R")
 
@@ -147,7 +148,30 @@ server <- function(input, output) {
       graph_ES(ES_dat(), input$effect_size, input$showAvgES)
     }, height = 400)
   
+
+  output$downloadGraph <- downloadHandler(
+    filename = "ARPsimulator - fake graph.png",
+    content = function(file) {
+      p <- with(sim_dat(), graph_SCD(dat, design, phase_changes, system, input$showtruth))
+      ht <- sim_dat()$height_SCD / 100
+      ggsave(filename = file, plot = p, width = 8, height = ht)
+    },
+    contentType = "image/png"
+  )
+  
+  output$downloadData <- downloadHandler(
+    filename = "ARPsimulator - fake data.csv",
+    content = function(file) {
+      dat <- sim_dat()$dat
+      dat <- subset(dat, select = c(sample, case, session, phase, trt, Y))
+      names(dat) <- c("Sample", "Case", "Session", "Phase", "Condition", "Outcome")
+      write.csv(dat, file, row.names=FALSE)
+    },
+    contentType = "text/csv"
+  )
+  
   output$EStable <- renderTable({
     summarize_ES(ES_dat())
   }, include.rownames = FALSE)
+  
 }

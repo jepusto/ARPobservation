@@ -75,7 +75,15 @@ ui <- navbarPage(title = "Alternating Renewal Process Simulator",
                                           br()
                              ),
                              mainPanel(width = 9,
-                                       plotOutput('SCDplot', height = "auto")
+                                       plotOutput('SCDplot', height = "auto"),
+                                       conditionalPanel(
+                                         condition = "input.simulateGraph > 0 | input.simulateES > 0",
+                                         fluidRow(
+                                           column(6, align = "center", downloadLink("downloadGraph", label = "Download graph")),
+                                           column(6, align = "center", downloadLink("downloadData", label = "Download data"))
+                                         )
+                                       ),
+                                       br()
                              )
                            )
                   ),

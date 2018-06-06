@@ -13,7 +13,7 @@
 #' @export
 #' 
 
-ARPsimulator <- function() {
+ARPsimulator <- function(launch_browser = TRUE) {
   if (!requireNamespace("shiny", quietly = TRUE)) {
     stop("The simulator requires the shiny package. Please install it.", call. = FALSE)
   }
@@ -26,5 +26,5 @@ ARPsimulator <- function() {
     stop("Could not find the application directory. Try re-installing ARPobservation.", call. = FALSE)
   }
   
-  shiny::runApp(appDir, display.mode = "normal")
+  shiny::runApp(appDir, launch.browser = launch_browser, display.mode = "normal")
 }

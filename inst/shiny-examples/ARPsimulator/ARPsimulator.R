@@ -131,17 +131,17 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   samples <- max(dat$sample)
   
   if (design == "Treatment Reversal") {
-    SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
+    SCD_graph <- ggplot(dat, aes(session, Y, color = trt, shape = trt, group = interaction(phase, sample))) + 
       geom_point(alpha = samples^(-1/4)) + 
       geom_line(alpha = samples^(-1/2)) + 
       geom_vline(xintercept = phase_changes + 0.5, linetype = "dashed") + 
-      labs(color = "Condition", y = Y_lab) 
+      labs(color = "Condition", shape = "Condition", y = Y_lab) 
   } else if (design == "Multiple Baseline") {
-    SCD_graph <- ggplot(dat, aes(session, Y, color = trt, group = interaction(phase, sample))) + 
+    SCD_graph <- ggplot(dat, aes(session, Y, color = trt, shape = trt, group = interaction(phase, sample))) + 
       geom_point(alpha = samples^(-1/4)) + 
       geom_line(alpha = samples^(-1/2)) + 
       geom_vline(data = phase_changes, aes(xintercept = session + 0.5), linetype = "dashed") + 
-      labs(color = "Condition", y = Y_lab) 
+      labs(color = "Condition", shape = "Condition", y = Y_lab) 
   } else {
     SCD_graph <- ggplot(dat, aes(session, Y, color = trt, shape = trt, group = interaction(trt,sample))) + 
       geom_point(alpha = samples^(-1/4)) + 
@@ -149,8 +149,10 @@ graph_SCD <- function(dat, design, phase_changes, system, showtruth) {
   }
   
   SCD_graph <- SCD_graph +   
+                scale_color_viridis(discrete = TRUE, begin = .2, end = .8, option = "C") + 
                 coord_cartesian(ylim = Y_range) + 
-                theme_bw() + theme(legend.position = "bottom")
+                theme_minimal() + 
+                theme(legend.position = "bottom")
   
   if (nlevels(dat$case) > 1) {
     SCD_graph <- SCD_graph + facet_grid(case ~ .)
