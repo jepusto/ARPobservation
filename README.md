@@ -2,6 +2,7 @@
 [![Coverage Status](https://img.shields.io/codecov/c/github/jepusto/ARPobservation/master.svg)](https://codecov.io/github/jepusto/ARPobservation?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/ARPobservation)](https://cran.r-project.org/package=ARPobservation)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/ARPobservation)](https://cran.r-project.org/package=ARPobservation)
+[![](http://cranlogs.r-pkg.org/badges/last-month/ARPobservation)](https://cran.r-project.org/package=ARPobservation)
 
 ARPobservation provides a set of tools for simulating the sort of data generated during direct observation of a behavior over time. It works by first simulating a behavior stream based on an alternating renewal process, given specified distributions of event durations and interim times. The following distributions are currently supported:
 
