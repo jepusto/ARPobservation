@@ -15,7 +15,7 @@ Object of class \code{\link{eq_dist}} with components \code{r_gen} and \code{r_e
 The function \code{r_gen(n, mean)} generates random deviates from a gamma distribution with specified 
 \code{mean} and \code{shape} parameters.
 
-The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribution corresponding
 to the gamma distribution with specified \code{mean} and \code{shape} parameters.
 }
 \description{

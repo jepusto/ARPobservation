@@ -13,7 +13,7 @@ The function \code{r_gen(n, mean)} generates random deviates from a uniform dist
 \code{mean} \eqn{\mu} on the interval \eqn{(0, 2 \mu)}. The cumulative distribution function 
 is given by \eqn{F(x) = x / 2 \mu}.
 
-The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribution corresponding
 to a uniform distribution on the interval \eqn{(0, 2 \mu)}. The cumulative distribution function is given by 
 \deqn{F(x) = x (4 \mu - x) / (4 \mu^2).}
 }

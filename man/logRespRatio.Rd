@@ -18,7 +18,7 @@ logRespRatio(observations, phase, base_level, conf_level = 0.95,
 
 \item{bias_correct}{Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{TRUE}}
 
-\item{exponentiate}{Logical value indicating if the log-respones ratio should be exponentiated.}
+\item{exponentiate}{Logical value indicating if the log-response ratio should be exponentiated.}
 }
 \value{
 If \code{exponentiate = FALSE}, a list with three named entries. 
@@ -41,7 +41,7 @@ confidence level.
 The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}. 
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 If there are more than two levels in \code{phase} this function will not work.
-A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
 If \code{exponentiate = TRUE}, the log-ratio and the confidence interval will be exponentiated,
 but the variance will be excluded from the output.
 }

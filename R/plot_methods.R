@@ -21,7 +21,7 @@ get_segments <- function(bs, stream_length) {
 #' @param episode_color character string indicating the color of the bars that
 #'   represent episode durations. Default is blue.
 #' @param episode_thickness numeric value indicating the thickness of the bars
-#'   that represent epsiode durations. Default is 2.
+#'   that represent episode durations. Default is 2.
 #' @param ... Further arguments, not used for this method.
 #'   
 #' @details The plot is created using \code{ggplot} from the ggplot2 package, 

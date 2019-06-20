@@ -17,7 +17,7 @@ represent session time. Default is black.}
 represent episode durations. Default is blue.}
 
 \item{episode_thickness}{numeric value indicating the thickness of the bars
-that represent epsiode durations. Default is 2.}
+that represent episode durations. Default is 2.}
 
 \item{...}{Further arguments, not used for this method.}
 }

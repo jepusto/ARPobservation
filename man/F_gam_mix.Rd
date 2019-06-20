@@ -24,7 +24,7 @@ is given by \deqn{F(x) = p \Gamma(x; k_1, \theta_1) + (1 - p) \Gamma(x; k_2, \th
 is the cumulative distribution function of a Gamma random variable with shape \eqn{k} and scale \eqn{\theta}, and
 the scale parameters are determined by the specified \code{mean} and \code{scale_ratio}.
 
-The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribution corresponding
 to the mixture of gamma distributions.
 }
 \description{

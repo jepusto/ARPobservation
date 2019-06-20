@@ -42,7 +42,7 @@ The prevalence ratio estimate is based on the assumptions that
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 If there are more than two levels in \code{phase} this function will not work. 
-A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
 
 For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 

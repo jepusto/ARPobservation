@@ -34,9 +34,9 @@ A dataframe with six columns and three rows corresponding to baseline, treatment
 and the log ratio or ratio (depending upon the value of \code{exponentiate}) of treatment to baseline
 }
 \description{
-Estimates prevalance and incidence for two samples, 
+Estimates prevalence and incidence for two samples, 
 along with the ratios of each parameter, assuming that the behavior follows 
-an `. Also provides boostrap confidence intervals.
+an `. Also provides bootstrap confidence intervals.
 }
 \details{
 The moment estimators are based on the assumption that the 

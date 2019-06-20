@@ -34,12 +34,12 @@ phase_validation <- function(observations, phase, base_level) {
 #' @param base_level a character string or value indicating the name of the baseline level.
 #' @param conf_level Desired coverage rate of the calculated confidence interval. Default is \code{.95}.
 #' @param bias_correct  Logical value indicating if the bias-corrected log-response ratio should be used. Default is \code{TRUE}
-#' @param exponentiate  Logical value indicating if the log-respones ratio should be exponentiated.
+#' @param exponentiate  Logical value indicating if the log-response ratio should be exponentiated.
 #' 
 #' @details The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}. 
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 #' If there are more than two levels in \code{phase} this function will not work.
-#' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+#' A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
 #' If \code{exponentiate = TRUE}, the log-ratio and the confidence interval will be exponentiated,
 #' but the variance will be excluded from the output.
 #' 
@@ -115,7 +115,7 @@ logRespRatio <- function(observations, phase, base_level, conf_level = .95,
 #' The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
 #' If there are more than two levels in \code{phase} this function will not work. 
-#' A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+#' A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
 #' 
 #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 #' 
@@ -212,7 +212,7 @@ prevalence_bounds <- function(PIR, phase, base_level, mu_L, active_length, inter
 #' 2) the average event duration is less than \code{mu_U}, and
 #' 3) the probability of observing an interim time less than the active interval length is less than \code{p}.
 #' 
-#' The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a chaaracter string it is case sensitive.
+#' The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
 #'  
 #' For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 #' 
@@ -309,7 +309,7 @@ incidence_bounds <- function(PIR, phase, base_level, mu_U, p, active_length,
 #' The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
 #' The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", 
 #' or "0" and "1". If there are more than two levels in \code{phase} this function will not work. 
-#' A value for \code{base_level} must be specified; if it is a chaaracter string it is case sensitive.
+#' A value for \code{base_level} must be specified; if it is a character string it is case sensitive.
 #' 
 #' \code{intervals} is the number of intervals in the observations. 
 #' This is a single value and is assumed to be constant across both samples and all observations. 
@@ -635,9 +635,9 @@ PIRbootstrappair_old <- function(nObs, phi, zeta, active, rest, K, iterations, a
 
 #' @title Moment estimator for prevalence and incidence, with bootstrap confidence intervals
 #' 
-#' @description Estimates prevalance and incidence for two samples, 
+#' @description Estimates prevalence and incidence for two samples, 
 #' along with the ratios of each parameter, assuming that the behavior follows 
-#' an `. Also provides boostrap confidence intervals.
+#' an `. Also provides bootstrap confidence intervals.
 #' 
 #' @param PIR vector of PIR measurements
 #' @param phase factor or vector indicating levels of the PIR measurements.
@@ -746,7 +746,7 @@ PIR_MOM <- function(PIR, phase, base_level, intervals, interval_length, rest_len
 
 #' Dunlap et al.(1994) data
 #' 
-#' Single case design data measured with partial interval recording from a study of the effect of providing Choice between academic activities on the disruptive behavior of three elementary school students with emotional and behavioral disorders. For this data "No Choice" is the baseline phase. Data were extracted from the figures in the publicaton.
+#' Single case design data measured with partial interval recording from a study of the effect of providing Choice between academic activities on the disruptive behavior of three elementary school students with emotional and behavioral disorders. For this data "No Choice" is the baseline phase. Data were extracted from the figures in the publication.
 #' 
 #' @usage Dunlap
 #' 

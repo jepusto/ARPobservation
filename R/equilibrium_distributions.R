@@ -80,7 +80,7 @@ rgamma_eq <- function(n, mean, shape) mapply(function(p, m)
 #' The function \code{r_gen(n, mean)} generates random deviates from a gamma distribution with specified 
 #' \code{mean} and \code{shape} parameters.
 #' 
-#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribution corresponding
 #' to the gamma distribution with specified \code{mean} and \code{shape} parameters.
 #' 
 #' @examples
@@ -131,7 +131,7 @@ rgamma_mix_eq <- function(n, mean, shape1, shape2, scale_ratio, mix)
 #' is the cumulative distribution function of a Gamma random variable with shape \eqn{k} and scale \eqn{\theta}, and
 #' the scale parameters are determined by the specified \code{mean} and \code{scale_ratio}.
 #' 
-#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribution corresponding
 #' to the mixture of gamma distributions.
 #' 
 #' @examples
@@ -174,7 +174,7 @@ rweibull_eq <- function(n, mean, shape) mapply(function(p, m)
 #' The function \code{r_gen(n, mean)} generates random deviates from a Weibull distribution with specified 
 #' \code{mean} and \code{shape} parameters.
 #' 
-#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribution corresponding
 #' to the Weibull distribution with specified \code{mean} and \code{shape} parameters.
 #' 
 #' @examples
@@ -203,7 +203,7 @@ F_weib <- function(shape)
 #' \code{mean} \eqn{\mu} on the interval \eqn{(0, 2 \mu)}. The cumulative distribution function 
 #' is given by \eqn{F(x) = x / 2 \mu}.
 #' 
-#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribuion corresponding
+#' The function \code{r_eq(n, mean)} generates random deviates from the equilibrium distribution corresponding
 #' to a uniform distribution on the interval \eqn{(0, 2 \mu)}. The cumulative distribution function is given by 
 #' \deqn{F(x) = x (4 \mu - x) / (4 \mu^2).}
 #' 

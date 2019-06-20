@@ -41,7 +41,7 @@ The interim ratio estimate is based on the assumptions that
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. 
 The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", 
 or "0" and "1". If there are more than two levels in \code{phase} this function will not work. 
-A value for \code{base_level} must be specified; if it is a chaaracter string it is case sensitive.
+A value for \code{base_level} must be specified; if it is a character string it is case sensitive.
 
 \code{intervals} is the number of intervals in the observations. 
 This is a single value and is assumed to be constant across both samples and all observations. 
