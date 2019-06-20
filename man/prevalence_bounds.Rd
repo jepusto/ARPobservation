@@ -4,8 +4,8 @@
 \alias{prevalence_bounds}
 \title{Prevalence bounds and confidence interval}
 \usage{
-prevalence_bounds(PIR, phase, base_level, mu_L, active_length, intervals = NA,
-  conf_level = 0.95, exponentiate = FALSE)
+prevalence_bounds(PIR, phase, base_level, mu_L, active_length,
+  intervals = NA, conf_level = 0.95, exponentiate = FALSE)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}

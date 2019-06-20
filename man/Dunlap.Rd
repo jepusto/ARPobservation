@@ -7,13 +7,13 @@
 \format{A data frame with 58 observations on 7 variables
 
 \itemize{
-\item [,1] \code{Case} The participant for whom the observation took place
-\item [,2] \code{Phase} The level of the observation ("Choice" vs. "No Choice")
-\item [,3] \code{Session} The observation session # for each participant
-\item [,4] \code{outcome} The summary PIR measurement for the observation session
-\item [,5] \code{active_length} The length of the active observation interval, in seconds
-\item [,6] \code{rest_length} The length of the recording interval, in seconds
-\item [,7] \code{intervals} The total number of intervals in the observation session 
+\item \code{Case} The participant for whom the observation took place
+\item \code{Phase} The level of the observation ("Choice" vs. "No Choice")
+\item \code{Session} The observation session # for each participant
+\item \code{outcome} The summary PIR measurement for the observation session
+\item \code{active_length} The length of the active observation interval, in seconds
+\item \code{rest_length} The length of the recording interval, in seconds
+\item \code{intervals} The total number of intervals in the observation session 
 }}
 \usage{
 Dunlap

@@ -4,8 +4,8 @@
 \alias{interim_bounds}
 \title{Interim bounds and confidence interval}
 \usage{
-interim_bounds(PIR, phase, base_level, conf_level = 0.95, intervals = NA,
-  exponentiate = FALSE)
+interim_bounds(PIR, phase, base_level, conf_level = 0.95,
+  intervals = NA, exponentiate = FALSE)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}

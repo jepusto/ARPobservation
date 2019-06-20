@@ -4,9 +4,9 @@
 \alias{PIR_MOM}
 \title{Moment estimator for prevalence and incidence, with bootstrap confidence intervals}
 \usage{
-PIR_MOM(PIR, phase, base_level, intervals, interval_length, rest_length = 0,
-  Bootstraps = 2000, conf_level = 0.95, exponentiate = FALSE,
-  seed = NULL)
+PIR_MOM(PIR, phase, base_level, intervals, interval_length,
+  rest_length = 0, Bootstraps = 2000, conf_level = 0.95,
+  exponentiate = FALSE, seed = NULL)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}

@@ -4,8 +4,8 @@
 \alias{interval_recording}
 \title{Applies interval recording to a behavior stream}
 \usage{
-interval_recording(BS, interval_length, rest_length = 0, partial = TRUE,
-  summarize = TRUE)
+interval_recording(BS, interval_length, rest_length = 0,
+  partial = TRUE, summarize = TRUE)
 }
 \arguments{
 \item{BS}{object of class behavior_stream}
