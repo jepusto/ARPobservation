@@ -1,4 +1,4 @@
-ARPobservation 1.2
+ARPobservation 1.2.0
 =======================
 * Added observation filter and random data generation for augmented interval recording procedure.
 * Added plot method for simulated behavior_stream objects.
