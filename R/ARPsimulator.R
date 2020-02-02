@@ -17,13 +17,16 @@
 #' 
 
 ARPsimulator <- function(launch_browser = TRUE) {
-  if (!requireNamespace("shiny", quietly = TRUE)) {
-    stop("The simulator requires the shiny package. Please install it.", call. = FALSE)
-  }
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("The simulator requires the ggplot2 package. Please install it.", call. = FALSE)
-  }
   
+  pkgs <- c("shiny","markdown","dplyr","tidyr","ggplot2","viridis")
+  loaded_pkgs <- sapply(pkgs, requireNamespace, quietly = TRUE)
+  if (any(!loaded_pkgs)) {
+    msg <- paste0("The simulator requires the following packages to work: ", 
+                 paste(pkgs[!loaded_pkgs], collapse = ", "), 
+                 ". Please install them and then try again.")
+    stop(msg, call. = FALSE)
+  }
+
   appDir <- system.file("shiny-examples", "ARPsimulator", package = "ARPobservation")
   if (appDir == "") {
     stop("Could not find the application directory. Try re-installing ARPobservation.", call. = FALSE)
