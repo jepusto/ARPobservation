@@ -1,5 +1,6 @@
 ARPobservation 1.2.0.99999
 =======================
+* Added checks for required packages when running ARPsimulator().
 
 ARPobservation 1.2.0
 =======================
