@@ -4,8 +4,14 @@
 \alias{logRespRatio}
 \title{Calculate log-response ratio, variance, and confidence interval}
 \usage{
-logRespRatio(observations, phase, base_level, conf_level = 0.95,
-  bias_correct = TRUE, exponentiate = FALSE)
+logRespRatio(
+  observations,
+  phase,
+  base_level,
+  conf_level = 0.95,
+  bias_correct = TRUE,
+  exponentiate = FALSE
+)
 }
 \arguments{
 \item{observations}{Vector of observations}
@@ -21,14 +27,14 @@ logRespRatio(observations, phase, base_level, conf_level = 0.95,
 \item{exponentiate}{Logical value indicating if the log-response ratio should be exponentiated.}
 }
 \value{
-If \code{exponentiate = FALSE}, a list with three named entries. 
-The first entry, \code{lRR}, is the estimated log-response ratio. 
+If \code{exponentiate = FALSE}, a list with three named entries.
+The first entry, \code{lRR}, is the estimated log-response ratio.
 The second entry, \code{V_lRR}, is the estimated variance of the log-response ratio.
 The third entry, \code{CI}, is a vector containing the endpoints of a confidence
 interval of \code{conf_level} coverage rate.
 
 If \code{exponentiate = TRUE}, a list with two named entries.
-The first entry, \code{RR}, is the estimated response ratio.  
+The first entry, \code{RR}, is the estimated response ratio.
 The second entry, \code{CI}, is a vector containing the endpoints of a confidence
 interval of \code{conf_level} coverage rate.
 }
@@ -38,8 +44,8 @@ the variance of the log-response ratio, and the confidence interval for a given
 confidence level.
 }
 \details{
-The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}. 
-The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". 
+The \code{observations} vector can be in any order corresponding to the factor or vector \code{phase}.
+The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1".
 If there are more than two levels in \code{phase} this function will not work.
 A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
 If \code{exponentiate = TRUE}, the log-ratio and the confidence interval will be exponentiated,

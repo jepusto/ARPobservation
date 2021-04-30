@@ -4,7 +4,8 @@
 \name{Dunlap}
 \alias{Dunlap}
 \title{Dunlap et al.(1994) data}
-\format{A data frame with 58 observations on 7 variables
+\format{
+A data frame with 58 observations on 7 variables
 
 \itemize{
 \item \code{Case} The participant for whom the observation took place
@@ -13,10 +14,10 @@
 \item \code{outcome} The summary PIR measurement for the observation session
 \item \code{active_length} The length of the active observation interval, in seconds
 \item \code{rest_length} The length of the recording interval, in seconds
-\item \code{intervals} The total number of intervals in the observation session 
-}}
-\usage{
-Dunlap
+\item \code{intervals} The total number of intervals in the observation session
+}
+
+A data frame with 53940 rows and 10 variables
 }
 \description{
 Single case design data measured with partial interval recording from a study of the effect of providing Choice between academic activities on the disruptive behavior of three elementary school students with emotional and behavioral disorders. For this data "No Choice" is the baseline phase. Data were extracted from the figures in the publication.

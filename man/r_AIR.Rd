@@ -4,8 +4,19 @@
 \alias{r_AIR}
 \title{Generates random augmented interval recording behavior streams}
 \usage{
-r_AIR(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
-  rest_length = 0, equilibrium = TRUE, p0 = 0, tuning = 2)
+r_AIR(
+  n,
+  mu,
+  lambda,
+  stream_length,
+  F_event,
+  F_interim,
+  interval_length,
+  rest_length = 0,
+  equilibrium = TRUE,
+  p0 = 0,
+  tuning = 2
+)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}

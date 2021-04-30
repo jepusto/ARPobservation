@@ -4,8 +4,13 @@
 \alias{reported_observations}
 \title{Applies multiple recording procedures to a behavior stream}
 \usage{
-reported_observations(BS, data_types = c("C", "M", "E", "P", "W"),
-  interval_length = 1, rest_length = 0, n_aggregate = 1)
+reported_observations(
+  BS,
+  data_types = c("C", "M", "E", "P", "W"),
+  interval_length = 1,
+  rest_length = 0,
+  n_aggregate = 1
+)
 }
 \arguments{
 \item{BS}{object of class behavior_stream}

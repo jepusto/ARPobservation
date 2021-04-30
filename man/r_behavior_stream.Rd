@@ -4,8 +4,17 @@
 \alias{r_behavior_stream}
 \title{Generates random behavior streams}
 \usage{
-r_behavior_stream(n, mu, lambda, F_event, F_interim, stream_length,
-  equilibrium = TRUE, p0 = 0, tuning = 2)
+r_behavior_stream(
+  n,
+  mu,
+  lambda,
+  F_event,
+  F_interim,
+  stream_length,
+  equilibrium = TRUE,
+  p0 = 0,
+  tuning = 2
+)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}

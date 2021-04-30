@@ -4,8 +4,13 @@
 \alias{plot.behavior_stream}
 \title{Plot method for \code{behavior_stream} objects}
 \usage{
-\method{plot}{behavior_stream}(x, session_color = "black",
-  episode_color = "blue", episode_thickness = 2, ...)
+\method{plot}{behavior_stream}(
+  x,
+  session_color = "black",
+  episode_color = "blue",
+  episode_thickness = 2,
+  ...
+)
 }
 \arguments{
 \item{x}{object of class \code{behavior_stream}}

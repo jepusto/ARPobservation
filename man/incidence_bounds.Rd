@@ -4,8 +4,17 @@
 \alias{incidence_bounds}
 \title{Incidence bounds and confidence interval}
 \usage{
-incidence_bounds(PIR, phase, base_level, mu_U, p, active_length,
-  intervals = NA, conf_level = 0.95, exponentiate = FALSE)
+incidence_bounds(
+  PIR,
+  phase,
+  base_level,
+  mu_U,
+  p,
+  active_length,
+  intervals = NA,
+  conf_level = 0.95,
+  exponentiate = FALSE
+)
 }
 \arguments{
 \item{PIR}{vector of PIR measurements}
@@ -27,24 +36,24 @@ incidence_bounds(PIR, phase, base_level, mu_U, p, active_length,
 \item{exponentiate}{Logical value indicating if the log of the bounds and the confidence interval should be exponentiated. Default is \code{FALSE}.}
 }
 \value{
-A list containing two named vectors and a single named number. 
-The first entry, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio. 
+A list containing two named vectors and a single named number.
+The first entry, \code{estimate_bounds}, contains the lower and upper bound for the estimate of the incidence ratio.
 The second entry, \code{estimate_SE}, contains the standard error of the estimate.
 The third entry, \code{estimate_CI}, contains the lower and upper bounds for the confidence interval of the incidence ratio.
 }
 \description{
-Calculates a bound for the log of the incidence ratio of two samples 
-(referred to as baseline and treatment) based on partial interval recording (PIR) data, 
+Calculates a bound for the log of the incidence ratio of two samples
+(referred to as baseline and treatment) based on partial interval recording (PIR) data,
 assuming that the behavior follows an Alternating Renewal Process.
 }
 \details{
-The incidence ratio estimate is based on the assumptions that 
+The incidence ratio estimate is based on the assumptions that
 1) the underlying behavior stream follows an Alternating Renewal Process,
 2) the average event duration is less than \code{mu_U}, and
 3) the probability of observing an interim time less than the active interval length is less than \code{p}.
 
 The \code{PIR} vector can be in any order corresponding to the factor or vector \code{phase}. The levels of \code{phase} can be any two levels, such as "A" and "B", "base" and "treat", or "0" and "1". If there are more than two levels in \code{phase} this function will not work. A value for \code{base_level} must be specified - if it is a character string it is case sensitive.
- 
+
 For all of the following variables, the function assumes that if a vector of values is provided they are constant across all observations and simply uses the first value in that vector.
 
 \code{mu_U} is the upper limit on the mean event durations. This is a single value assumed to hold for both samples of behavior
@@ -58,7 +67,7 @@ For all of the following variables, the function assumes that if a vector of val
 # Estimate bounds on the incidence ratio for Ahmad from the Dunlap dataset
 data(Dunlap)
 with(subset(Dunlap, Case == "Ahmad"),
-incidence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice", 
+incidence_bounds(PIR = outcome, phase = Phase, base_level = "No Choice",
                  mu_U = 10, p = .15, active_length = active_length, intervals = intervals))
 
 }

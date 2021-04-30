@@ -4,8 +4,17 @@
 \alias{r_event_counting}
 \title{Generates random samples of event counts}
 \usage{
-r_event_counting(n, mu, lambda, stream_length, F_event, F_interim,
-  equilibrium = TRUE, p0 = 0, tuning = 2)
+r_event_counting(
+  n,
+  mu,
+  lambda,
+  stream_length,
+  F_event,
+  F_interim,
+  equilibrium = TRUE,
+  p0 = 0,
+  tuning = 2
+)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}

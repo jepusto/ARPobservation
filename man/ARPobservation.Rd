@@ -3,7 +3,6 @@
 \docType{package}
 \name{ARPobservation}
 \alias{ARPobservation}
-\alias{ARPobservation-package}
 \title{ARPobservation}
 \description{
 Tools for simulating different methods of observing alternating renewal processes
@@ -12,11 +11,11 @@ Tools for simulating different methods of observing alternating renewal processe
 \pkg{ARPobservation} provides a set of tools for simulating data based on direct observation of behavior. 
 It works by first simulating a behavior stream based on an alternating renewal process, using 
 specified distributions of event durations and interim times. Different procedures for recording data 
-can then be applied to the simulated behavior stream.
+can then be applied to the simulated behavior stream. 
 
 The main function for simulating a behavior stream is \code{\link{r_behavior_stream}}. Currently, the event
 duration and interim time distributions must come from the class \code{\link{eq_dist}}. (See the documentation
-for this class for distributions that are currently implemented.)
+for this class for distributions that are currently implemented.) 
 
 Several different observation recording procedures can then be applied as filters to a simulated behavior stream. 
 The following procedures are currently implemented:

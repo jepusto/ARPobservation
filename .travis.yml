@@ -1,12 +1,21 @@
 language: r
+
+matrix:
+  include:
+  - r: devel
+  - r: release
+    after_success:
+    - Rscript -e 'covr::codecov()'
+  - r: oldrel
+
 cache: packages
 
-r_packages: 
+r_packages:
   - covr
-  
+
 after_success:
   - Rscript -e 'covr::codecov()'
-  
+
 warnings_are_errors: true
 
 notifications:

@@ -4,9 +4,20 @@
 \alias{r_WIR}
 \title{Generates random whole interval recording behavior streams}
 \usage{
-r_WIR(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
-  rest_length = 0, summarize = FALSE, equilibrium = TRUE, p0 = 0,
-  tuning = 2)
+r_WIR(
+  n,
+  mu,
+  lambda,
+  stream_length,
+  F_event,
+  F_interim,
+  interval_length,
+  rest_length = 0,
+  summarize = FALSE,
+  equilibrium = TRUE,
+  p0 = 0,
+  tuning = 2
+)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}

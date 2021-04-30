@@ -1,4 +1,4 @@
-ARPobservation 1.2.0.99999
+ARPobservation 1.2.1
 =======================
 * Added checks for required packages when running ARPsimulator().
 
@@ -11,7 +11,7 @@ ARPobservation 1.2.0
 
 ARPobservation 1.1
 =======================
-* Added utility functions for directly simulating MTS, PIR, and WIR data. 
+* Added utility functions for directly simulating MTS, PIR, and WIR data.
 * Added log-response ratio effect size estimators.
 * Added various estimators for summarized PIR data.
 * Added study_planning demo

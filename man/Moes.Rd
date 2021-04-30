@@ -4,7 +4,8 @@
 \name{Moes}
 \alias{Moes}
 \title{Moes(1998) data}
-\format{A data frame with 80 observations on 7 variables
+\format{
+A data frame with 80 observations on 7 variables
 
 \itemize{
 \item \code{Case} The participant for whom the observation took place
@@ -13,10 +14,10 @@
 \item \code{outcome} The summary PIR measurement for the observation session
 \item \code{active_length} The length of the active observation interval, in seconds
 \item \code{rest_length} The length of the recording interval, in seconds
-\item \code{intervals} The total number of intervals in the observation session 
-}}
-\usage{
-Moes
+\item \code{intervals} The total number of intervals in the observation session
+}
+
+A data frame with 53940 rows and 10 variables
 }
 \description{
 Single-case design data from a study that using partial interval recording (PIR) examining the impact of choice-making in a homework tutoring context on disruptive behavior. In this data "No Choice" is the baseline phase. Data were extracted from the figure in the publication.

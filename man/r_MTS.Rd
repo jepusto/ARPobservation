@@ -4,8 +4,19 @@
 \alias{r_MTS}
 \title{Generates random momentary time sampling behavior streams}
 \usage{
-r_MTS(n, mu, lambda, stream_length, F_event, F_interim, interval_length,
-  summarize = FALSE, equilibrium = TRUE, p0 = 0, tuning = 2)
+r_MTS(
+  n,
+  mu,
+  lambda,
+  stream_length,
+  F_event,
+  F_interim,
+  interval_length,
+  summarize = FALSE,
+  equilibrium = TRUE,
+  p0 = 0,
+  tuning = 2
+)
 }
 \arguments{
 \item{n}{number of behavior streams to generate}
