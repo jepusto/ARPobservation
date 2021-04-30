@@ -76,9 +76,14 @@ At the default setting of \code{bootstraps = 2000}, PIR_MOM takes just under six
 # Estimate prevalence and incidence ratios for Carl from the Moes dataset
 data(Moes)
 with(subset(Moes, Case == "Carl"),
-PIR_MOM(PIR = outcome, phase = Phase, intervals = intervals,
-interval_length = (active_length + rest_length), rest_length = rest_length,
-base_level = "No Choice", seed = 149568373))
+  PIR_MOM(PIR = outcome,
+          phase = Phase,
+          intervals = intervals,
+          interval_length = (active_length + rest_length),
+          rest_length = rest_length,
+          base_level = "No Choice",
+          Bootstraps = 200,
+          seed = 149568373))
 
 }
 \author{
