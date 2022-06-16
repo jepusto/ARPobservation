@@ -5,3 +5,4 @@
 ^PIR_MOM_test\.Rmd$
 ^\.travis\.yml$
 ^CRAN-RELEASE$
+^\.github$
