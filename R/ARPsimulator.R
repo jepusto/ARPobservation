@@ -10,7 +10,7 @@
 #' behaviors are generated from an alternating poisson process, in which the
 #' event durations and interim times are exponentially distributed. Currently,
 #' multiple baseline and treatment reversal designs are supported.
-#'
+#' 
 #' @param launch_browser Logical value indicating whether to run the tool using
 #'   the system's default web browser. Defaults to \code{TRUE}.
 #' @export
