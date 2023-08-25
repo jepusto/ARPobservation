@@ -1,6 +1,6 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/jepusto/ARPobservation/workflows/R-CMD-check/badge.svg)](https://github.com/jepusto/ARPobservation/actions)
-[![Codecov Status](https://codecov.io/gh/jepusto/ARPobservation/branch/master/graph/badge.svg)](https://codecov.io/gh/jepusto/ARPobservation?branch=master)
+[![Codecov Status](https://app.codecov.io/github/jepusto/ARPobservation/branch/master/graph/badge.svg)](https://app.codecov.io/github/jepusto/ARPobservation?branch=master)
 [![](http://www.r-pkg.org/badges/version/ARPobservation)](https://CRAN.R-project.org/package=ARPobservation)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/ARPobservation)](https://CRAN.R-project.org/package=ARPobservation)
 [![](http://cranlogs.r-pkg.org/badges/last-month/ARPobservation)](https://CRAN.R-project.org/package=ARPobservation)
