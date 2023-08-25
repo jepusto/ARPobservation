@@ -38,8 +38,12 @@ The plot is created using \code{ggplot} from the ggplot2 package,
   which must be installed.
 }
 \examples{
+
+if (requireNamespace("ggplot2", quietly = TRUE)) {
 b_streams <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
                                F_event = F_exp(), F_interim = F_exp(), 
                                stream_length = 100)
 plot(b_streams)
+}
+
 }

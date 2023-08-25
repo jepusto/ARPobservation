@@ -31,10 +31,14 @@ get_segments <- function(bs, stream_length) {
 #' @return An object of class \code{ggplot}.
 #'   
 #' @examples
+#' 
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
 #' b_streams <- r_behavior_stream(n = 5, mu = 3, lambda = 10, 
 #'                                F_event = F_exp(), F_interim = F_exp(), 
 #'                                stream_length = 100)
 #' plot(b_streams)
+#' }
+#' 
 
 plot.behavior_stream <- function(x, session_color = "black", episode_color = "blue", episode_thickness = 2, ...) {
   

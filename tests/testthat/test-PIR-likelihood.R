@@ -1,5 +1,7 @@
 context("Evaluating the functioning of the likelihood estimator")
 
+skip_if_not_installed("plyr")
+skip_if_not_installed("reshape2")
 library(plyr)
 library(reshape2)
 
