@@ -31,4 +31,5 @@
 #' 
 #' @name ARPobservation
 #' @docType package
+#' @aliases ARPobservation-package
 NULL

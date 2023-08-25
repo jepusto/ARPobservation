@@ -1,3 +1,7 @@
+ARPobservation 1.2.2
+=======================
+* Updated documentation with Roxygen2 v7.2.3.
+
 ARPobservation 1.2.1
 =======================
 * Added checks for required packages when running ARPsimulator().

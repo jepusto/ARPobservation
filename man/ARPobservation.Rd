@@ -3,6 +3,7 @@
 \docType{package}
 \name{ARPobservation}
 \alias{ARPobservation}
+\alias{ARPobservation-package}
 \title{ARPobservation}
 \description{
 Tools for simulating different methods of observing alternating renewal processes
