@@ -26,7 +26,6 @@ get_segments <- function(bs, stream_length) {
 #'   
 #' @details The plot is created using \code{ggplot} from the ggplot2 package, 
 #'   which must be installed.
-#' @export
 #' 
 #' @return An object of class \code{ggplot}.
 #'   
@@ -39,6 +38,7 @@ get_segments <- function(bs, stream_length) {
 #' plot(b_streams)
 #' }
 #' 
+#' @export
 
 plot.behavior_stream <- function(x, session_color = "black", episode_color = "blue", episode_thickness = 2, ...) {
   

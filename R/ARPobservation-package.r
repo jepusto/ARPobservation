@@ -32,4 +32,5 @@
 #' @name ARPobservation
 #' @docType package
 #' @aliases ARPobservation-package
-NULL
+#' @keywords internal
+"_PACKAGE"
