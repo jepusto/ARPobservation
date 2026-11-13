@@ -1,6 +1,7 @@
 ARPobservation 1.2.3
 =======================
 * Updated DESCRIPTION author listing and package documentation.
+* The package now imports ggplot2 instead of only suggesting it.
 
 ARPobservation 1.2.2
 =======================
