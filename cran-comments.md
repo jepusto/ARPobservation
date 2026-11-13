@@ -1,6 +1,6 @@
 ## Resubmission
 
-This is a maintenance release to bring the package DESCRIPTION and documentation formatting up to date with CRAN policies. 
+This is a maintenance release to bring the package DESCRIPTION and documentation formatting up to date with CRAN policies. The package now imports ggplot2 instead of only suggesting it.
 
 This release corrects the NOTEs showing in the current CRAN checks.
 
@@ -10,6 +10,7 @@ This release corrects the NOTEs showing in the current CRAN checks.
 * ubuntu 20.04.3 LTS (on Github), R devel, release, oldrelease
 * macOS-latest (on Github), R release
 * windows-latest (on Github), R release
+* win-builder (devel, release, oldrelease)
 
 ## R CMD check results
 

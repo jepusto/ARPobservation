@@ -21,13 +21,13 @@ Authors@R: c(person(given = c("James", "E."),
 License: GPL-3
 VignetteBuilder: knitr
 Imports:
-    stats
+    stats,
+    ggplot2
 Suggests:
     shiny,
     plyr,
     reshape2,
     dplyr,
-    ggplot2,
     viridis,
     knitr,
     rmarkdown,
